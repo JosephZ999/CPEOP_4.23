@@ -29,11 +29,16 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Meta = (AllowPrivateAccess = "true"))
 	bool ShowCritDamageText;
+
+	UPROPERTY(EditDefaultsOnly, Meta = (AllowPrivateAccess = "true"))
+	class TSubclassOf<AActor> ShadowClass;
+
 public:
 	UFUNCTION()
 	class UPaperFlipbook* getSpark(uint8 index) const;
 	TSubclassOf<class ADmgTextBase> getDamageTextClass() const;
 	bool canCreateDamageText(bool crited)const;
+	TSubclassOf<AActor> getShadowClass() const { return ShadowClass; }
 
 	//==========================================/ Hero Events
 	UFUNCTION(BlueprintImplementableEvent, Category = "Units Calls")

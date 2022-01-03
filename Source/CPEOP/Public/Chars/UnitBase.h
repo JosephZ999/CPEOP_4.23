@@ -110,27 +110,27 @@ public:
 protected:	virtual void BeginPlay();
 public:		virtual void Tick(float delta);
 
-	bool	Control = true;		// Запрещает любые движение
+	bool    Control = true;		// Запрещает любые движение
 private:
 // Variables //
-	uint8	State{ 0 };
+	uint8   State{ 0 };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = "true"))
-	uint8	Team{ 0 };
+	uint8   Team{ 0 };
 
 	UPROPERTY(BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
-	bool Dead;
+	bool    Dead;
 
-	
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
+	class UShadowComponent* ShadowComp;
 
 public:
 // AI
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = AI)
-	void StartAI();
+	void    StartAI();
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = AI)
-	void StopAI();
+	void    StopAI();
 
 // Getters and Setters //
 	UFUNCTION(BlueprintCallable)
@@ -142,6 +142,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual class UUnitStatsBase* getStatsComp() const { return nullptr; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE UShadowComponent* getShadow() const { return ShadowComp; }
 
 // Conditions //
 	UFUNCTION(BlueprintCallable, BlueprintPure)

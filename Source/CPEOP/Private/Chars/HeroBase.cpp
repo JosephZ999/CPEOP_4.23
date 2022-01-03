@@ -6,6 +6,7 @@
 #include "sys/MyPlayerController.h"
 #include "sys/MyGameInstance.h"
 #include "Paper2D/Classes/PaperFlipbookComponent.h"
+#include "Chars/Components/ShadowComponent.h"
 
 #include "Components/SceneComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -14,6 +15,7 @@
 #include "Components/CapsuleComponent.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Kismet/KismetMathLibrary.h"
+
 
 // Camera Settings
 #define ARM_LOCATION		FVector(80, 0, 0)
@@ -593,6 +595,7 @@ AMyPlayerController * AHeroBase::getController()
 			tp_HelperScale.X	= 2.f;
 		}
 		SpawnHelper("Teleport", 0.f, tp_HelperRot, tp_HelperScale);
+		getShadow()->HideShadow();
 	}
 	void AHeroBase::Teleport(FVector nLocation)
 	{
@@ -628,6 +631,7 @@ AMyPlayerController * AHeroBase::getController()
 			tp_HelperScale.X	= 2.f;
 		}
 		SpawnHelper("Teleport", 0.f, tp_HelperRot, tp_HelperScale);
+		getShadow()->HideShadow();
 	}
 
 	inline void AHeroBase::TeleportTick(float delta)
@@ -646,6 +650,7 @@ AMyPlayerController * AHeroBase::getController()
 				float dist = FVector::Dist(tp_initialLocation, GetActorLocation());
 				float minusStamina = FMath::Min(1.2f, dist / 100.f) / getHeroStatsComp()->getTeleportCost();
 				GET_STATS->AddStamina(-(minusStamina));
+				getShadow()->ShowShadow();
 			}
 		}
 	}

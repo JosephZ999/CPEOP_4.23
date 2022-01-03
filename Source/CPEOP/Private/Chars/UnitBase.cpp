@@ -5,8 +5,9 @@
 
 #include "Objects/Dynamic/Helper.h"
 #include "Objects/Dynamic/HitSparkBase.h"
-#include "Sys/MyGameInstance.h"
 #include "Chars/Components/UnitStatsBase.h"
+#include "Chars/Components/ShadowComponent.h"
+#include "Sys/MyGameInstance.h"
 
 #include "PaperFlipbookComponent.h"
 #include "PaperFlipbook.h"
@@ -30,6 +31,8 @@ AUnitBase::AUnitBase()
 
 	DangerNoticeType = EDangerType::None;
 	Dead = false;
+
+	ShadowComp = CreateDefaultSubobject<UShadowComponent>(TEXT("Shadow"));
 }
 
 void AUnitBase::BeginPlay()
