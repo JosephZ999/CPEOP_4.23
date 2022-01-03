@@ -69,11 +69,17 @@ void UShadowComponent::SetupOwnerforShadow()
 
 void UShadowComponent::ShowShadow()
 {
-	ShadowObj->SetActorScale3D(FVector(Scale));
+	if (ShadowObj)
+	{
+		ShadowObj->SetActorScale3D(FVector(Scale));
+	}
 }
 
 void UShadowComponent::HideShadow()
 {
-	ShadowObj->SetActorScale3D(FVector(0.f));
+	if (ShadowObj)
+	{
+		ShadowObj->SetActorScale3D(FVector(0.f));
+	}
 }
 
