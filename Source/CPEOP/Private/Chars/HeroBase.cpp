@@ -93,6 +93,7 @@ AHeroBase::AHeroBase()
 
 	// Helpers
 	InitHelper("Teleport", "Blueprint/Objects/Dynamic/TeleportEff");
+	
 
 }
 

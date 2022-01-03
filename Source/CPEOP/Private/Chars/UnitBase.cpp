@@ -33,6 +33,8 @@ AUnitBase::AUnitBase()
 	Dead = false;
 
 	ShadowComp = CreateDefaultSubobject<UShadowComponent>(TEXT("Shadow"));
+
+	InitHelper("BlockSpark", "Blueprint/Objects/Dynamic/BlockSpark");
 }
 
 void AUnitBase::BeginPlay()
@@ -338,7 +340,15 @@ void AUnitBase::Tick(float delta)
 			}
 		}
 		
-		if (block)	{ getStatsComp()->AddStamina(0.05f); }
+		if (block)	
+		{ 
+			getStatsComp()->AddStamina(0.05f); 
+			
+			// Block Spark
+			FRotator SparkRot = { FRotator::ZeroRotator };
+			SparkRot.Yaw = (impulse.X > 0.f) ? 180.f : 0.f;
+			SpawnHelper("BlockSpark", 0.f, SparkRot);
+		}
 		else		
 		{ 
 			crit = damageOption->isCriticalDamage(); 
