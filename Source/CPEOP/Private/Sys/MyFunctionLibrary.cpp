@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MyFunctionLibrary.h"
+#include "Sys/MyFunctionLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 
 int UMyFunctionLibrary::RotationDivide(FVector2D pointA, FVector2D pointB)
@@ -53,4 +53,31 @@ float UMyFunctionLibrary::PercentDivision(float percent, uint8 divisionNum)
 		return outValue;
 	}
 	return percent;
+}
+
+FString UMyFunctionLibrary::FindObjectName(FString objectPath)
+{
+	FString ObjectName;
+	int32 charIndex = objectPath.Len();
+	while (true)
+	{
+		charIndex--;
+		if (objectPath[charIndex] == '/')
+		{
+			for (int i = ++charIndex; i < objectPath.Len(); i++)
+			{
+				ObjectName.AppendChar(objectPath[i]);
+			}
+			break;
+		}
+		else if (charIndex == 0)
+		{
+			for (int i = ++charIndex; i < objectPath.Len(); i++)
+			{
+				ObjectName.AppendChar(objectPath[i]);
+			}
+			break;
+		}
+	}
+	return ObjectName;
 }

@@ -8,6 +8,7 @@
 #include "Chars/Components/UnitStatsBase.h"
 #include "Chars/Components/ShadowComponent.h"
 #include "Sys/MyGameInstance.h"
+#include "Sys/MyFunctionLibrary.h"
 
 #include "PaperFlipbookComponent.h"
 #include "PaperFlipbook.h"
@@ -54,34 +55,11 @@ void AUnitBase::Tick(float delta)
 }
 
 // Functions
-	void AUnitBase::findObject(FString objectPath, TSubclassOf<class AHelper>& Class)
+	void AUnitBase::FindHelper(FString objectPath, TSubclassOf<class AHelper>& Class)
 	{
 		// Добавляю в конец classPath - .'название класса'
-		FString ObjectName;
-		int32 charIndex = objectPath.Len();
-		while (true)
-		{
-			charIndex--;
-			if (objectPath[charIndex] == '/')
-			{
-				for (int i = ++charIndex; i < objectPath.Len(); i++)
-				{
-					ObjectName.AppendChar(objectPath[i]);
-				}
-				break;
-			}
-			else if (charIndex == 0)
-			{
-				for (int i = ++charIndex; i < objectPath.Len(); i++)
-				{
-					ObjectName.AppendChar(objectPath[i]);
-				}
-				break;
-			}
-		}
-
-		FString finalPath;
-		finalPath = "Class'/Game/" + objectPath + "." + ObjectName + "_C'";
+		FString ObjectName = UMyFunctionLibrary::FindObjectName(objectPath);
+		FString finalPath = "Class'/Game/" + objectPath + "." + ObjectName + "_C'";
 		ConstructorHelpers::FClassFinder<AHelper> nObject((TEXT("%s"), *finalPath));
 		if (nObject.Succeeded())
 		{
@@ -89,38 +67,13 @@ void AUnitBase::Tick(float delta)
 			return;
 		}
 
-		UE_LOG(LogTemp, Warning, TEXT("Cannot find the class, path: %s "), *objectPath);
+		UE_LOG(LogTemp, Warning, TEXT("Can't find the class, path: %s "), *objectPath);
 	}
 
-	UPaperFlipbook* AUnitBase::findObject(FString objectPath) 
+	UPaperFlipbook* AUnitBase::FindAnim(FString objectPath) 
 	{
-		// Добавляю в конец classPath - .'название класса'
-		FString ObjectName;
-		int32 charIndex = objectPath.Len();
-		while (true)
-		{
-			charIndex--;
-			if (objectPath[charIndex] == '/')
-			{
-				for (int i = ++charIndex; i < objectPath.Len(); i++)
-				{
-					ObjectName.AppendChar(objectPath[i]);
-				}
-				break;
-			}
-			else if (charIndex == 0)
-			{
-				for (int i = ++charIndex; i < objectPath.Len(); i++)
-				{
-					ObjectName.AppendChar(objectPath[i]);
-				}
-				break;
-			}
-		}
-
-		FString finalPath;
-
-		finalPath = "PaperFlipbook'/Game/" + objectPath + "." + ObjectName + "'";
+		FString ObjectName = UMyFunctionLibrary::FindObjectName(objectPath);
+		FString finalPath = "PaperFlipbook'/Game/" + objectPath + "." + ObjectName + "'";
 		ConstructorHelpers::FObjectFinder<UPaperFlipbook> nObject((TEXT("%s"), *finalPath));
 		if (nObject.Succeeded())
 		{
@@ -241,7 +194,7 @@ void AUnitBase::Tick(float delta)
 	void AUnitBase::InitHelper(FName name, FString classPath)
 	{
 		TSubclassOf<AHelper> nClass;
-		findObject(classPath, nClass);
+		FindHelper(classPath, nClass);
 		if (nClass)
 		{
 			HelpersData.Add(name, nClass);
@@ -576,7 +529,7 @@ void AUnitBase::Tick(float delta)
 		if(AnimData)
 		{
 			UPaperFlipbook* nAnim{ nullptr };
-			nAnim = findObject(flipbookPath);
+			nAnim = FindAnim(flipbookPath);
 			if (nAnim)
 			{
 				AnimData->Add(name, nAnim);

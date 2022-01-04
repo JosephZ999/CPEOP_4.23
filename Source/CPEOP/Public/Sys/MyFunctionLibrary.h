@@ -21,4 +21,6 @@ public:
 	static int RotationDivide2(FVector2D CurrPoint, FVector2D CenterPoint, uint8 divisionNum, float& angle);
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static float PercentDivision(float percent, uint8 divisionNum);
+
+	static FString FindObjectName(FString objectPath);
 };

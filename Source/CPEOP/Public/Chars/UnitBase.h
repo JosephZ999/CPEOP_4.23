@@ -164,8 +164,8 @@ public:
 	FORCEINLINE bool isFalling() const { return State == EBaseStates::Fall; }
 
 // Functions //----------------------------------
-	void findObject(FString objectPath, TSubclassOf<class AHelper>& Class);
-	UPaperFlipbook* findObject(FString objectPath);
+	void FindHelper(FString objectPath, TSubclassOf<class AHelper>& Class);
+	UPaperFlipbook* FindAnim(FString objectPath);
 
 	/* time / custom time delation */
 	FORCEINLINE float cTime(float time)	{ return time / CustomTimeDilation; }
