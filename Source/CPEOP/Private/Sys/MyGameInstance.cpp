@@ -27,6 +27,6 @@
 		}
 		else
 		{
-			return FMath::RandRange(0, 100) <= DamageTextRate;
+			return FMath::RandRange(1, 100) <= DamageTextRate;
 		}
 	}

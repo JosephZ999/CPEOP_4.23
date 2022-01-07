@@ -429,6 +429,11 @@ void AUnitBase::Tick(float delta)
 	}
 	void AUnitBase::CreateDamageText(float damage, bool moveRight, bool crit)
 	{
+		if (FMath::IsNearlyEqual(damage, 0.f))
+		{
+			crit = false;
+		}
+
 		if (!GameInsRef->canCreateDamageText(crit))
 			return;
 

@@ -76,6 +76,7 @@ void UHeroStats::Init()
 	WalkSpeed		= Agility * WALK_SPEED + BASE_WALK_SPEED;
 	SprintSpeed		= Agility * RUN_SPEED + BASE_WALK_SPEED;
 	TeleportCost	= 1.f + Agility * TP_COST;
+	CritRate        = 1.f + Agility * CRIT_RATE;
 
 	// Intelligence
 	if (firstTime)

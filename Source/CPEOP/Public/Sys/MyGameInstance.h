@@ -18,19 +18,19 @@ class CPEOP_API UMyGameInstance : public UGameInstance
 
 private:
 
-	UPROPERTY(EditDefaultsOnly, Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, Category = "Game Settings", Meta = (AllowPrivateAccess = "true"))
 	TArray<class UPaperFlipbook*> Data_Sparks;
 
-	UPROPERTY(EditDefaultsOnly, Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, Category = "Game Settings", Meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class ADmgTextBase> DamageText;
 
-	UPROPERTY(EditDefaultsOnly, Meta = (AllowPrivateAccess = "true", ClampMin = 0, ClampMax = 100))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game Settings", Meta = (AllowPrivateAccess = "true", ClampMin = 0, ClampMax = 100))
 	uint8 DamageTextRate;
 
-	UPROPERTY(EditDefaultsOnly, Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game Settings", Meta = (AllowPrivateAccess = "true"))
 	bool ShowCritDamageText;
 
-	UPROPERTY(EditDefaultsOnly, Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, Category = "Game Settings", Meta = (AllowPrivateAccess = "true"))
 	class TSubclassOf<AActor> ShadowClass;
 
 public:
