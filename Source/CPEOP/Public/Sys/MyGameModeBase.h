@@ -9,6 +9,29 @@
 /**
  * 
  */
+UENUM(BlueprintType)
+enum EGameResultType
+{
+	Win, Greate, Perfect, Lose,
+};
+
+USTRUCT(BlueprintType)
+struct FGameResults
+{
+	GENERATED_BODY()
+
+	FGameResults() {}
+
+	UPROPERTY(BlueprintReadWrite)
+	FText Title;
+
+	UPROPERTY(BlueprintReadWrite)
+	TEnumAsByte<EGameResultType> Result;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 Time;
+};
+
 UCLASS()
 class CPEOP_API AMyGameModeBase : public AGameModeBase
 {
@@ -18,7 +41,11 @@ class CPEOP_API AMyGameModeBase : public AGameModeBase
 protected:
 	virtual void BeginPlay();
 
+
 public:
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, BlueprintPure)
+	FGameResults GetGameResults();
+
 
 	//==========================================/ GAME EVENTS
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Game Events")
