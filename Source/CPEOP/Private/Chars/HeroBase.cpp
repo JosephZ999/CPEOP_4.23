@@ -334,7 +334,7 @@ AMyPlayerController * AHeroBase::getController()
 			// New Location
 			FVector nLoc = FVector::ZeroVector;
 			nLoc.X = FMath::Clamp(CamPointLoc.X, CameraXClampA, CameraXClampB);
-			nLoc.Y = CamPointLoc.Y;
+			nLoc.Y = FMath::Clamp(CamPointLoc.Y, CameraYClampA, CameraYClampB);
 			nLoc.Z = CamPointLoc.Z;
 
 			ArmComp->SetWorldLocation(FMath::VInterpTo(ArmLoc, nLoc, delta, CAM_INTERP));

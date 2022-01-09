@@ -118,9 +118,15 @@ public:
 	// Free Mode
 	UFUNCTION(BlueprintCallable)
 	void SetCameraViewF(float CameraStartLoc, float CameraEndLoc);
+
+	UFUNCTION(BlueprintCallable)
+		void SetCameraClampY(float ClampA, float ClampB) { CameraYClampA = ClampA; CameraYClampB = ClampB; }
+
 private:
 	float CameraXClampA = -200; // Camera view point A in Free Mode
 	float CameraXClampB = 200; // Camera view point B in Free Mode
+	float CameraYClampA = -500.f;
+	float CameraYClampB = 500.f;
 
 public:
 	// Action Mode
