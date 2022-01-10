@@ -36,4 +36,5 @@ public:
 
 	void ShowShadow();
 	void HideShadow();
+	void DestroyShadow();
 };

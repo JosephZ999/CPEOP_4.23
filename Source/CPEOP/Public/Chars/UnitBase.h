@@ -8,8 +8,8 @@
 #include "TimerManager.h"
 #include "UnitBase.generated.h"
 
-#define SET_TIMER	GetWorldTimerManager().SetTimer
-#define PAUSE_TIMER GetWorldTimerManager().PauseTimer
+#define SET_TIMER	  GetWorldTimerManager().SetTimer
+#define PAUSE_TIMER   GetWorldTimerManager().PauseTimer
 
 /**
  * 
@@ -124,6 +124,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
 	class UShadowComponent* ShadowComp;
 
+protected:
+	bool CanFall{ true };
+
 public:
 // AI
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = AI)
@@ -135,9 +138,14 @@ public:
 // Getters and Setters //
 	UFUNCTION(BlueprintCallable)
 	bool	checkState(uint8 nState) const		{ return State == nState;	}
-	FORCEINLINE const uint8& getState() 		{ return State;				}
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FORCEINLINE uint8 getState() 		        { return State;				}
+
 	bool	checkTeam(uint8 nTeam)				{ return Team == nTeam;		}
+
 	void	setTeam(uint8 nTeam)				{ Team = nTeam; }
+
 	FORCEINLINE const uint8& getTeam()			{ return Team;				}
 
 	UFUNCTION(BlueprintCallable)
@@ -148,7 +156,7 @@ public:
 
 // Conditions //
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	virtual bool isAlive()							{ return !Dead; }
+	virtual bool IsDead()							{ return Dead; }
 
 	/* Условия блокировки атак */
 	FORCEINLINE virtual bool isBlockingAttack()		{ return State == EBaseStates::Blocking; }
@@ -207,13 +215,13 @@ public:
 protected:
 	/*Добавляет класс "HitBox" в массив компонента "HitComp" 
 	* Пример: InitHelper("Attack_1, "Blueprint/HitBox/Attack_1")*/
-	void InitHelper(FName name, FString classPath);
+	void InitHelper(FName name, FString classPath = FString());
 
 	/* Собирает данные о создаваемом обьекте и запускает таймер для спавна */
-	void SpawnHelper(FName name, float time, FRotator rotation = { 0.f, 0.f, 0.f }, FVector scale = FVector::OneVector);
+	void SpawnHelper(FName name, float time = 0.f, FRotator rotation = { 0.f, 0.f, 0.f }, FVector scale = FVector::OneVector);
 private:
 	/* Список всех обьектов 'HitBox' */
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditDefaultsOnly, Category = "UnitOptions|Data")
 	TMap<FName, TSubclassOf<class AHelper>> HelpersData;
 
 	/* Сортированный список обьектов 'HitBox' для спавна*/
@@ -232,6 +240,7 @@ private:
 public:
 	/* On Damaged */
 	void ApplyDamage(class AUnitBase* damageCauser, FHitOption* damageOption, bool fromBehind);
+	virtual void OnDamaged() {}
 	
 	// Blocking
 protected:

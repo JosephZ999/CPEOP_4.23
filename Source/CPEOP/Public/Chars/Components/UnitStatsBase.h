@@ -17,14 +17,14 @@ public:
 	UUnitStatsBase();
 
 	UFUNCTION(BlueprintCallable)
-	virtual float getHealth() const		{ return 0.f; };
+	virtual float GetHealth() const		{ return 0.f; };
 	UFUNCTION(BlueprintCallable)
-	virtual float getMaxHealth() const	{ return 0.f; };
+	virtual float GetMaxHealth() const	{ return 0.f; };
 
 	UFUNCTION(BlueprintCallable)
-	virtual float getDamage() const		{ return 0.f; };
+	virtual float GetDamage() const		{ return 0.f; };
 	UFUNCTION(BlueprintCallable)
-	virtual float getCritRate() const	{ return 0.f; };
+	virtual float GetCritRate() const	{ return 0.f; };
 	
 protected:
 	// Called when the game starts
@@ -34,6 +34,7 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	// Calculate and return damage value
 	virtual float    TakeDamage(float damage, bool blocked) { return 0; }
 
 	// Stamina

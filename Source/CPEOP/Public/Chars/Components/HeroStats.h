@@ -102,10 +102,10 @@ public:
 	void SetForm(FName name);
 
 	
-	virtual float getHealth()const		override { return Health; }
-	virtual float getMaxHealth()const	override { return MaxHealth; }
-	virtual float getDamage()const		override { return Damage; }
-	virtual float getCritRate()const	override { return CritRate; }
+	virtual float GetHealth()const		override { return Health; }
+	virtual float GetMaxHealth()const	override { return MaxHealth; }
+	virtual float GetDamage()const		override { return Damage; }
+	virtual float GetCritRate()const	override { return CritRate; }
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE float getPower()const			{ return Power; }

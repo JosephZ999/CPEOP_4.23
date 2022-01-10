@@ -58,6 +58,9 @@ void AUnitBase::Tick(float delta)
 	void AUnitBase::FindHelper(FString objectPath, TSubclassOf<class AHelper>& Class)
 	{
 		// Добавляю в конец classPath - .'название класса'
+		if (objectPath.IsEmpty())
+			return;
+
 		FString ObjectName = UMyFunctionLibrary::FindObjectName(objectPath);
 		FString finalPath = "Class'/Game/" + objectPath + "." + ObjectName + "_C'";
 		ConstructorHelpers::FClassFinder<AHelper> nObject((TEXT("%s"), *finalPath));
@@ -199,6 +202,10 @@ void AUnitBase::Tick(float delta)
 		{
 			HelpersData.Add(name, nClass);
 		}
+		else
+		{
+			HelpersData.Add(name, nullptr);
+		}
 	}
 
 	void AUnitBase::SpawnHelper(FName name, float time, FRotator rotation, FVector scale)
@@ -242,7 +249,7 @@ void AUnitBase::Tick(float delta)
 			// Sets default values
 			if (nHelper->Type == EHelperType::HitBox)
 			{
-				nHelper->Init(this, getStatsComp()->getDamage(), getStatsComp()->getCritRate());
+				nHelper->Init(this, getStatsComp()->GetDamage(), getStatsComp()->GetCritRate());
 			}
 			
 			if (nHelper->bAttachRotation)
@@ -292,7 +299,7 @@ void AUnitBase::Tick(float delta)
 				}
 			}
 		}
-		
+
 		if (block)	
 		{ 
 			getStatsComp()->AddStamina(0.05f); 
@@ -326,8 +333,7 @@ void AUnitBase::Tick(float delta)
 			NewState(EBaseStates::Hit, "Hit", 0, false, true);
 			EndStateDeferred(0.4f);
 			
-
-			Dead = getStatsComp()->getHealth() < 0.f;
+			Dead = getStatsComp()->GetHealth() < 0.f;
 			
 			if (Dead)
 			{
@@ -337,11 +343,15 @@ void AUnitBase::Tick(float delta)
 			// Falling
 			if (damageOption->fall || Dead)
 			{
-				FallDeferred(HIT_TIME);
+				if (CanFall)
+				{
+					FallDeferred(HIT_TIME);
+				}
 				SetRotation(impulse.X < 0.f, false);
 				AddImpulse(impulse + FVector2D(0.f, 100.f), HIT_TIME);
 			}
 		}
+		OnDamaged();
 	}
 	
 	

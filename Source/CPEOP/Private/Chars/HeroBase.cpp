@@ -567,7 +567,7 @@ AMyPlayerController * AHeroBase::getController()
 		if (!getHeroStatsComp()->checkStamina(1.F / getHeroStatsComp()->getTeleportCost(), false))
 			return;
 
-		if (MoveVector == FVector::ZeroVector || checkState(EBaseStates::Fall) || checkState(EBaseStates::Teleport) || !isAlive())
+		if (MoveVector == FVector::ZeroVector || checkState(EBaseStates::Fall) || checkState(EBaseStates::Teleport) || IsDead())
 			return;
 
 		if (BlockAttackType != EBlockType::None && !isComboTime())
@@ -603,7 +603,7 @@ AMyPlayerController * AHeroBase::getController()
 		if (!getHeroStatsComp()->checkStamina(1.F / getHeroStatsComp()->getTeleportCost(), false))
 			return;
 
-		if (checkState(EBaseStates::Fall) || checkState(EBaseStates::Teleport) || !isAlive())
+		if (checkState(EBaseStates::Fall) || checkState(EBaseStates::Teleport) || IsDead())
 			return;
 
 		tp_initialLocation = GetActorLocation();

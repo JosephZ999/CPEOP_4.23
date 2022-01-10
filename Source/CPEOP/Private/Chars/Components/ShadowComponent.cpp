@@ -83,3 +83,10 @@ void UShadowComponent::HideShadow()
 	}
 }
 
+void UShadowComponent::DestroyShadow()
+{
+	if (ShadowObj)
+	{
+		ShadowObj->Destroy();
+	}
+}
