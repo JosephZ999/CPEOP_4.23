@@ -13,9 +13,9 @@
  */
 
 UENUM()
-enum class EMonsterStates : uint8
+enum EMonsterStates
 {
-	Attack_1 = (uint8)EBaseStates::LastIndex,
+	Attack_1 = EBaseStates::LastIndex,
 	Attack_2,
 	AttackRanged_1,
 	AttackRanged_2,
@@ -54,7 +54,7 @@ private:
 //---------------------------------------------// Attack / Combo Time
 public:
 	virtual void Attack();
-	FORCEINLINE bool ComboTime() { return IsAttacking; }
+	FORCEINLINE bool ComboTime() { return !IsAttacking; }
 protected:
 	void AttackDuration(float Duration);
 private:

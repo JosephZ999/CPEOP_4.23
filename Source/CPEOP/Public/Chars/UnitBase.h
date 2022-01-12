@@ -188,10 +188,11 @@ protected:
 	virtual void Move();
 	FVector MoveVector;
 
-
+public:
 	/* Impulse */
 	void AddImpulse(FVector2D impulse, float time=0.f);
 	void AddImpulse(FVector impulse, float time=0.f);
+private:
 	void ImpulseDeferred();
 	FTimerHandle ImpulseTimer;
 	FVector ImpulseVector;
@@ -286,6 +287,8 @@ protected:
 	void AddAnimation(FName name, FString flipbookPath);
 	void SetAnim(UPaperFlipbook* anim, bool playFromStart);
 	void SetAnim(FName name, bool playFromStart);
+	UPaperFlipbook* GetAnim(FName AnimName);
+	float AnimElemTime(uint8 frame);
 	
 
 // End State Type //=============================------------------------------

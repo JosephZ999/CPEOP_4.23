@@ -26,6 +26,15 @@ protected:
 	virtual void EndState() override;
 	virtual void Landed(const FHitResult& Hit) {}
 
+public:
+	virtual void Attack() override;
+
 private:
 	void UpdateAnim();
+
+	UPROPERTY(EditDefaultsOnly, Category = "Attack Options")
+	uint8 AttackHelperFrame;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Attack Options")
+	uint8 AttackSuccessFrame;
 };

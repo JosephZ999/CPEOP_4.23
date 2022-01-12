@@ -4,6 +4,7 @@
 #include "Hollow_01.h"
 #include "PaperFlipbook.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "PaperFlipbookComponent.h"
 
 AHollow_01::AHollow_01()
 {
@@ -46,4 +47,16 @@ void AHollow_01::UpdateAnim()
 		SetAnim(FName("Stand"), false);
 	}
 	} // Switch End
+}
+
+void AHollow_01::Attack()
+{
+	NewState((int)EMonsterStates::Attack_1, "None");
+	SetAnim("Attack", true);
+
+	SpawnHelper("AttackSlash", AnimElemTime(AttackHelperFrame));
+
+	float animLength = GetSprite()->GetFlipbookLength();
+	AttackDuration(AnimElemTime(AttackSuccessFrame));
+	EndStateDeferred(animLength);
 }

@@ -538,6 +538,8 @@ void AUnitBase::Tick(float delta)
 			}
 		}
 	}
+
+//---------------------------------------------// Animations
 	
 	void AUnitBase::AddAnimation(FName name, FString flipbookPath)
 	{
@@ -582,6 +584,16 @@ void AUnitBase::Tick(float delta)
 				GetSprite()->PlayFromStart();
 			}
 		}
+	}
+
+	UPaperFlipbook * AUnitBase::GetAnim(FName AnimName)
+	{
+		return AnimData->FindRef(AnimName);
+	}
+
+	float AUnitBase::AnimElemTime(uint8 frame)
+	{
+		return frame / GetSprite()->GetFlipbookFramerate();
 	}
 
 // End State Type //=============================------------------------------	

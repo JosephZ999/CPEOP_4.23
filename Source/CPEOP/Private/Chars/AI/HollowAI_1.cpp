@@ -29,6 +29,12 @@ void AHollowAI_1::AIBody()
 		}
 	}
 
+	if (OwnerRef->IsDead())
+	{
+		OwnerRef->SetMoveVector(FVector(0.f));
+		return;
+	}
+
 	switch (HType)
 	{
 	case EHollowType::Default:  { AITypeDef();      break; }
@@ -53,9 +59,32 @@ void AHollowAI_1::AITypeDef()
 			OwnerRef->SetMoveVector(FVector(0.f));
 			OwnerRef->SetRotation(isEnemyOnRight(), false);
 			OwnerRef->Attack();
+			if (OwnerRef->getState() == EMonsterStates::Attack_1)
+			{
+				FVector vec = (getForwardVector() * getDistance() * 5.f);
+				OwnerRef->AddImpulse(FVector(vec.X, vec.Y, 20.f), 0.1f);
+			}
 		}
+		break;
 	}
+	case EMonsterStates::Attack_1:
+	{
+		if (OwnerRef->ComboTime())
+		{
+			StopMoving();
+			Wait(0.5f + FMath::FRandRange(0.f, 0.5f));
+		}
+		break;
 	}
+
+	case EBaseStates::Hit:
+	{
+		StopMoving();
+		Wait(0.5f + FMath::FRandRange(0.f, 0.5f));
+		break;
+	}
+
+	} // Switch End
 }
 
 void AHollowAI_1::AITypeRanged()
@@ -70,11 +99,38 @@ void AHollowAI_1::AITypeRanged()
 		}
 		else
 		{
-			OwnerRef->SetMoveVector(FVector(0.f));
+			StopMoving();
 			OwnerRef->SetRotation(isEnemyOnRight(), false);
 			OwnerRef->Attack();
+			if (OwnerRef->getState() == EMonsterStates::Attack_1)
+			{
+				FVector vec = (getForwardVector() * getDistance());
+				OwnerRef->AddImpulse(FVector2D(vec.X, 10.f), 0.1f);
+			}
 		}
 	}
+	case EMonsterStates::Attack_1:
+	{
+		if (OwnerRef->ComboTime())
+		{
+			StopMoving();
+			Wait(0.5f + FMath::FRandRange(0.f, 0.5f));
+		}
+		break;
 	}
 
+	case EBaseStates::Hit:
+	{
+		StopMoving();
+		Wait(0.5f + FMath::FRandRange(0.f, 0.5f));
+		break;
+	}
+
+	} // Switch End
+
+}
+
+void AHollowAI_1::StopMoving()
+{
+	OwnerRef->SetMoveVector(FVector(0.f));
 }

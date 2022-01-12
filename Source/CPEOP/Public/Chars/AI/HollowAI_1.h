@@ -37,4 +37,6 @@ private:
 
 	FORCEINLINE void AITypeDef();
 	FORCEINLINE void AITypeRanged();
+
+	FORCEINLINE void StopMoving();
 };
