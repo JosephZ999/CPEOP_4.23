@@ -65,7 +65,7 @@ public:
 
 private:
 // Base Stats
-	int8 Level { 0 };
+	int8 Level { 0 }; // 000000000000
 	int8 Strength;		int8 Agility;		int8 Spirit;
 	int32 MaxExp{ 0 };	int32 Exp{ 0 };
 
@@ -98,6 +98,7 @@ public:
 	/** Добавляет форму для персонажа как Банкай
 	* Вызывается в конструкторе персонажа */
 	void AddForms(FName name, FVector stats);
+
 	UFUNCTION(BlueprintCallable)
 	void SetForm(FName name);
 
@@ -108,9 +109,17 @@ public:
 	virtual float GetCritRate()const	override { return CritRate; }
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE float getPower()const			{ return Power; }
+	uint8 GetLevel()const { return Level; }
+
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE float getMaxPower()const		{ return MaxPower; }
+	float getPower()const            { return Power; }
+	UFUNCTION(BlueprintCallable)
+	float getMaxPower()const         { return MaxPower; }
+	
+	UFUNCTION(BlueprintCallable)
+	int32 GetExp()const              { return Exp; }
+	UFUNCTION(BlueprintCallable)
+	int32 GetMaxExp()const           { return MaxExp; }
 
 	UFUNCTION(BlueprintCallable)
 	void getStats(uint8& Lv, uint8& Str, uint8& Agi, uint8& Spi, float& Dmg, float& Arm, float& Crit)const
@@ -138,11 +147,14 @@ public:
 public:
 	void Init();
 
-	void AddExp(int32 exp);
+	virtual void AddExp(int32 exp) override;
 	void LevelUp();
 
 	UFUNCTION(BlueprintCallable)
-	void AddStats(FVector stats);
+	bool AddStats(FVector stats, bool force = true);
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetLevelScore()const;
 
 	virtual float TakeDamage(float damage, bool blocked) override;
 

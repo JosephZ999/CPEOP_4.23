@@ -31,8 +31,6 @@ void AOgichiAI::BeginPlay()
 
 void AOgichiAI::AIBody()
 {
-	Super::AIBody();
-
 	if (!OgichiRef)
 	{
 		OgichiRef = Cast<AOgichi>(GetPawn());

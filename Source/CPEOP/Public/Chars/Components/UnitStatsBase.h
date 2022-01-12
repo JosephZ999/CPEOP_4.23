@@ -12,9 +12,15 @@ class CPEOP_API UUnitStatsBase : public UActorComponent
 {
 	GENERATED_BODY()
 
+
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	int32 ExpForKill;
+
 public:	
 	// Sets default values for this component's properties
 	UUnitStatsBase();
+
 
 	UFUNCTION(BlueprintCallable)
 	virtual float GetHealth() const		{ return 0.f; };
@@ -35,7 +41,13 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	// Calculate and return damage value
-	virtual float    TakeDamage(float damage, bool blocked) { return 0; }
+	virtual float TakeDamage(float damage, bool blocked) { return 0; }
+
+	UFUNCTION(BlueprintCallable)
+	virtual void AddExp(int32 exp) {}
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	int32 GetExpForKill() { return ExpForKill; }
 
 	// Stamina
 public:

@@ -11,6 +11,17 @@
 /**
  * 
  */
+
+UENUM()
+enum class EMonsterStates : uint8
+{
+	Attack_1 = (uint8)EBaseStates::LastIndex,
+	Attack_2,
+	AttackRanged_1,
+	AttackRanged_2,
+	Super,
+};
+
 UCLASS()
 class CPEOP_API AMonsterBase : public AUnitBase
 {
@@ -38,5 +49,17 @@ protected:
 private:
 	void Appearance();
 	void Death();
+
+
+//---------------------------------------------// Attack / Combo Time
+public:
+	virtual void Attack();
+	FORCEINLINE bool ComboTime() { return IsAttacking; }
+protected:
+	void AttackDuration(float Duration);
+private:
+	void AttackSuccess();
+	FTimerHandle AttackEndTimer;
+	bool IsAttacking;
 
 };

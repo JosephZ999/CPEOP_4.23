@@ -95,7 +95,6 @@ void UHeroStats::Init()
 	StaminaRestoreSpeed = STAMINA_REGEN;
 }
 
-
 // Transformation //=============================------------------------------
 	void UHeroStats::AddForms(FName name, FVector stats)
 	{
@@ -125,7 +124,7 @@ void UHeroStats::AddExp(int32 exp)
 		return;
 
 	FTimerHandle levelingTimer;
-	while (Exp > MaxExp)
+	while (Exp >= MaxExp)
 	{
 		++Level;
 		Exp		-= MaxExp;
@@ -151,12 +150,23 @@ void UHeroStats::LevelUp()
 	else UE_LOG(LogTemp, Fatal, TEXT("Couldn't find PlayerController"));
 }
 
-void UHeroStats::AddStats(FVector stats)
+bool UHeroStats::AddStats(FVector stats, bool force)
 {
-	SavedStats.addStr(stats.X);
-	SavedStats.addAgi(stats.Y);
-	SavedStats.addSpi(stats.Z);
-	Init();
+	int32 nStats = stats.X + stats.Y + stats.Z;
+	if (GetLevelScore() >= nStats || force)
+	{
+		SavedStats.addStr(stats.X);
+		SavedStats.addAgi(stats.Y);
+		SavedStats.addSpi(stats.Z);
+		Init();
+		return true;
+	}
+	return false;
+}
+
+int32 UHeroStats::GetLevelScore() const
+{
+	return SavedStats.level - (SavedStats.strength + SavedStats.agility + SavedStats.spirit + 1);
 }
 
 float UHeroStats::TakeDamage(float damage, bool blocked)

@@ -63,9 +63,9 @@ void AUnitAIBase::BeginPlay()
 	Super::BeginPlay();
 }
 
-void AUnitAIBase::StartAI(float time)
+void AUnitAIBase::StartAI(float timeDelay)
 {
-	GetWorldTimerManager().SetTimer(AITick, this, &AUnitAIBase::AIBody, 0.05f, true, time);
+	GetWorldTimerManager().SetTimer(AITick, this, &AUnitAIBase::AIBody, 0.05f, true, timeDelay);
 }
 
 void AUnitAIBase::StopAI()

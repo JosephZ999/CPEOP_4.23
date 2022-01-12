@@ -11,6 +11,7 @@ void UMonsterStats::Init(uint8 level)
 	MaxHealth += MaxHealth * level * 0.2f;
 	Health = MaxHealth;
 	Damage += Damage * level * 0.2f;
+	ExpForKill += (float)ExpForKill * level * 0.2f;
 }
 
 float UMonsterStats::TakeDamage(float damage, bool block)

@@ -54,3 +54,26 @@ void AMonsterBase::Death()
 	getShadow()->DestroyShadow();
 	Destroy();
 }
+
+// ------------------------------------------/ Attack
+void AMonsterBase::Attack()
+{
+}
+
+void AMonsterBase::AttackDuration(float Duration)
+{
+	if (Duration > 0.f)
+	{
+		SET_TIMER(AttackEndTimer, this, &AMonsterBase::AttackSuccess, Duration);
+		IsAttacking = true;
+	}
+	else
+	{
+		IsAttacking = false;
+	}
+}
+
+void AMonsterBase::AttackSuccess()
+{
+	IsAttacking = false;
+}

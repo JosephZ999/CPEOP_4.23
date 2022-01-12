@@ -7,25 +7,13 @@
 #include "OgichiAI.generated.h"
 
 
-UENUM()
-enum class EAIStates
-{
-	None,
-	SearchEnemy,
-	Move,
-	Attack,
-};
-
 UCLASS()
 class CPEOP_API AOgichiAI : public AUnitAIBase
 {
 	GENERATED_BODY()
 
 private:
-	EAIStates State;
 	class AOgichi* OgichiRef;
-
-	// Functional
 
 	// Teleport
 	bool canTeleport{ true };

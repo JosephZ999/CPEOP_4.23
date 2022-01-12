@@ -66,8 +66,9 @@ protected: virtual void BeginPlay() override;
 
 public:
 	bool SearchEnemy(uint8 team);
+
 	UFUNCTION(BlueprintCallable, Category = AI)
-	void StartAI(float time=0.f);
+	void StartAI(float timeDelay);
 
 	UFUNCTION(BlueprintCallable, Category = AI)
 	void StopAI();
@@ -75,6 +76,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = AI)
 	void Wait(float time);
 
+protected:
 	FTimerHandle AITick;
 	virtual void AIBody() {}
 };
