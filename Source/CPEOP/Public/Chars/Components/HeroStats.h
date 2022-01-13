@@ -102,7 +102,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetForm(FName name);
 
-	
+	// Get
 	virtual float GetHealth()const		override { return Health; }
 	virtual float GetMaxHealth()const	override { return MaxHealth; }
 	virtual float GetDamage()const		override { return Damage; }
@@ -113,14 +113,20 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	float getPower()const            { return Power; }
+
 	UFUNCTION(BlueprintCallable)
 	float getMaxPower()const         { return MaxPower; }
 	
 	UFUNCTION(BlueprintCallable)
 	int32 GetExp()const              { return Exp; }
+
 	UFUNCTION(BlueprintCallable)
 	int32 GetMaxExp()const           { return MaxExp; }
 
+	UFUNCTION(BlueprintCallable)
+	int32 GetLevelScore()const;
+
+	/*
 	UFUNCTION(BlueprintCallable)
 	void getStats(uint8& Lv, uint8& Str, uint8& Agi, uint8& Spi, float& Dmg, float& Arm, float& Crit)const
 	{
@@ -132,6 +138,7 @@ public:
 		Arm = Armor;
 		Crit = CritRate;
 	}
+	*/
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE float getStamina()const			{ return Stamina; }
@@ -144,6 +151,8 @@ public:
 	FORCEINLINE float getSprintSpeed()			{ return SprintSpeed;	}
 
 	FORCEINLINE float getTeleportCost()			{ return TeleportCost; }
+
+	// Set
 public:
 	void Init();
 
@@ -154,7 +163,10 @@ public:
 	bool AddStats(FVector stats, bool force = true);
 
 	UFUNCTION(BlueprintCallable)
-	int32 GetLevelScore()const;
+	void AddHealth(float value);
+
+	UFUNCTION(BlueprintCallable)
+	void AddPower(float value);
 
 	virtual float TakeDamage(float damage, bool blocked) override;
 
