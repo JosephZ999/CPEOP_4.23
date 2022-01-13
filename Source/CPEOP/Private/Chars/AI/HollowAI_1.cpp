@@ -37,7 +37,7 @@ void AHollowAI_1::AIBody()
 
 	switch (HType)
 	{
-	case EHollowType::Default:  { AITypeDef();      break; }
+	case EHollowType::Melee:    { AITypeDef();      break; }
 	case EHollowType::Ranged:   { AITypeRanged();   break; }
 
 	} // Switch End
@@ -93,7 +93,7 @@ void AHollowAI_1::AITypeRanged()
 	{
 	case EBaseStates::Stand:
 	{
-		if (getDistanceX() < MinDistX || getDistanceX() > MaxDistX || getDistanceY() > 20.f)
+		if ((getDistanceX() < MinDistX || getDistanceX() > MaxDistX) || getDistanceY() > 40.f)
 		{
 			OwnerRef->SetMoveVector(getForwardVector(FMath::Lerp(MinDistX, MaxDistX, 0.5f)));
 		}
@@ -104,10 +104,11 @@ void AHollowAI_1::AITypeRanged()
 			OwnerRef->Attack();
 			if (OwnerRef->getState() == EMonsterStates::Attack_1)
 			{
-				FVector vec = (getForwardVector() * getDistance());
-				OwnerRef->AddImpulse(FVector2D(vec.X, 10.f), 0.1f);
+				float VelotictY = getForwardVector().Y * getDistanceY() * 5.f;
+				OwnerRef->AddImpulse(FVector(0.f, VelotictY, 20.f), 0.1f);
 			}
 		}
+		break;
 	}
 	case EMonsterStates::Attack_1:
 	{
