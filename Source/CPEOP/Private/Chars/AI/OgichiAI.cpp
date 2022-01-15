@@ -66,6 +66,7 @@ void AOgichiAI::AIBody()
 		else
 		{
 			Intro = false;
+			Cast<AHeroBase>(getEnemy())->getHeroStatsComp()->SetSkill("Bankai", false);
 		}
 		return;
 	}
@@ -121,8 +122,8 @@ void AOgichiAI::AIBody()
 
 			// Getsuga
 			if (UKismetMathLibrary::RandomBoolWithWeight(0.01f) 
-				&& OgichiRef->getHeroStatsComp()->checkStamina(-(GETSUGA_FW_COST))
-				&& OgichiRef->getHeroStatsComp()->checkPower(-(GETSUGA_FW_COST))
+				&& OgichiRef->getHeroStatsComp()->checkStamina(-(GETSUGA_COST))
+				&& OgichiRef->getHeroStatsComp()->checkPower(-(GETSUGA_COST))
 				&& getDistanceY() < MIN_DIST_Y)
 			{
 				OgichiRef->SetRotation(isEnemyOnRight(), false);

@@ -126,6 +126,9 @@ void AUnitBase::Tick(float delta)
 
 	void AUnitBase::SetRotation(bool right, bool moveVec)
 	{
+		if (checkState(EBaseStates::Fall))
+			return;
+
 		if (moveVec)
 		{
 			if (!FMath::IsNearlyEqual(MoveVector.X, 0.f, 0.1f))

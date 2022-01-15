@@ -8,6 +8,14 @@
 #define ANIM_LOC_2	"Texture/Chars/Ogichi_Bankai/Anim/"
 #define HIT_LOC		"Blueprint/Chars/Ogichi/Shikai/"
 
+// Attack Options
+#define BASE_VELOCITY	(MoveVector + GetActorForwardVector()) * 150
+#define SP_VELOCITY		(MoveVector + GetActorForwardVector()) * 200
+
+#define BLOCK_DURATION cTime(0.2f)
+
+
+
 AOgichi::AOgichi()
 {
 	if (getHeroStatsComp())
@@ -219,10 +227,10 @@ void AOgichi::sh_AttackFW()
 	SetBlockingAttack(EBlockType::Forward, getFrameTime(5), BLOCK_DURATION);
 
 	if (SkillisActive()
-		&& getHeroStatsComp()->checkStamina(-(GETSUGA_FW_COST))
-		&& getHeroStatsComp()->checkPower(-(GETSUGA_FW_COST)))
+		&& getHeroStatsComp()->checkStamina(-(GETSUGA_COST))
+		&& getHeroStatsComp()->checkPower(-(GETSUGA_COST)))
 	{
-		GET_STATS->AddStamina(GETSUGA_FW_COST, getFrameTime(5), true);
+		GET_STATS->AddStamina(GETSUGA_COST, getFrameTime(5), true);
 		SpawnHelper("sh_GetsugaFWHelper", getFrameTime(5));
 		SkillDisable();
 	}
@@ -303,6 +311,9 @@ void AOgichi::sh_Getsuga()
 // Bankai
 void AOgichi::sh_Bankai()
 {
+	if (!getHeroStatsComp()->CheckSkill("Bankai"))
+		return;
+
 	NewState((uint8)EOgichiShikai::Bankai, "Bankai");
 	SetImmortality(AnimElemTime(35));
 	Bankai();

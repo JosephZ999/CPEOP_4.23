@@ -104,8 +104,9 @@ void AHollowAI_1::AITypeRanged()
 			OwnerRef->Attack();
 			if (OwnerRef->getState() == EMonsterStates::Attack_1)
 			{
-				float VelotictY = getForwardVector().Y * getDistanceY() * 5.f;
-				OwnerRef->AddImpulse(FVector(0.f, VelotictY, 20.f), 0.1f);
+				FVector vel{ 0.f, 0.f, 20.f };
+				vel.Y = getDistanceY() * 5 * ((getEnemyLocation().Y > getPawnLocation().Y) ? 1.f : -1.f);
+				OwnerRef->AddImpulse(vel);
 			}
 		}
 		break;

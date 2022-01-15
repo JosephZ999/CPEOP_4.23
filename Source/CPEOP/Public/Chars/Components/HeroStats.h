@@ -49,6 +49,9 @@ struct FSavedStats
 	UPROPERTY(BlueprintReadWrite)
 	int32 exp		{ 0 };
 
+	UPROPERTY(BlueprintReadWrite)
+	TMap<FName, bool> Skills;
+
 	void addStr(uint8 num) { strength += num;	}
 	void addAgi(uint8 num) { agility += num;	}
 	void addSpi(uint8 num) { spirit += num;	}
@@ -167,6 +170,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AddPower(float value);
+
+	UFUNCTION(BlueprintCallable)
+	void SetSkill(FName skillName, bool value);
+
+	UFUNCTION(BlueprintCallable)
+	bool CheckSkill(FName key);
 
 	virtual float TakeDamage(float damage, bool blocked) override;
 

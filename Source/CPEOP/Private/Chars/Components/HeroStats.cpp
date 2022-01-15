@@ -238,3 +238,28 @@ float UHeroStats::TakeDamage(float damage, bool blocked)
 	{
 		Power = FMath::Clamp(Power + value, 0.f, MaxPower);
 	}
+
+
+	void UHeroStats::SetSkill(FName skillName, bool value)
+	{
+		if (SavedStats.Skills.Contains(skillName))
+		{
+			SavedStats.Skills[skillName] = value;
+		}
+		else
+		{
+			SavedStats.Skills.Add(skillName, value);
+		}
+	}
+
+	bool UHeroStats::CheckSkill(FName key)
+	{
+		if (SavedStats.Skills.Contains(key))
+		{
+			return SavedStats.Skills[key];
+		}
+		else
+		{
+			return false;
+		}
+	}

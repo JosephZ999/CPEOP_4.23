@@ -10,6 +10,14 @@
 #define ANIM_LOC_B "Texture/Chars/Ichigo_Bankai/FBook/"
 #define HIT_LOC	"Blueprint/Chars/Ichigo/Shikai/"
 
+// Attack Options
+#define BASE_VELOCITY	(MoveVector + GetActorForwardVector()) * 150
+#define SP_VELOCITY		(MoveVector + GetActorForwardVector()) * 200
+
+#define BLOCK_DURATION cTime(0.2f)
+
+
+
 AIchigo::AIchigo()
 {
 	if (getHeroStatsComp())
@@ -19,13 +27,15 @@ AIchigo::AIchigo()
 	}
 
 	// Hit Boxes
-	InitHelper("sh_Attack_1", HIT_LOC "sh_Attack_1");
-	InitHelper("sh_Attack_2", HIT_LOC "sh_Attack_2");
-	InitHelper("sh_AttackBack", HIT_LOC "sh_AttackBack");
-	InitHelper("sh_AttackForward", HIT_LOC "sh_AttackForward");
+	InitHelper("sh_Attack_1",			HIT_LOC "sh_Attack_1");
+	InitHelper("sh_Attack_2",			HIT_LOC "sh_Attack_2");
+	InitHelper("sh_AttackBack",			HIT_LOC "sh_AttackBack");
+	InitHelper("sh_AttackForward",		HIT_LOC "sh_AttackForward");
 
-	InitHelper("sh_GetsugaHelper", HIT_LOC "sh_GetsugaHelper");
-	InitHelper("sh_GetsugaFWHelper", HIT_LOC "sh_GetsugaFWHelper");
+	InitHelper("sh_GetsugaHelper",		HIT_LOC "sh_GetsugaHelper");
+	InitHelper("sh_GetsugaFWHelper",	HIT_LOC "sh_GetsugaFWHelper");
+
+	InitHelper("sh_SwordTwist",			HIT_LOC "sh_SwordTwist");
 
 // Animations //
 	// Shikai
@@ -56,6 +66,9 @@ AIchigo::AIchigo()
 	AddAnimation("Attack_2",		ANIM_LOC "Attack2");
 	AddAnimation("AttackFW",		ANIM_LOC "AttackForward");
 	AddAnimation("AttackB",			ANIM_LOC "AttackBack");
+
+	AddAnimation("SwordTwist",		ANIM_LOC "SwordTwist");
+	AddAnimation("SwordTwistLoop",	ANIM_LOC "SwordTwistLoop");
 
 	AddAnimation("GetsugaStart",	ANIM_LOC "GetsugaStart");
 	AddAnimation("GetsugaFW",		ANIM_LOC "GetsugaFW");
@@ -105,8 +118,29 @@ void AIchigo::BeginPlay()
 			{
 			case EBaseStates::Stand: { sh_Attack_1(); break; }
 			case EBaseStates::Jumping: { break; }
+			case (uint8)EIchigoShikai::Attack_1: 
+			{ 
+				if (isComboTime()) { sh_Attack_2(); resetKeys(); } 
+				break; 
+			}
+			case (uint8)EIchigoShikai::AttackFW:
+			{
+				SkillEnable();
+				UE_LOG(LogTemp, Warning, TEXT("Activate this fucking skill"));
+				break;
+			}
+			case (uint8)EIchigoShikai::AttackB:
+			{
+				SkillEnable();
+				break;
+			}
 
-			case (uint8)EIchigoShikai::Attack_1: { if (isComboTime()) { sh_Attack_2(); resetKeys(); } break; }
+			case (uint8)EIchigoShikai::SwordTwistLoop:
+			{
+				SET_TIMER(sh_STwistEndTimer, this, &AIchigo::sh_SwordTwistEnd, cTime(1.f));
+				GET_STATS->AddStamina(0.07);
+				break;
+			}
 
 			} // End Switch
 
@@ -122,11 +156,20 @@ void AIchigo::BeginPlay()
 			{
 			case EBaseStates::Stand:
 			{
-				sh_AttackB();
+				if (SkillisActive())
+				{
+					sh_SwordTwist(); SkillDisable();
+				}
+				else
+				{
+					sh_AttackB();
+				}
 				break;
 			}
 			case EBaseStates::Jumping: { break; }
 			case (uint8)EIchigoShikai::Attack_2: { if (isComboTime()) { sh_AttackB(); resetKeys(); } break; }
+			case EBaseStates::PowChargeLoop: { sh_SwordTwist(); SkillDisable(); break; }
+			
 			} // End Switch
 		}
 	}
@@ -140,7 +183,14 @@ void AIchigo::BeginPlay()
 			{
 			case EBaseStates::Stand:
 			{
-				sh_AttackFW();
+				if (SkillisActive())
+				{
+					sh_GetsugaStart();
+				}
+				else
+				{
+					sh_AttackFW();
+				}
 				break;
 			}
 			case EBaseStates::Jumping: { break; }
@@ -196,15 +246,28 @@ void AIchigo::BeginPlay()
 		SetBlockingAttack(EBlockType::Forward, getFrameTime(5), BLOCK_DURATION);
 		DangerN(getFrameTime(7), EDangerType::MeleeAttack);
 
-		if (SkillisActive() 
-			&& getHeroStatsComp()->checkStamina(-(GETSUGA_FW_COST))
-			&& getHeroStatsComp()->checkPower(-(GETSUGA_FW_COST)))
+		FTimerHandle nTimer;
+		SET_TIMER(nTimer, this, &AIchigo::sh_GetsugaFW, getFrameTime(5));
+	}
+
+	void AIchigo::sh_GetsugaFW()
+	{
+		if (!checkState((uint8)EIchigoShikai::AttackFW))
+			return;
+
+		if (!getHeroStatsComp()->CheckSkill("Getsuga"))
+			return;
+
+		if (SkillisActive()
+			&& getHeroStatsComp()->checkStamina(-(GETSUGA_COST))
+			&& getHeroStatsComp()->checkPower(-(GETSUGA_COST)))
 		{
-			GET_STATS->AddStamina(GETSUGA_FW_COST, getFrameTime(5), true);
-			SpawnHelper("sh_GetsugaFWHelper", getFrameTime(5));
+			GET_STATS->AddStamina(GETSUGA_COST, 0.f, true);
+			SpawnHelper("sh_GetsugaFWHelper");
 			SkillDisable();
 		}
 	}
+
 	void AIchigo::sh_AttackB()
 	{
 		NewState		((uint8)EIchigoShikai::AttackB, "AttackB");
@@ -214,6 +277,60 @@ void AIchigo::BeginPlay()
 
 		SetBlockingAttack(EBlockType::Forward, getFrameTime(6), BLOCK_DURATION);
 		DangerN(getFrameTime(8), EDangerType::MeleeAttack);
+
+
+		FTimerHandle nTimer;
+		SET_TIMER(nTimer, this, &AIchigo::sh_GetsugaB, getFrameTime(6));
+	}
+
+	void AIchigo::sh_GetsugaB()
+	{
+		if (!checkState((uint8)EIchigoShikai::AttackB))
+			return;
+
+		if (!getHeroStatsComp()->CheckSkill("Getsuga"))
+			return;
+
+		if (SkillisActive()
+			&& getHeroStatsComp()->checkStamina(-(GETSUGA_COST))
+			&& getHeroStatsComp()->checkPower(-(GETSUGA_COST)))
+		{
+			GET_STATS->AddStamina(GETSUGA_COST, 0.f, true);
+			SpawnHelper("sh_GetsugaFWHelper", 0.f, FRotator(45.f, 0.f, 0.f));
+			SkillDisable();
+		}
+	}
+
+	//---------------------------------------------// Sword Twist
+	void AIchigo::sh_SwordTwist()
+	{
+		if (!getHeroStatsComp()->CheckSkill("SwordTwist"))
+			return;
+
+		NewState((uint8)EIchigoShikai::SwordTwist, "SwordTwist", 0, false, false);
+		SetRotation(isMovingRight());
+		SpawnHelper("sh_SwordTwist", getFrameTime(4));
+
+		FTimerHandle timer;
+		GetWorldTimerManager().SetTimer(timer, this, &AIchigo::sh_SwordTwistLoop, getFrameTime(10));
+	}
+
+	void AIchigo::sh_SwordTwistLoop()
+	{
+		if (getState() == (uint8)EIchigoShikai::SwordTwist)
+		{
+			NewState((uint8)EIchigoShikai::SwordTwistLoop, "SwordTwistLoop", 0, false, false);
+			GetWorldTimerManager().SetTimer(sh_STwistEndTimer, this, &AIchigo::sh_SwordTwistEnd, cTime(1.f));
+			Combo(getFrameTime(3));
+		}
+	}
+
+	void AIchigo::sh_SwordTwistEnd()
+	{
+		if (getState() == (uint8)EIchigoShikai::SwordTwistLoop)
+		{
+			NewState((uint8)EIchigoShikai::SwordTwistEnd, "SwordTwist", 11);
+		}
 	}
 
 	//---------------------------------------------// Getsuga Tensho
@@ -228,7 +345,7 @@ void AIchigo::BeginPlay()
 		}
 	}
 
-	void AIchigo::sh_GetsugaFW()
+	void AIchigo::sh_GetsugaSlash()
 	{
 		NewState		((uint8)EIchigoShikai::GetsugaFW, "GetsugaFW");
 		SetRotation		(isMovingRight());
@@ -243,6 +360,9 @@ void AIchigo::BeginPlay()
 
 	void AIchigo::sh_Bankai()
 	{
+		if (!getHeroStatsComp()->CheckSkill("Bankai"))
+			return;
+
 		NewState((uint8)EIchigoShikai::Bankai, "Bankai");
 		SetImmortality(AnimElemTime(35));
 		Bankai();
@@ -292,7 +412,7 @@ void AIchigo::BeginPlay()
 		}
 		case (uint8)EIchigoShikai::GetsugaStart:
 		{
-			sh_GetsugaFW();
+			sh_GetsugaSlash();
 			break;
 		}
 		} // End Switch

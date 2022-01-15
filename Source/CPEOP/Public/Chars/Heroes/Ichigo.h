@@ -9,17 +9,11 @@
 #define SHIKAI_NAME "Shikai"
 #define BANKAI_NAME "Bankai"
 
-
-// Attack Options
-#define BASE_VELOCITY	(MoveVector + GetActorForwardVector()) * 150
-#define SP_VELOCITY		(MoveVector + GetActorForwardVector()) * 200
-
-#define BLOCK_DURATION cTime(0.2f)
-
 // Skills
-#define GETSUGA_FW_COST -2.F
-#define GETSUGA_TENSHOU_COST -4.F
+#define GETSUGA_COST -2.f
+#define GETSUGA_TENSHOU_COST -4.f
 
+/* */
 UENUM()
 enum class EIchigoShikai : uint8
 {
@@ -79,8 +73,17 @@ public:
 	void sh_AttackFW();
 	void sh_AttackB();
 
-	void sh_GetsugaStart();
 	void sh_GetsugaFW();
+	void sh_GetsugaB();
+
+	void sh_SwordTwist();
+	void sh_SwordTwistLoop();
+	void sh_SwordTwistEnd();
+	FTimerHandle sh_STwistEndTimer;
+
+
+	void sh_GetsugaStart();
+	void sh_GetsugaSlash();
 
 	void sh_Bankai();
 };
