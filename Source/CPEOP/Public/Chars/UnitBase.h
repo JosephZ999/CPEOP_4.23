@@ -121,6 +121,8 @@ private:
 	UPROPERTY(BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
 	bool    Dead;
 
+	bool    Immortal;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
 	class UShadowComponent* ShadowComp;
 
@@ -157,6 +159,8 @@ public:
 // Conditions //
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	virtual bool IsDead()							{ return Dead; }
+	
+	FORCEINLINE bool IsImmortal()					{ return Immortal; }
 
 	/* Условия блокировки атак */
 	FORCEINLINE virtual bool isBlockingAttack()		{ return State == EBaseStates::Blocking; }
@@ -181,7 +185,10 @@ public:
 	/* Get Animation frame time */
 	float getFrameTime(uint8 frame);
 
-
+public:
+	void SetImmortality(float duration);
+	void DisableImmortality();
+	FTimerHandle ImmortalityTimer;
 
 // Movement //===================================------------------------------
 protected:

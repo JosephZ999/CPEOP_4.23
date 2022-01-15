@@ -46,7 +46,6 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, BlueprintPure)
 	FGameResults GetGameResults();
 
-
 	//==========================================/ GAME EVENTS
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Game Events")
 	void EventKill(class AUnitBase * killerUnit, class AUnitBase * killedUnit);

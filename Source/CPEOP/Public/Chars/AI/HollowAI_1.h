@@ -12,7 +12,7 @@
 UENUM(BlueprintType)
 enum class EHollowType : uint8
 {
-	Default,
+	Melee,
 	Ranged,
 };
 
@@ -35,8 +35,8 @@ public:
 private:
 	virtual void AIBody() override;
 
-	FORCEINLINE void AITypeDef();
-	FORCEINLINE void AITypeRanged();
+	inline void AITypeDef();
+	inline void AITypeRanged();
 
 	FORCEINLINE void StopMoving();
 };

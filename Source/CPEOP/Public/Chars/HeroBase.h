@@ -151,8 +151,9 @@ public:
 	virtual void AttackHold();
 	virtual void AttackBack();
 	virtual void AttackForward();
-	virtual void Block();
-	virtual void BlockStop();
+	virtual void Btn_Bankai() {}
+	void Block();
+	void BlockStop();
 	FTimerHandle BlockTimer;
 
 	UFUNCTION(BlueprintCallable)

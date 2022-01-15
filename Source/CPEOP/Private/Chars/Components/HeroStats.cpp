@@ -227,3 +227,14 @@ float UHeroStats::TakeDamage(float damage, bool blocked)
 	{
 		return value <= Power;
 	}
+
+
+	void UHeroStats::AddHealth(float value)
+	{
+		Health = FMath::Clamp(Health + value, 0.f, MaxHealth);
+	}
+
+	void UHeroStats::AddPower(float value)
+	{
+		Power = FMath::Clamp(Power + value, 0.f, MaxPower);
+	}
