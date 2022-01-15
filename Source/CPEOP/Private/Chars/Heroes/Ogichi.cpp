@@ -4,6 +4,10 @@
 #include "TimerManager.h"
 #include "PaperFlipbook.h"
 
+#define ANIM_LOC	"Texture/Chars/Ogichi/FBook/"
+#define ANIM_LOC_2	"Texture/Chars/Ogichi_Bankai/Anim/"
+#define HIT_LOC		"Blueprint/Chars/Ogichi/Shikai/"
+
 AOgichi::AOgichi()
 {
 	if (getHeroStatsComp())
@@ -58,6 +62,31 @@ AOgichi::AOgichi()
 	AddAnimation("SwordThrow",		ANIM_LOC "SwordThrow");
 
 	AddAnimation("Getsuga",			ANIM_LOC "Getsuga");
+	AddAnimation("Bankai",			ANIM_LOC_2 "Bankai");
+
+	AnimData = &BankaiAnim;
+
+	AddAnimation("Stand",			ANIM_LOC_2 "Stand");
+	AddAnimation("Walk",			ANIM_LOC_2 "Run");
+	AddAnimation("JumpStart",		ANIM_LOC_2 "JumpStart");
+	AddAnimation("JumpUp",			ANIM_LOC_2 "JumpUp");
+	AddAnimation("JumpHold",		ANIM_LOC_2 "JumpHold");
+	AddAnimation("JumpDown",		ANIM_LOC_2 "JumpDown");
+	AddAnimation("JumpLand",		ANIM_LOC_2 "JumpLand");
+
+	AddAnimation("Hit",				ANIM_LOC_2 "Hit");
+	AddAnimation("FallHold",		ANIM_LOC_2 "FallHold");
+	AddAnimation("FallUp",			ANIM_LOC_2 "FallUp");
+	AddAnimation("FallDown",		ANIM_LOC_2 "FallDown");
+	AddAnimation("StandUp",			ANIM_LOC_2 "StandUp");
+	AddAnimation("StandUpAir",		ANIM_LOC_2 "StandUpAir");
+
+	AddAnimation("Block",			ANIM_LOC_2 "Block");
+	AddAnimation("BlockAir",		ANIM_LOC_2 "Block");
+
+	AddAnimation("PowChargeStart",	ANIM_LOC_2 "ChargeStart");
+	AddAnimation("PowChargeLoop",	ANIM_LOC_2 "ChargeLoop");
+	AddAnimation("PowChargeEnd",	ANIM_LOC_2 "ChargeEnd");
 
 	AnimData = &ShikaiAnim;
 
@@ -143,6 +172,18 @@ void AOgichi::AttackForward()
 		case (uint8)EOgichiShikai::Attack_2: { if (isComboTime()) { sh_AttackFW(); resetKeys(); } break; }
 		case EBaseStates::PowChargeLoop: { sh_Getsuga(); break; }
 		} // End Switch
+	}
+}
+
+void AOgichi::Btn_Bankai()
+{
+	if (getHeroStatsComp()->FormName == SHIKAI_NAME)
+	{
+		switch (getState())
+		{
+		case EBaseStates::Stand: { if (SkillisActive()) { sh_Bankai(); } break; }
+		case EBaseStates::PowChargeLoop: { sh_Bankai(); break; }
+		}
 	}
 }
 
@@ -259,7 +300,13 @@ void AOgichi::sh_Getsuga()
 	}
 }
 
-
+// Bankai
+void AOgichi::sh_Bankai()
+{
+	NewState((uint8)EOgichiShikai::Bankai, "Bankai");
+	SetImmortality(AnimElemTime(35));
+	Bankai();
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //---------------------------------------------// Combo Implementation

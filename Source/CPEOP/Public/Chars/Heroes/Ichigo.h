@@ -8,9 +8,7 @@
 
 #define SHIKAI_NAME "Shikai"
 #define BANKAI_NAME "Bankai"
-#define ANIM_LOC "Texture/Chars/Ichigo/FBook/"
-#define ANIM_LOC_B "Texture/Chars/Bankai_Ichigo/FBook/"
-#define HIT_LOC	"Blueprint/Chars/Ichigo/Shikai/"
+
 
 // Attack Options
 #define BASE_VELOCITY	(MoveVector + GetActorForwardVector()) * 150

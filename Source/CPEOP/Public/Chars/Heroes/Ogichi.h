@@ -8,8 +8,7 @@
 
 #define SHIKAI_NAME "Shikai"
 #define BANKAI_NAME "Bankai"
-#define ANIM_LOC	"Texture/Chars/Ogichi/FBook/"
-#define HIT_LOC		"Blueprint/Chars/Ogichi/Shikai/"
+
 
 // Attack Options
 #define BASE_VELOCITY	(MoveVector + GetActorForwardVector()) * 150
@@ -40,6 +39,8 @@ enum class EOgichiShikai : uint8
 	SwordThrow,
 
 	Getsuga,
+
+	Bankai,
 	LastIndex,
 };
 
@@ -71,12 +72,10 @@ public:
 
 	// Input Actions
 	virtual void Attack()			override;
-	//virtual void AttackHold()		override;
 	virtual void AttackBack()		override;
 	virtual void AttackForward()	override;
-	//virtual void Block()			override;
-	//virtual void BlockStop()		override;
 	virtual void ComboI()			override;
+	virtual void Btn_Bankai()		override;
 
 	FORCEINLINE void ShikaiComboI();
 	FORCEINLINE void BankaiComboI();
@@ -101,4 +100,5 @@ public:
 
 	void sh_Getsuga();
 
+	void sh_Bankai();
 };

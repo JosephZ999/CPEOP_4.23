@@ -6,6 +6,10 @@
 
 #include "PaperFlipbook.h"
 
+#define ANIM_LOC "Texture/Chars/Ichigo/FBook/"
+#define ANIM_LOC_B "Texture/Chars/Ichigo_Bankai/FBook/"
+#define HIT_LOC	"Blueprint/Chars/Ichigo/Shikai/"
+
 AIchigo::AIchigo()
 {
 	if (getHeroStatsComp())
@@ -240,7 +244,7 @@ void AIchigo::BeginPlay()
 	void AIchigo::sh_Bankai()
 	{
 		NewState((uint8)EIchigoShikai::Bankai, "Bankai");
-		SetImmortality(AnimElemTime(30));
+		SetImmortality(AnimElemTime(35));
 		Bankai();
 	}
 
