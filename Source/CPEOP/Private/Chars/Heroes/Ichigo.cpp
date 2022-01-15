@@ -10,8 +10,8 @@ AIchigo::AIchigo()
 {
 	if (getHeroStatsComp())
 	{
-		InitForm(SHIKAI_NAME, { 5, 2, 7 }); // 15
-		InitForm(BANKAI_NAME, { 5, 12, 7 });
+		InitForm(SHIKAI_NAME, { 4, 3, 3 }); // 10
+		InitForm(BANKAI_NAME, { 5, 8, 4 });
 	}
 
 	// Hit Boxes
@@ -55,16 +55,30 @@ AIchigo::AIchigo()
 
 	AddAnimation("GetsugaStart",	ANIM_LOC "GetsugaStart");
 	AddAnimation("GetsugaFW",		ANIM_LOC "GetsugaFW");
+	AddAnimation("Bankai",			ANIM_LOC "Bankai");
 
 	AnimData = &BankaiAnim;
-	AddAnimation("Stand",			"Texture/Chars/Bankai_Ichigo/FBook/BIchi_Stand"	);
-	AddAnimation("Walk",			"Texture/Chars/Bankai_Ichigo/FBook/BIchi_Run"		);
-	AddAnimation("JumpStart",		"Texture/Chars/Bankai_Ichigo/FBook/BIchi_JumpStart");
-	AddAnimation("JumpUp",			"Texture/Chars/Bankai_Ichigo/FBook/BIchi_JumpUp"	);
-	AddAnimation("JumpHold",		"Texture/Chars/Bankai_Ichigo/FBook/BIchi_JumpHold"	);
-	AddAnimation("JumpDown",		"Texture/Chars/Bankai_Ichigo/FBook/BIchi_JumpDown"	);
-	AddAnimation("JumpLand",		"Texture/Chars/Bankai_Ichigo/FBook/BIchi_JumpLand"	);
+	AddAnimation("Stand",           ANIM_LOC_B "Stand"	);
+	AddAnimation("Walk",            ANIM_LOC_B "Run"		);
+	AddAnimation("JumpStart",       ANIM_LOC_B "JumpStart");
+	AddAnimation("JumpUp",          ANIM_LOC_B "JumpUp"	);
+	AddAnimation("JumpHold",        ANIM_LOC_B "JumpHold"	);
+	AddAnimation("JumpDown",        ANIM_LOC_B "JumpDown"	);
+	AddAnimation("JumpLand",        ANIM_LOC_B "JumpLand"	);
 
+	AddAnimation("Hit",             ANIM_LOC_B "Hit");
+	AddAnimation("FallHold",        ANIM_LOC_B "FallHold");
+	AddAnimation("FallUp",          ANIM_LOC_B "FallUp");
+	AddAnimation("FallDown",        ANIM_LOC_B "FallDown");
+	AddAnimation("StandUp",         ANIM_LOC_B "StandUp");
+	AddAnimation("StandUpAir",      ANIM_LOC_B "StandUpAir");
+
+	AddAnimation("Block",           ANIM_LOC_B "Guard");
+	AddAnimation("BlockAir",        ANIM_LOC_B "Guard");
+
+	AddAnimation("PowChargeStart",  ANIM_LOC_B "ChargeStart");
+	AddAnimation("PowChargeLoop",   ANIM_LOC_B "ChargeLoop");
+	AddAnimation("PowChargeEnd",    ANIM_LOC_B "ChargeEnd");
 
 	AnimData = &ShikaiAnim;
 }
@@ -129,6 +143,17 @@ void AIchigo::BeginPlay()
 			case (uint8)EIchigoShikai::Attack_2: { if (isComboTime()) { sh_AttackFW(); resetKeys(); } break; }
 			case EBaseStates::PowChargeLoop: { sh_GetsugaStart(); break; }
 			} // End Switch
+		}
+	}
+	void AIchigo::Btn_Bankai()
+	{
+		if (getHeroStatsComp()->FormName == SHIKAI_NAME)
+		{
+			switch (getState())
+			{
+			case EBaseStates::Stand: { if (SkillisActive()) { sh_Bankai(); } break; }
+			case EBaseStates::PowChargeLoop: { sh_Bankai(); break; }
+			}
 		}
 	}
 
@@ -210,6 +235,13 @@ void AIchigo::BeginPlay()
 			(EBlockType::Both, getFrameTime(0), BLOCK_DURATION);
 		DangerN
 			(getFrameTime(5), EDangerType::MeleeAttack);
+	}
+
+	void AIchigo::sh_Bankai()
+	{
+		NewState((uint8)EIchigoShikai::Bankai, "Bankai");
+		SetImmortality(AnimElemTime(30));
+		Bankai();
 	}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

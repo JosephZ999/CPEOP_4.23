@@ -39,12 +39,35 @@ void AOgichiAI::AIBody()
 
 	// Search Enemy
 	if (!getEnemy())
-	{ 
+	{
 		if (!SearchEnemy(OgichiRef->getTeam()))
 		{
 			Wait(1.f);
 			return;
 		}
+		else
+		{
+			EnemyInitialLocation = getEnemy()->GetActorLocation();
+		}
+	}
+
+	if (Intro)
+	{
+		if (EnemyInitialLocation.Equals(getEnemy()->GetActorLocation(), 10.f))
+		{
+			if (getEnemy()->IsImmortal())
+			{
+				OgichiRef->SkillEnable();
+				OgichiRef->Btn_Bankai();
+				Intro = false;
+				Wait(3.f);
+			}
+		}
+		else
+		{
+			Intro = false;
+		}
+		return;
 	}
 
 	switch (OgichiRef->getState())

@@ -92,6 +92,23 @@ void AUnitBase::Tick(float delta)
 	{
 		return (frame / GetSprite()->GetFlipbookFramerate()) / CustomTimeDilation;
 	}
+
+	void AUnitBase::SetImmortality(float duration)
+	{
+		Immortal = true;
+		if (duration > 0.f)
+		{
+			SET_TIMER(ImmortalityTimer, this, &AUnitBase::DisableImmortality, duration);
+		}
+		else
+		{
+			Immortal = false;
+		}
+	}
+	void AUnitBase::DisableImmortality()
+	{
+		Immortal = false;
+	}
 // Movement //===================================------------------------------
 	void AUnitBase::Move()
 	{
@@ -274,7 +291,7 @@ void AUnitBase::Tick(float delta)
 // Taking Damage //==============================------------------------------
 	void AUnitBase::ApplyDamage(class AUnitBase* damageCauser, FHitOption* damageOption, bool fromBehind)
 	{
-		if (State == EBaseStates::Fall || State == EBaseStates::Teleport)
+		if (State == EBaseStates::Fall || State == EBaseStates::Teleport || IsImmortal())
 			return;
 
 		bool block  { false };
@@ -404,7 +421,10 @@ void AUnitBase::Tick(float delta)
 		else
 		{
 			if (GetVelocity().Z > 20.f)
+			{
 				NewState(EBaseStates::StandUp, "StandUpAir");
+				GetSprite()->PlayFromStart();
+			}
 		}
 	}
 	void AUnitBase::CreateSpark(uint8 index, FVector2D scale, float rotation)

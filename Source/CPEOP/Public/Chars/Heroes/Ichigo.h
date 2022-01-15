@@ -9,6 +9,7 @@
 #define SHIKAI_NAME "Shikai"
 #define BANKAI_NAME "Bankai"
 #define ANIM_LOC "Texture/Chars/Ichigo/FBook/"
+#define ANIM_LOC_B "Texture/Chars/Bankai_Ichigo/FBook/"
 #define HIT_LOC	"Blueprint/Chars/Ichigo/Shikai/"
 
 // Attack Options
@@ -34,6 +35,7 @@ enum class EIchigoShikai : uint8
 	SwordTwistEnd,
 	GetsugaStart,
 	GetsugaFW,
+	Bankai,
 	LastIndex,
 };
 
@@ -63,16 +65,15 @@ public:
 	//virtual void AttackHold()		override;
 	virtual void AttackBack()		override;
 	virtual void AttackForward()	override;
-	//virtual void Block()			override;
-	//virtual void BlockStop()		override;
+	virtual void Btn_Bankai()       override;
 	virtual void ComboI()			override;
 
 	FORCEINLINE void ShikaiComboI();
 	FORCEINLINE void BankaiComboI();
 
 	// Actions
-	void Shikai() { getHeroStatsComp()->SetForm(SHIKAI_NAME);	AnimData = &ShikaiAnim; }
-	void Bankai() {	getHeroStatsComp()->SetForm(BANKAI_NAME);	AnimData = &BankaiAnim;	}
+	void Shikai() { ChangeForm(SHIKAI_NAME);	AnimData = &ShikaiAnim; }
+	void Bankai() {	ChangeForm(BANKAI_NAME);	AnimData = &BankaiAnim;	}
 
 	// Shikai Actions
 	void sh_Attack_1();
@@ -82,4 +83,6 @@ public:
 
 	void sh_GetsugaStart();
 	void sh_GetsugaFW();
+
+	void sh_Bankai();
 };

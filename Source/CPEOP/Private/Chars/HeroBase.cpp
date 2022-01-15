@@ -564,6 +564,9 @@ AMyPlayerController * AHeroBase::getController()
 //---------------------------------------------// Teleport
 	void AHeroBase::Teleport()
 	{
+		if (IsImmortal())
+			return;
+
 		if (!getHeroStatsComp()->checkStamina(1.F / getHeroStatsComp()->getTeleportCost(), false))
 			return;
 
@@ -600,6 +603,9 @@ AMyPlayerController * AHeroBase::getController()
 	}
 	void AHeroBase::Teleport(FVector nLocation)
 	{
+		if (IsImmortal())
+			return;
+
 		if (!getHeroStatsComp()->checkStamina(1.F / getHeroStatsComp()->getTeleportCost(), false))
 			return;
 

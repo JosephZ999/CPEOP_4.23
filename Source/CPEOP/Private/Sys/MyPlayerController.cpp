@@ -115,6 +115,7 @@ void AMyPlayerController::BtnAction(EInputActionType action, bool btnReleased)
 		if (btnReleased)
 		{
 			PlayerCharacter->BlockStop();
+			PlayerCharacter->Btn_Bankai();
 			PlayerCharacter->addKey(EComboKey::CK_Block);
 		}
 		break;
@@ -154,7 +155,15 @@ void AMyPlayerController::BtnAction(EInputActionType action, bool btnReleased)
 		break;
 	}
 
-	case EInputActionType::A_BlockStart:		{ PlayerCharacter->Block(); PlayerCharacter->SkillCanceled();		break; }
+	case EInputActionType::A_BlockStart:		
+	{ 
+		if (!PlayerCharacter->SkillisActive())
+		{
+			PlayerCharacter->Block(); 
+			PlayerCharacter->SkillCanceled();		
+		}
+		break; 
+	}
 	case EInputActionType::A_BlockEnd:			{ PlayerCharacter->BlockStop();	break; }
 	} // End switch
 

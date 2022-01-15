@@ -15,11 +15,17 @@ class CPEOP_API AOgichiAI : public AUnitAIBase
 private:
 	class AOgichi* OgichiRef;
 
+
 	// Teleport
 	bool canTeleport{ true };
 	FTimerHandle tpReloadTimer;
 	void tpReload(float time);
 	void tpReset();
+
+
+	// Debut
+	bool Intro{ true };
+	FVector EnemyInitialLocation;
 
 // Actions
 	/*

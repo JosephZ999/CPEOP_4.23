@@ -8,8 +8,8 @@ AOgichi::AOgichi()
 {
 	if (getHeroStatsComp())
 	{
-		InitForm(SHIKAI_NAME, { 5, 2, 10 });
-		InitForm(BANKAI_NAME, { 5, 12, 10 });
+		InitForm(SHIKAI_NAME, { 4, 4, 7 }); // 15
+		InitForm(BANKAI_NAME, { 5, 9, 8 });
 	}
 
 	// Hit Boxes
