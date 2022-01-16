@@ -16,6 +16,7 @@ AHelper::AHelper(const FObjectInitializer& ObjectInitializer) : Super(ObjectInit
 	if (Sprite)
 	{
 		Sprite->SetupAttachment(RootComp);
+		Sprite->SetTranslucentSortPriority(2);
 	}
 
 

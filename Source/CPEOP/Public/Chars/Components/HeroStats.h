@@ -181,7 +181,7 @@ public:
 
 //---------------------------------------------// Stamina
 public:
-	virtual void     AddStamina(float value, float time = 0.f, bool skill = false) override;
+	virtual void     AddStamina(float value, float time = 0.f, bool skill = false, int desiredState = -1) override;
 	virtual void     RestoreStamina()          override;
 	virtual bool     RestoreStaminaCondition() override { return Stamina < 1.f;  }
 	virtual float    RestoreStaminaDelay()     override { return 1.f; }

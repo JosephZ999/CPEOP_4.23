@@ -182,11 +182,14 @@ float UHeroStats::TakeDamage(float damage, bool blocked)
 
 
 //---------------------------------------------// Stamina
-	void UHeroStats::AddStamina(float value, float time, bool skill)
+	void UHeroStats::AddStamina(float value, float time, bool skill, int desiredState)
 	{
-		Super::AddStamina(value, time, skill);
+		Super::AddStamina(value, time, skill, desiredState);
 
 		if (time > 0.f)
+			return;
+
+		if (desiredState >= 0 && AddStaminaCanceled())
 			return;
 
 		if (skill)

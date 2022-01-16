@@ -34,6 +34,8 @@ void AOgichiAI::AIBody()
 	if (!OgichiRef)
 	{
 		OgichiRef = Cast<AOgichi>(GetPawn());
+		FTimerHandle IntroTimer;
+		SET_TIMER(IntroTimer, this, &AOgichiAI::BreakIntro, 1.f);
 		return;
 	}
 

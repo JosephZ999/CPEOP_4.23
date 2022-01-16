@@ -10,8 +10,9 @@
 #define BANKAI_NAME "Bankai"
 
 // Skills
-#define GETSUGA_COST -2.f
-#define GETSUGA_TENSHOU_COST -4.f
+#define GETSUGA_COST -1.5f
+#define GETSUGA_TENSHOU_COST -3.f
+#define EXPLOSION_COST -3.f
 
 /* */
 UENUM()
@@ -27,6 +28,8 @@ enum class EIchigoShikai : uint8
 	SwordTwistEnd,
 	GetsugaStart,
 	GetsugaFW,
+	RExplosion,
+
 	Bankai,
 	LastIndex,
 };
@@ -54,7 +57,6 @@ public:
 
 	// Input Actions
 	virtual void Attack()			override;
-	//virtual void AttackHold()		override;
 	virtual void AttackBack()		override;
 	virtual void AttackForward()	override;
 	virtual void Btn_Bankai()       override;
@@ -75,6 +77,7 @@ public:
 
 	void sh_GetsugaFW();
 	void sh_GetsugaB();
+	void sh_RExplosion();
 
 	void sh_SwordTwist();
 	void sh_SwordTwistLoop();

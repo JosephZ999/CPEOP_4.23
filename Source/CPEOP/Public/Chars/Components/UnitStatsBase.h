@@ -52,13 +52,14 @@ public:
 	// Stamina
 public:
 	UFUNCTION(BlueprintCallable)
-	virtual void     AddStamina(float value, float time = 0.f, bool skill = false);
+	virtual void     AddStamina(float value, float time = 0.f, bool skill = false, int desiredState = -1);
 	virtual void     RestoreStamina();
 
 protected:
 	virtual bool     AddStaminaCondition()        { return false; }
 	virtual float    RestoreStaminaDelay()        { return 0.f;   }
 	virtual bool     RestoreStaminaCondition()    { return false; }
+	bool             AddStaminaCanceled();
 
 private: 
 	void             AddStaminaDeffered();
@@ -66,4 +67,7 @@ private:
 	bool             AddStaminaSkill;
 	FTimerHandle     AddStaminaTimer;
 	FTimerHandle     RestoreStaminaTimer;
+
+	uint8 const*     OwnerState;
+	int8             DesiredState{ -1 };
 };

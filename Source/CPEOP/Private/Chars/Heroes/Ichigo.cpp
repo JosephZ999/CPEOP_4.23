@@ -16,6 +16,12 @@
 
 #define BLOCK_DURATION cTime(0.2f)
 
+// Skills list
+/*
+	Getsuga
+	SwordTwist
+	RExplosion
+*/
 
 
 AIchigo::AIchigo()
@@ -34,6 +40,8 @@ AIchigo::AIchigo()
 
 	InitHelper("sh_GetsugaHelper",		HIT_LOC "sh_GetsugaHelper");
 	InitHelper("sh_GetsugaFWHelper",	HIT_LOC "sh_GetsugaFWHelper");
+	InitHelper("sh_ReiatsuExplosion",	HIT_LOC "sh_ReiatsuExplosion");
+	
 
 	InitHelper("sh_SwordTwist",			HIT_LOC "sh_SwordTwist");
 
@@ -72,6 +80,9 @@ AIchigo::AIchigo()
 
 	AddAnimation("GetsugaStart",	ANIM_LOC "GetsugaStart");
 	AddAnimation("GetsugaFW",		ANIM_LOC "GetsugaFW");
+	AddAnimation("RExplosion",		ANIM_LOC "RExplosion");
+
+
 	AddAnimation("Bankai",			ANIM_LOC "Bankai");
 
 	AnimData = &BankaiAnim;
@@ -169,7 +180,11 @@ void AIchigo::BeginPlay()
 			case EBaseStates::Jumping: { break; }
 			case (uint8)EIchigoShikai::Attack_2: { if (isComboTime()) { sh_AttackB(); resetKeys(); } break; }
 			case EBaseStates::PowChargeLoop: { sh_SwordTwist(); SkillDisable(); break; }
-			
+			case (uint8)EIchigoShikai::SwordTwistLoop:
+			{
+				sh_RExplosion(); break;
+			}
+
 			} // End Switch
 		}
 	}
@@ -310,6 +325,7 @@ void AIchigo::BeginPlay()
 		NewState((uint8)EIchigoShikai::SwordTwist, "SwordTwist", 0, false, false);
 		SetRotation(isMovingRight());
 		SpawnHelper("sh_SwordTwist", getFrameTime(4));
+		SetBlockingAttack(EBlockType::Both, AnimElemTime(4), AnimElemTime(10));
 
 		FTimerHandle timer;
 		GetWorldTimerManager().SetTimer(timer, this, &AIchigo::sh_SwordTwistLoop, getFrameTime(10));
@@ -350,13 +366,35 @@ void AIchigo::BeginPlay()
 		NewState		((uint8)EIchigoShikai::GetsugaFW, "GetsugaFW");
 		SetRotation		(isMovingRight());
 		SpawnHelper		("sh_GetsugaHelper", getFrameTime(3));
-		GET_STATS->AddStamina(GETSUGA_TENSHOU_COST, getFrameTime(2), true);
+		GET_STATS->AddStamina(GETSUGA_TENSHOU_COST, getFrameTime(2), true, getState());
 
 		SetBlockingAttack
 			(EBlockType::Both, getFrameTime(0), BLOCK_DURATION);
 		DangerN
 			(getFrameTime(5), EDangerType::MeleeAttack);
 	}
+
+
+	//---------------------------------------------// Reiatsu Explosion
+	void AIchigo::sh_RExplosion()
+	{
+		if (!getHeroStatsComp()->CheckSkill("RExplosion"))
+			return;
+
+		if (getHeroStatsComp()->checkStamina(-(EXPLOSION_COST)) && getHeroStatsComp()->checkPower(-(EXPLOSION_COST)))
+		{
+			NewState((uint8)EIchigoShikai::RExplosion, "RExplosion");
+			SpawnHelper("sh_ReiatsuExplosion", getFrameTime(8), FRotator(0.f), FVector(1.5f));
+			Combo(getFrameTime(18));
+
+			DangerN(getFrameTime(5), EDangerType::MeleeAttack);
+			SetBlockingAttack(EBlockType::Both, AnimElemTime(5), AnimElemTime(15));
+
+			GET_STATS->AddStamina(EXPLOSION_COST, AnimElemTime(10), true, getState());
+		}
+	}
+
+	// Bankai
 
 	void AIchigo::sh_Bankai()
 	{

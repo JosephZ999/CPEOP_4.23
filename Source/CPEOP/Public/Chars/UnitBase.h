@@ -143,6 +143,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE uint8 getState() 		        { return State;				}
+	uint8& getStateRef()                        { return State;             }
 
 	bool	checkTeam(uint8 nTeam)				{ return Team == nTeam;		}
 

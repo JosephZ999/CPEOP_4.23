@@ -26,9 +26,7 @@ void UUnitStatsBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-
-
+	OwnerState = &(Cast<AUnitBase>(GetOwner())->getStateRef());
 }
 
 
@@ -40,13 +38,17 @@ void UUnitStatsBase::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	// ...
 }
 
-void UUnitStatsBase::AddStamina(float value, float time, bool skill)
+void UUnitStatsBase::AddStamina(float value, float time, bool skill, int desiredState)
 {
 	if (time > 0.f)
 	{
 		// Delay
 		AddStaminaValue = value;
 		AddStaminaSkill = skill;
+
+		if (desiredState >= 0)
+			DesiredState = desiredState;
+		
 		GetWorld()->GetTimerManager().SetTimer(AddStaminaTimer, this, &UUnitStatsBase::AddStaminaDeffered, time);
 	}
 	else
@@ -60,7 +62,7 @@ void UUnitStatsBase::AddStamina(float value, float time, bool skill)
 
 void UUnitStatsBase::AddStaminaDeffered()
 {
-	AddStamina(AddStaminaValue, -1.f, AddStaminaSkill);
+	AddStamina(AddStaminaValue, -1.f, AddStaminaSkill, DesiredState);
 }
 
 void UUnitStatsBase::RestoreStamina()
@@ -69,4 +71,9 @@ void UUnitStatsBase::RestoreStamina()
 	{
 		GetWorld()->GetTimerManager().SetTimer(RestoreStaminaTimer, this, &UUnitStatsBase::RestoreStamina, STAMINA_RESTORE_TIME);
 	}
+}
+
+bool UUnitStatsBase::AddStaminaCanceled()
+{
+	return !(*OwnerState == DesiredState);
 }

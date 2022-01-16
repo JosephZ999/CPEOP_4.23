@@ -260,6 +260,7 @@ void AOgichi::sh_SwordTwist()
 	NewState		((uint8)EOgichiShikai::SwordTwist, "SwordTwist", 0, false, false);
 	SetRotation		(isMovingRight());
 	SpawnHelper		("sh_SwordTwist", getFrameTime(4));
+	SetBlockingAttack(EBlockType::Both, AnimElemTime(4), AnimElemTime(10));
 
 	FTimerHandle timer;
 	GetWorldTimerManager().SetTimer(timer, this, &AOgichi::sh_SwordTwistLoop, getFrameTime(10));

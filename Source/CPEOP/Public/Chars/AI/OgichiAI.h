@@ -26,6 +26,7 @@ private:
 	// Debut
 	bool Intro{ true };
 	FVector EnemyInitialLocation;
+	void BreakIntro() { Intro = false; }
 
 // Actions
 	/*

@@ -80,7 +80,7 @@ void AHollowAI_1::AITypeDef()
 	case EBaseStates::Hit:
 	{
 		StopMoving();
-		Wait(0.5f + FMath::FRandRange(0.f, 0.5f));
+		Wait(0.8f + FMath::FRandRange(0.f, 0.5f));
 		break;
 	}
 
