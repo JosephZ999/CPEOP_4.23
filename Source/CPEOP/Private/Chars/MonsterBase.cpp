@@ -12,6 +12,8 @@
 
 AMonsterBase::AMonsterBase()
 {
+	AnimData = &AnimList;
+
 	Stats = CreateDefaultSubobject<UMonsterStats>(TEXT("MonsterStats"));
 	InitHelper("DeathEffect", "Blueprint/Objects/Dynamic/MonsterDeathEffect");
 }
@@ -27,6 +29,19 @@ void AMonsterBase::BeginPlay()
 	SET_TIMER(nTimer, this, &AMonsterBase::Appearance, APPEARANCE_TIME);
 }
 
+// Animations
+
+void AMonsterBase::AddAnimation(FName index, UPaperFlipbook* elem)
+{
+	AnimList.Add(index, elem);
+}
+
+UPaperFlipbook * AMonsterBase::GetAnimation(FName index)
+{
+	return nullptr;
+}
+
+//
 void AMonsterBase::Appearance()
 {
 	GetSprite()->SetVisibility(true);

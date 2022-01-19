@@ -6,9 +6,10 @@
 
 #include "PaperFlipbook.h"
 
-#define ANIM_LOC "Texture/Chars/Ichigo/FBook/"
-#define ANIM_LOC_B "Texture/Chars/Ichigo_Bankai/FBook/"
-#define HIT_LOC	"Blueprint/Chars/Ichigo/Shikai/"
+#define ANIM_LOC		"Texture/Chars/Ichigo/FBook/"
+#define ANIM_LOC_B		"Texture/Chars/Ichigo_Bankai/FBook/"
+#define HIT_LOC			"Blueprint/Chars/Ichigo/Shikai/"
+#define HIT_LOC_B		"Blueprint/Chars/Ichigo/Bankai/"
 
 // Attack Options
 #define BASE_VELOCITY	(MoveVector + GetActorForwardVector()) * 150
@@ -37,13 +38,15 @@ AIchigo::AIchigo()
 	InitHelper("sh_Attack_2",			HIT_LOC "sh_Attack_2");
 	InitHelper("sh_AttackBack",			HIT_LOC "sh_AttackBack");
 	InitHelper("sh_AttackForward",		HIT_LOC "sh_AttackForward");
-
 	InitHelper("sh_GetsugaHelper",		HIT_LOC "sh_GetsugaHelper");
 	InitHelper("sh_GetsugaFWHelper",	HIT_LOC "sh_GetsugaFWHelper");
 	InitHelper("sh_ReiatsuExplosion",	HIT_LOC "sh_ReiatsuExplosion");
-	
-
 	InitHelper("sh_SwordTwist",			HIT_LOC "sh_SwordTwist");
+
+	InitHelper("b_Attack_1",			HIT_LOC_B "b_Attack_1");
+	InitHelper("b_Attack_2",			HIT_LOC_B "b_Attack_2");
+	InitHelper("b_Attack_B",			HIT_LOC_B "b_Attack_B");
+
 
 // Animations //
 	// Shikai
@@ -55,17 +58,14 @@ AIchigo::AIchigo()
 	AddAnimation("JumpHold",		ANIM_LOC "JumpHold"		);
 	AddAnimation("JumpDown",		ANIM_LOC "JumpDown"		);
 	AddAnimation("JumpLand",		ANIM_LOC "JumpLand"		);
-
 	AddAnimation("Hit",				ANIM_LOC "hit"			);
 	AddAnimation("FallHold",		ANIM_LOC "FallHold"		);
 	AddAnimation("FallUp",			ANIM_LOC "FallUp"		);
 	AddAnimation("FallDown",		ANIM_LOC "FallDown"		);
 	AddAnimation("StandUp",			ANIM_LOC "StandUp"		);
 	AddAnimation("StandUpAir",		ANIM_LOC "StandUpAir"	);
-
 	AddAnimation("Block",			ANIM_LOC "Guard"		);
 	AddAnimation("BlockAir",		ANIM_LOC "GuardAir"		);
-
 	AddAnimation("PowChargeStart",	ANIM_LOC "PowChStart"	);
 	AddAnimation("PowChargeLoop",	ANIM_LOC "PowChLoop"	);
 	AddAnimation("PowChargeEnd",	ANIM_LOC "PowChEnd"		);
@@ -74,10 +74,8 @@ AIchigo::AIchigo()
 	AddAnimation("Attack_2",		ANIM_LOC "Attack2");
 	AddAnimation("AttackFW",		ANIM_LOC "AttackForward");
 	AddAnimation("AttackB",			ANIM_LOC "AttackBack");
-
 	AddAnimation("SwordTwist",		ANIM_LOC "SwordTwist");
 	AddAnimation("SwordTwistLoop",	ANIM_LOC "SwordTwistLoop");
-
 	AddAnimation("GetsugaStart",	ANIM_LOC "GetsugaStart");
 	AddAnimation("GetsugaFW",		ANIM_LOC "GetsugaFW");
 	AddAnimation("RExplosion",		ANIM_LOC "RExplosion");
@@ -93,20 +91,23 @@ AIchigo::AIchigo()
 	AddAnimation("JumpHold",        ANIM_LOC_B "JumpHold"	);
 	AddAnimation("JumpDown",        ANIM_LOC_B "JumpDown"	);
 	AddAnimation("JumpLand",        ANIM_LOC_B "JumpLand"	);
-
 	AddAnimation("Hit",             ANIM_LOC_B "Hit");
 	AddAnimation("FallHold",        ANIM_LOC_B "FallHold");
 	AddAnimation("FallUp",          ANIM_LOC_B "FallUp");
 	AddAnimation("FallDown",        ANIM_LOC_B "FallDown");
 	AddAnimation("StandUp",         ANIM_LOC_B "StandUp");
 	AddAnimation("StandUpAir",      ANIM_LOC_B "StandUpAir");
-
 	AddAnimation("Block",           ANIM_LOC_B "Guard");
 	AddAnimation("BlockAir",        ANIM_LOC_B "Guard");
-
 	AddAnimation("PowChargeStart",  ANIM_LOC_B "ChargeStart");
 	AddAnimation("PowChargeLoop",   ANIM_LOC_B "ChargeLoop");
 	AddAnimation("PowChargeEnd",    ANIM_LOC_B "ChargeEnd");
+
+	AddAnimation("Attack_1",        ANIM_LOC_B "Attack1");
+	AddAnimation("Attack_2",        ANIM_LOC_B "Attack2");
+
+	AddAnimation("Attack_B",        ANIM_LOC_B "AttackB");
+
 
 	AnimData = &ShikaiAnim;
 }
@@ -122,7 +123,7 @@ void AIchigo::BeginPlay()
 	void AIchigo::Attack()
 	{
 		Super::Attack();
-
+		
 		if (getHeroStatsComp()->FormName == SHIKAI_NAME)
 		{
 			switch (getState())
@@ -154,7 +155,20 @@ void AIchigo::BeginPlay()
 			}
 
 			} // End Switch
-
+			return;
+		}
+	
+		if (getHeroStatsComp()->FormName == BANKAI_NAME)
+		{
+			switch (getState())
+			{
+			case EBaseStates::Stand: { b_Attack_1(); break; }
+			case (uint8)EIchigoBankai::Attack_1:
+			{
+				if (isComboTime()) { b_Attack_2(); resetKeys(); }
+				break;
+			}
+			} // Switch End
 		}
 	}
 	void AIchigo::AttackBack()
@@ -186,6 +200,23 @@ void AIchigo::BeginPlay()
 			}
 
 			} // End Switch
+		}
+
+		if (getHeroStatsComp()->FormName == BANKAI_NAME)
+		{
+			switch (getState())
+			{
+			case EBaseStates::Stand: { b_Attack_B(); break; }
+			case (uint8)EIchigoBankai::Attack_2:
+			{
+				if (isComboTime())
+				{
+					b_Attack_B(); resetKeys();
+				}
+				break;
+			}
+
+			} // Switch End
 		}
 	}
 	void AIchigo::AttackForward()
@@ -406,6 +437,51 @@ void AIchigo::BeginPlay()
 		Bankai();
 	}
 
+//---------------------------------------------// Bankai Actions //////////////////////////////////
+	void AIchigo::b_Attack_1()
+	{
+		NewState((uint8)EIchigoBankai::Attack_1, "Attack_1");
+		SetRotation(isMovingRight());
+		AddImpulse(BASE_VELOCITY, getFrameTime(1));
+		SpawnHelper("b_Attack_1", getFrameTime(3));
+		Combo(getFrameTime(7));
+
+		SetBlockingAttack(EBlockType::Forward, getFrameTime(3), BLOCK_DURATION);
+		DangerN(getFrameTime(6), EDangerType::MeleeAttack);
+	}
+
+	void AIchigo::b_Attack_2()
+	{
+		NewState((uint8)EIchigoBankai::Attack_2, "Attack_2");
+		SetRotation(isMovingRight());
+		AddImpulse(BASE_VELOCITY, getFrameTime(1));
+		SpawnHelper("b_Attack_2", getFrameTime(3));
+		Combo(getFrameTime(7));
+
+		SetBlockingAttack(EBlockType::Forward, getFrameTime(3), BLOCK_DURATION);
+		DangerN(getFrameTime(6), EDangerType::MeleeAttack);
+	}
+
+	void AIchigo::b_Attack_3()
+	{
+	}
+
+	void AIchigo::b_Attack_FW()
+	{
+	}
+
+	void AIchigo::b_Attack_B()
+	{
+		NewState((uint8)EIchigoBankai::Attack_B, "Attack_B");
+		SetRotation(isMovingRight());
+		AddImpulse(SP_VELOCITY, getFrameTime(4));
+		SpawnHelper("b_Attack_B", getFrameTime(6));
+		Combo(getFrameTime(11));
+
+		SetBlockingAttack(EBlockType::Forward, getFrameTime(7), BLOCK_DURATION);
+		DangerN(getFrameTime(6), EDangerType::MeleeAttack);
+	}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Combo Implementation /--------------------------------------------------------------------------
 	void AIchigo::ComboI()
@@ -416,11 +492,6 @@ void AIchigo::BeginPlay()
 
 		if		(form == SHIKAI_NAME)	{ ShikaiComboI(); }
 		else if (form == BANKAI_NAME)	{ BankaiComboI(); }
-		
-		else
-		{
-
-		}
 	}
 
 	void AIchigo::ShikaiComboI()
@@ -434,17 +505,18 @@ void AIchigo::BeginPlay()
 		{ 
 			switch (key)
 			{
-			case EComboKey::CK_Attack:	{ sh_Attack_2();	break; }
-			case EComboKey::CK_Dash:	{ DoDash();			break; }
+			case EComboKey::CK_Attack:	{ sh_Attack_2(); break; }
+			case EComboKey::CK_Dash:	{ DoDash();		 break; }
 			}
+			break;
 		}
 		case (uint8)EIchigoShikai::Attack_2:
 		{
 			switch (key)
 			{
-			case EComboKey::CK_AForward:	{ sh_AttackFW();	break; }
-			case EComboKey::CK_ABackward:	{ sh_AttackB();		break; }
-			case EComboKey::CK_Dash:		{ DoDash();			break; }
+			case EComboKey::CK_AForward:	{ sh_AttackFW(); break;}
+			case EComboKey::CK_ABackward:	{ sh_AttackB();	 break; }
+			case EComboKey::CK_Dash:		{ DoDash();		 break; }
 			}
 			break;
 		}
@@ -458,5 +530,30 @@ void AIchigo::BeginPlay()
 
 	void AIchigo::BankaiComboI()
 	{
+		EComboKey key = getNextKey();
 
+		switch (getState())
+		{
+
+		case (uint8)EIchigoBankai::Attack_1:
+		{
+			switch (key)
+			{
+			case EComboKey::CK_Attack: { b_Attack_2(); break; }
+			case EComboKey::CK_Dash:   { DoDash();     break; }
+			}
+			break;
+		}
+		case (uint8)EIchigoBankai::Attack_2:
+		{
+			switch (key)
+			{
+			// case EComboKey::CK_Attack: { b_Attack_2(); break; }
+			case EComboKey::CK_ABackward: { b_Attack_B(); break; }
+			case EComboKey::CK_Dash:      { DoDash();     break; }
+			} // Switch End
+			break;
+		}
+
+		} // Switch End
 	}

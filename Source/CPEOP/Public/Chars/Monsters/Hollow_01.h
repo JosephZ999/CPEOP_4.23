@@ -17,9 +17,6 @@ class CPEOP_API AHollow_01 : public AMonsterBase
 public:
 	AHollow_01();
 
-public:
-	UPROPERTY(EditDefaultsOnly, Category = "UnitOptions|Data")
-	TMap<FName, class UPaperFlipbook*> AnimList;
 
 protected:
 	virtual void Tick(float delta) override;

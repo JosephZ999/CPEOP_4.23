@@ -27,10 +27,11 @@ private:
 	EHollowType HType;
 	float MinDistX;
 	float MaxDistX;
+	float AttackVelScale;
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void InitParams(EHollowType type, float minDistX, float maxDistX);
+	void InitParams(EHollowType type, float minDistX, float maxDistX, float attackVel);
 
 private:
 	virtual void AIBody() override;

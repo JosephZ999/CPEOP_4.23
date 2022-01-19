@@ -38,9 +38,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetPlayerHero(AHeroBase* Hero) { PlayerCharacter = Hero; }
 
-	UFUNCTION(BlueprintCallable)
-	bool SpawnPlayerCharacter(TSubclassOf<AHeroBase> hero);
-
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void ShowInputWidget();
 

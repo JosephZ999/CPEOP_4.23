@@ -29,6 +29,7 @@ AUnitBase::AUnitBase()
 	GetCharacterMovement()->BrakingFrictionFactor = 1.f;
 	GetCharacterMovement()->GroundFriction = 1.f;
 	GetCharacterMovement()->MaxWalkSpeed = 150.f;
+	GetCharacterMovement()->GravityScale = 1.2f;
 
 	DangerNoticeType = EDangerType::None;
 	Dead = false;
@@ -277,7 +278,9 @@ void AUnitBase::Tick(float delta)
 				info.rotation.Yaw	= (isLookingRight()) ? 0.f : 180.f;
 				nHelper->InitialLocation.X = (isLookingRight()) ? nHelper->InitialLocation.X : nHelper->InitialLocation.X *-1.f;
 			}
+
 			nHelper->InitialLocation.Y += 1.f;
+			nHelper->CustomTimeDilation = this->CustomTimeDilation;
 
 			UGameplayStatics::FinishSpawningActor(nHelper, FTransform(info.rotation, nHelper->InitialLocation + GetActorLocation(), info.scale));
 			
@@ -286,7 +289,7 @@ void AUnitBase::Tick(float delta)
 			{
 				nHelper->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, EAttachmentRule::KeepWorld, true), "None" );
 				nHelper->SetActorLocation(nHelper->InitialLocation + GetActorLocation());
-			}
+			}	
 		}
 	}
 // End Hit Box//=================================------------------------------

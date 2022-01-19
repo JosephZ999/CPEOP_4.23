@@ -12,6 +12,9 @@
  * 
  */
 
+class UPaperFlipbook;
+class UMonsterStats;
+
 UENUM()
 enum EMonsterStates
 {
@@ -33,14 +36,27 @@ public:
 private:
 	/** Характеристики персонажа */
 	UPROPERTY(Category = Components, VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
-	class UMonsterStats* Stats;
+	UMonsterStats* Stats;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UnitOptions|Data")
+	TMap<FName, UPaperFlipbook*> AnimList;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Monster Options")
 	float DeathEffScale { 1.f };
 
+	UPROPERTY(EditDefaultsOnly, Category = "Monster Options")
+	float SpawnEffScale{ 1.f };
+
+
 public:
-	FORCEINLINE virtual class UUnitStatsBase* getStatsComp() const { return Stats; }
-	FORCEINLINE class UMonsterStats* getStats()              const { return Stats; }
+	FORCEINLINE virtual UUnitStatsBase* getStatsComp() const { return Stats; }
+	FORCEINLINE UMonsterStats* getStats()              const { return Stats; }
+
+	void AddAnimation(FName index, UPaperFlipbook* elem = nullptr);
+	UPaperFlipbook* GetAnimation(FName index);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	float GetSpawnEffScale() { return SpawnEffScale; }
 
 protected:
 	virtual void BeginPlay() override;

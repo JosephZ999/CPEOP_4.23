@@ -13,28 +13,6 @@ void AMyPlayerController::BeginPlay()
 	Super::BeginPlay();
 }
 
-
-bool AMyPlayerController::SpawnPlayerCharacter(TSubclassOf<AHeroBase> hero)
-{
-	AActor* playerStart = UGameplayStatics::GetActorOfClass(this, APlayerStart::StaticClass());
-	if (playerStart)
-	{
-		FTransform nT(playerStart->GetTransform());
-		nT.SetScale3D(FVector::OneVector);
-
-		AHeroBase* character = GetWorld()->SpawnActorDeferred<AHeroBase>(hero, nT);
-		if (character)
-		{
-			Possess(character);
-			UGameplayStatics::FinishSpawningActor(character, nT);
-			PlayerCharacter = character;
-			return true;
-		}
-	}
-	return false;
-}
-
-
 //////////////////////// Input ////////////////////////////
 
 void AMyPlayerController::BtnDash(FVector forwardVector, bool Released)

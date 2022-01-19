@@ -128,6 +128,7 @@ AMyPlayerController * AHeroBase::getController()
 	else
 	{
 		PlayerController = Cast<AMyPlayerController>(GetController());
+		return PlayerController;
 	}
 	return nullptr;
 }

@@ -10,9 +10,9 @@
 #define BANKAI_NAME "Bankai"
 
 // Skills
-#define GETSUGA_COST -1.5f
-#define GETSUGA_TENSHOU_COST -3.f
-#define EXPLOSION_COST -3.f
+#define GETSUGA_COST -2.f
+#define GETSUGA_TENSHOU_COST -4.f
+#define EXPLOSION_COST -4.f
 
 /* */
 UENUM()
@@ -37,7 +37,11 @@ enum class EIchigoShikai : uint8
 UENUM()
 enum class EIchigoBankai : uint8
 {
-	AttackLight = (uint8)EIchigoShikai::LastIndex,
+	Attack_1 = (uint8)EIchigoShikai::LastIndex,
+	Attack_2,
+	Attack_3,
+	Attack_FW,
+	Attack_B,
 	LastIndex,
 };
 
@@ -89,4 +93,11 @@ public:
 	void sh_GetsugaSlash();
 
 	void sh_Bankai();
+
+	// Bankai Actions
+	void b_Attack_1();
+	void b_Attack_2();
+	void b_Attack_3();
+	void b_Attack_FW();
+	void b_Attack_B();
 };

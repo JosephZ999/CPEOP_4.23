@@ -8,12 +8,10 @@
 
 AHollow_01::AHollow_01()
 {
-	AnimData = &AnimList;
-
-	AnimList.Add(FName("Stand"),   nullptr);
-	AnimList.Add(FName("Walk"),    nullptr);
-	AnimList.Add(FName("Attack"),  nullptr);
-	AnimList.Add(FName("Hit"),     nullptr);
+	AddAnimation(FName("Stand"),   nullptr);
+	AddAnimation(FName("Walk"),    nullptr);
+	AddAnimation(FName("Attack"),  nullptr);
+	AddAnimation(FName("Hit"),     nullptr);
 
 	InitHelper("AttackSlash");
 
@@ -23,6 +21,7 @@ AHollow_01::AHollow_01()
 void AHollow_01::Tick(float delta)
 {
 	Super::Tick(delta);
+	UpdateAnim();
 }
 
 void AHollow_01::EndState()
@@ -44,7 +43,17 @@ void AHollow_01::UpdateAnim()
 	{
 	case EBaseStates::Stand:
 	{
-		SetAnim(FName("Stand"), false);
+		float Speed = GetVelocity().X + GetVelocity().Y;
+
+		if (GetCharacterMovement()->IsWalking(), !FMath::IsNearlyEqual(Speed, 0.f, 10.f))
+		{
+			SetAnim(FName("Walk"), false);
+		}
+		else
+		{
+			SetAnim(FName("Stand"), false);
+		}
+		break;
 	}
 	} // Switch End
 }

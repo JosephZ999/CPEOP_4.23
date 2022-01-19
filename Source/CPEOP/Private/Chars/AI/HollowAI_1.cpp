@@ -4,11 +4,12 @@
 #include "Chars/AI/HollowAI_1.h"
 #include "Chars/MonsterBase.h"
 
-void AHollowAI_1::InitParams(EHollowType type, float minDistX, float maxDistX)
+void AHollowAI_1::InitParams(EHollowType type, float minDistX, float maxDistX, float attackVel)
 {
 	HType = type;
 	MinDistX = minDistX;
 	MaxDistX = maxDistX;
+	AttackVelScale = attackVel;
 }
 
 void AHollowAI_1::AIBody()
@@ -50,21 +51,35 @@ void AHollowAI_1::AITypeDef()
 	{
 	case EBaseStates::Stand:
 	{
+		// Moving
 		if (getDistanceX() > MinDistX || getDistanceY() > 20.f)
 		{
 			OwnerRef->SetMoveVector(getForwardVector(MinDistX));
 		}
 		else
 		{
-			OwnerRef->SetMoveVector(FVector(0.f));
+			// Attack
+			StopMoving();
 			OwnerRef->SetRotation(isEnemyOnRight(), false);
 			OwnerRef->Attack();
 			if (OwnerRef->getState() == EMonsterStates::Attack_1)
 			{
-				FVector vec = (getForwardVector() * getDistance() * 5.f);
+				FVector vec = (getForwardVector() * getDistance() * 5.f) * AttackVelScale;
 				OwnerRef->AddImpulse(FVector(vec.X, vec.Y, 20.f), 0.1f);
 			}
 		}
+
+		// Lose sight of the enemy
+		if (getEnemy()->checkState(EBaseStates::Teleport) && getDistance() < 120.f)
+		{
+			if (!(OwnerRef->isLookingRight() == isEnemyOnRight()))
+				return;
+
+			StopMoving();
+			Wait(FMath::RandRange(0.5f, 1.f));
+			return;
+		}
+
 		break;
 	}
 	case EMonsterStates::Attack_1:
@@ -99,6 +114,7 @@ void AHollowAI_1::AITypeRanged()
 		}
 		else
 		{
+			// Attack
 			StopMoving();
 			OwnerRef->SetRotation(isEnemyOnRight(), false);
 			OwnerRef->Attack();
@@ -106,7 +122,7 @@ void AHollowAI_1::AITypeRanged()
 			{
 				FVector vel{ 0.f, 0.f, 20.f };
 				vel.Y = getDistanceY() * 5 * ((getEnemyLocation().Y > getPawnLocation().Y) ? 1.f : -1.f);
-				OwnerRef->AddImpulse(vel);
+				OwnerRef->AddImpulse(vel * AttackVelScale);
 			}
 		}
 		break;

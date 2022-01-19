@@ -91,7 +91,7 @@ enum EBaseStates
 	LastIndex,
 };
 
-UENUM()
+UENUM(BlueprintType)
 enum class EBlockType : uint8 { None, Forward, Back, Both };
 
 UENUM()
@@ -110,78 +110,80 @@ public:
 protected:	virtual void BeginPlay();
 public:		virtual void Tick(float delta);
 
-	bool    Control = true;		// Запрещает любые движение
+			bool    Control = true;		// Запрещает любые движение
 private:
-// Variables //
+	// Variables //
 	uint8   State{ 0 };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = "true"))
-	uint8   Team{ 0 };
+		uint8   Team {
+		0
+	};
 
 	UPROPERTY(BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
-	bool    Dead;
+		bool    Dead;
 
 	bool    Immortal;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
-	class UShadowComponent* ShadowComp;
+		class UShadowComponent* ShadowComp;
 
 protected:
 	bool CanFall{ true };
 
 public:
-// AI
+	// AI
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = AI)
-	void    StartAI();
+		void    StartAI();
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = AI)
-	void    StopAI();
+		void    StopAI();
 
-// Getters and Setters //
+	// Getters and Setters //
 	UFUNCTION(BlueprintCallable)
-	bool	checkState(uint8 nState) const		{ return State == nState;	}
+		bool	checkState(uint8 nState) const { return State == nState; }
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FORCEINLINE uint8 getState() 		        { return State;				}
-	uint8& getStateRef()                        { return State;             }
+		FORCEINLINE uint8 getState() { return State; }
+	uint8& getStateRef() { return State; }
 
-	bool	checkTeam(uint8 nTeam)				{ return Team == nTeam;		}
+	bool	checkTeam(uint8 nTeam) { return Team == nTeam; }
 
-	void	setTeam(uint8 nTeam)				{ Team = nTeam; }
+	void	setTeam(uint8 nTeam) { Team = nTeam; }
 
-	FORCEINLINE const uint8& getTeam()			{ return Team;				}
-
-	UFUNCTION(BlueprintCallable)
-	virtual class UUnitStatsBase* getStatsComp() const { return nullptr; }
+	FORCEINLINE const uint8& getTeam() { return Team; }
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE UShadowComponent* getShadow() const { return ShadowComp; }
+		virtual class UUnitStatsBase* getStatsComp() const { return nullptr; }
 
-// Conditions //
+	UFUNCTION(BlueprintCallable)
+		FORCEINLINE UShadowComponent* getShadow() const { return ShadowComp; }
+
+	// Conditions //
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	virtual bool IsDead()							{ return Dead; }
-	
-	FORCEINLINE bool IsImmortal()					{ return Immortal; }
+		virtual bool IsDead() { return Dead; }
+
+	FORCEINLINE bool IsImmortal() { return Immortal; }
 
 	/* Условия блокировки атак */
-	FORCEINLINE virtual bool isBlockingAttack()		{ return State == EBaseStates::Blocking; }
+	FORCEINLINE virtual bool isBlockingAttack() { return State == EBaseStates::Blocking; }
 
 	/* Смотрит вправо */
-	FORCEINLINE virtual bool isLookingRight()		{ return int(GetActorRotation().Yaw) == 0; }
+	FORCEINLINE virtual bool isLookingRight() { return int(GetActorRotation().Yaw) == 0; }
 
-	FORCEINLINE bool isMovingRight()				{ return MoveVector.X > 0.f; }
+	FORCEINLINE bool isMovingRight() { return MoveVector.X > 0.f; }
 
-	FORCEINLINE virtual bool isBeginAttack()		{ return false; }
+	FORCEINLINE virtual bool isBeginAttack() { return false; }
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE bool isFalling() const { return State == EBaseStates::Fall; }
+		FORCEINLINE bool isFalling() const { return State == EBaseStates::Fall; }
 
-// Functions //----------------------------------
+	// Functions //----------------------------------
 	void FindHelper(FString objectPath, TSubclassOf<class AHelper>& Class);
 	UPaperFlipbook* FindAnim(FString objectPath);
 
 	/* time / custom time delation */
-	FORCEINLINE float cTime(float time)	{ return time / CustomTimeDilation; }
+	FORCEINLINE float cTime(float time) { return time / CustomTimeDilation; }
 
 	/* Get Animation frame time */
 	float getFrameTime(uint8 frame);
@@ -191,38 +193,38 @@ public:
 	void DisableImmortality();
 	FTimerHandle ImmortalityTimer;
 
-// Movement //===================================------------------------------
+	// Movement //===================================------------------------------
 protected:
 	virtual void Move();
 	FVector MoveVector;
 
 public:
 	/* Impulse */
-	void AddImpulse(FVector2D impulse, float time=0.f);
-	void AddImpulse(FVector impulse, float time=0.f);
+	void AddImpulse(FVector2D impulse, float time = 0.f);
+	void AddImpulse(FVector impulse, float time = 0.f);
 private:
 	void ImpulseDeferred();
 	FTimerHandle ImpulseTimer;
 	FVector ImpulseVector;
 public:
 	UFUNCTION(BlueprintCallable)
-	void SetMoveVector(FVector nVec = FVector::ZeroVector);
+		void SetMoveVector(FVector nVec = FVector::ZeroVector);
 	UFUNCTION(BlueprintCallable)
-	const FVector& GetMoveVector() const { return MoveVector; }
+		const FVector& GetMoveVector() const { return MoveVector; }
 
-	void SetRotation(bool right, bool moveVec=true);
+	void SetRotation(bool right, bool moveVec = true);
 
 	// Actions
 	UFUNCTION(BlueprintCallable)
-	void EventJump();
+		void EventJump();
 	void Jumping();
 
 	virtual void Landed(const FHitResult& Hit) override;
-// End Movement //===============================------------------------------
+	// End Movement //===============================------------------------------
 
-// Helper //=====================================------------------------------
+	// Helper //=====================================------------------------------
 protected:
-	/*Добавляет класс "HitBox" в массив компонента "HitComp" 
+	/*Добавляет класс "HitBox" в массив компонента "HitComp"
 	* Пример: InitHelper("Attack_1, "Blueprint/HitBox/Attack_1")*/
 	void InitHelper(FName name, FString classPath = FString());
 
@@ -231,7 +233,7 @@ protected:
 private:
 	/* Список всех обьектов 'HitBox' */
 	UPROPERTY(EditDefaultsOnly, Category = "UnitOptions|Data")
-	TMap<FName, TSubclassOf<class AHelper>> HelpersData;
+		TMap<FName, TSubclassOf<class AHelper>> HelpersData;
 
 	/* Сортированный список обьектов 'HitBox' для спавна*/
 	TArray<FHelperInfo> HelpersOrder;
@@ -242,15 +244,18 @@ private:
 	/* */
 	void HelperSpawning(FHelperInfo info, TSubclassOf<class AHelper> hitClass);
 
-// End Helper //=================================------------------------------
+	// End Helper //=================================------------------------------
 
 
-// Taking Damage //==============================------------------------------
+	// Taking Damage //==============================------------------------------
 public:
 	/* On Damaged */
 	void ApplyDamage(class AUnitBase* damageCauser, FHitOption* damageOption, bool fromBehind);
 	virtual void OnDamaged() {}
-	
+
+	UFUNCTION(BlueprintCallable)
+	EBlockType GetBlockType() { return BlockAttackType; }
+
 	// Blocking
 protected:
 	EBlockType BlockAttackType;
