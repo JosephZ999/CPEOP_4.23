@@ -1,9 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
-#include "Chars/Components/HeroStats.h"
 
 #include "CoreMinimal.h"
+#include "Components/TimelineComponent.h"
+#include "Chars/Components/HeroStats.h"
 #include "Chars/UnitBase.h"
 #include "HeroBase.generated.h"
 
@@ -12,6 +13,8 @@
 /**
  * 
  */
+
+class UCurveFloat;
 
 enum EComboKey { CK_None, CK_Attack, CK_AForward, CK_ABackward, CK_Jump, CK_Block, CK_Dash };
 
@@ -60,6 +63,11 @@ protected:
 	virtual void EndState()			override;
 public:
 	virtual void Tick(float delta)	override;
+
+//---------------------------------------------// Timeline
+protected:
+	void PlayTimeline(UObject* targetObject, UCurveFloat* curve, FName functionName, bool looping);
+	FTimeline CurveTimeline;
 
 //---------------------------------------------// Movement // Sprint // Dash //
 public:

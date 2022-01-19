@@ -108,11 +108,27 @@ void AHeroBase::BeginPlay()
 void AHeroBase::Tick(float delta)
 {
 	Super::Tick(delta);
+
 	UpdateCameraView(delta);
 	UpdateAnim();
 	TeleportTick(delta);
+	CurveTimeline.TickTimeline(delta);
 }
 
+// Timeline
+void AHeroBase::PlayTimeline(UObject* targetObject, UCurveFloat * curve, FName functionName, bool looping)
+{
+	if (curve)
+	{
+		FOnTimelineFloat TimelineProgress;
+		TimelineProgress.BindUFunction(targetObject, functionName);
+		CurveTimeline.AddInterpFloat(curve, TimelineProgress);
+		CurveTimeline.SetLooping(looping);
+		CurveTimeline.PlayFromStart();
+	}
+}
+
+//
 void AHeroBase::EndState()
 {
 	Super::EndState();

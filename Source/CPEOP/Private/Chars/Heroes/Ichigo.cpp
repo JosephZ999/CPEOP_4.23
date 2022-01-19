@@ -118,6 +118,12 @@ void AIchigo::BeginPlay()
 	ChangeForm(SHIKAI_NAME);
 }
 
+void AIchigo::TpProgress(float value)
+{
+	FVector TargetLocation = StartLoc;
+	TargetLocation.X = FMath::Lerp(TargetLocation.X, TargetLocation.X + 100.f, value);
+	SetActorLocation(TargetLocation);
+}
 
 //---------------------------------------------// Inputs
 	void AIchigo::Attack()

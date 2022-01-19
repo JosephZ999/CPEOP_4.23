@@ -45,20 +45,32 @@ enum class EIchigoBankai : uint8
 	LastIndex,
 };
 
+
+
 UCLASS()
 class CPEOP_API AIchigo : public AHeroBase
 {
 	GENERATED_BODY()
 
+public:
 	AIchigo();
+
+	UPROPERTY(EditDefaultsOnly)
+	UCurveFloat* TpCurve;
+
+	UFUNCTION()
+	void TpProgress(float value);
+
+	FVector StartLoc;
+
 private:
 	// Animations
 	TMap<FName, class UPaperFlipbook*> ShikaiAnim;
 	TMap<FName, class UPaperFlipbook*> BankaiAnim;
 protected:
 	virtual void BeginPlay() override;
-public:
 
+public:
 	// Input Actions
 	virtual void Attack()			override;
 	virtual void AttackBack()		override;
