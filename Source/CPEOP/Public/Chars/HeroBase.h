@@ -16,6 +16,14 @@
 
 class UCurveFloat;
 
+UENUM()
+enum class ECameraMode : uint8
+{
+	Free,
+	Action,
+	Target,
+};
+
 enum EComboKey { CK_None, CK_Attack, CK_AForward, CK_ABackward, CK_Jump, CK_Block, CK_Dash };
 
 UCLASS()
@@ -58,6 +66,8 @@ public:
 
 	FORCEINLINE virtual class UUnitStatsBase* getStatsComp() const { return HeroStatsComp; }
 	FORCEINLINE class UHeroStats* getHeroStatsComp()         const { return HeroStatsComp; }
+
+	FVector GetCameraLocation();
 protected:
 	virtual void BeginPlay()		override;
 	virtual void EndState()			override;
@@ -66,7 +76,9 @@ public:
 
 //---------------------------------------------// Timeline
 protected:
+	UCurveFloat* FindCurveFloat(FString path);
 	void PlayTimeline(UObject* targetObject, UCurveFloat* curve, FName functionName, bool looping);
+	void StopTimeline();
 	FTimeline CurveTimeline;
 
 //---------------------------------------------// Movement // Sprint // Dash //
@@ -110,13 +122,6 @@ private:
 
 //---------------------------------------------// Camera Behaviour
 private:
-	enum class ECameraMode
-	{
-		Free,
-		Action,
-		Target,
-	};
-
 	ECameraMode CameraMode = ECameraMode::Free;
 
 	// Calls in every frame
@@ -128,20 +133,23 @@ public:
 	void SetCameraViewF(float CameraStartLoc, float CameraEndLoc);
 
 	UFUNCTION(BlueprintCallable)
-		void SetCameraClampY(float ClampA, float ClampB) { CameraYClampA = ClampA; CameraYClampB = ClampB; }
+	void SetCameraClampY(float ClampA, float ClampB) { CameraYClampA = ClampA; CameraYClampB = ClampB; }
 
 private:
 	float CameraXClampA = -200; // Camera view point A in Free Mode
 	float CameraXClampB = 200; // Camera view point B in Free Mode
 	float CameraYClampA = -500.f;
 	float CameraYClampB = 500.f;
-
-public:
+	
 	// Action Mode
+public:
 	UFUNCTION(BlueprintCallable)
-	void SetCameraViewA(FVector CameraLocation);
+	void SetCameraViewA(FVector CameraLocation, float Duration);
 private:
-	FVector CameraView = { FVector::ZeroVector }; // Camera view in Action Mode
+	void DisableCameraViewA();
+	FVector CameraView{ FVector::ZeroVector }; // Camera view in Action Mode
+	ECameraMode CameraLastMode = ECameraMode::Free;
+	FTimerHandle CamActionTimer;
 
 public:
 	// Target Mode

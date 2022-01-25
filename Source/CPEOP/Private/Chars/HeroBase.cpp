@@ -15,6 +15,8 @@
 #include "Components/CapsuleComponent.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Sys/MyFunctionLibrary.h"
 
 
 // Camera Settings
@@ -116,6 +118,18 @@ void AHeroBase::Tick(float delta)
 }
 
 // Timeline
+UCurveFloat * AHeroBase::FindCurveFloat(FString path)
+{
+	FString objectName = UMyFunctionLibrary::FindObjectName(path);
+	FString fullPath = "CurveFloat'/Game/" + path + "." + objectName + "'";
+	ConstructorHelpers::FObjectFinder<UCurveFloat> nCurve((TEXT("%s"), *fullPath));
+	if (nCurve.Succeeded())
+	{
+		return nCurve.Object;
+	}
+	return nullptr;
+}
+
 void AHeroBase::PlayTimeline(UObject* targetObject, UCurveFloat * curve, FName functionName, bool looping)
 {
 	if (curve)
@@ -126,6 +140,11 @@ void AHeroBase::PlayTimeline(UObject* targetObject, UCurveFloat * curve, FName f
 		CurveTimeline.SetLooping(looping);
 		CurveTimeline.PlayFromStart();
 	}
+}
+
+void AHeroBase::StopTimeline()
+{
+	CurveTimeline.Stop();
 }
 
 //
@@ -339,6 +358,16 @@ AMyPlayerController * AHeroBase::getController()
 // End Blocking Movement //======================------------------------------
 
 // Camera Behaviour //===========================------------------------------
+	FVector AHeroBase::GetCameraLocation()
+	{
+		FVector CamPointLoc = CameraSceneComp->GetComponentLocation();
+		FVector nLoc = FVector::ZeroVector;
+		nLoc.X = FMath::Clamp(CamPointLoc.X, CameraXClampA, CameraXClampB);
+		nLoc.Y = FMath::Clamp(CamPointLoc.Y, CameraYClampA, CameraYClampB);
+		nLoc.Z = CamPointLoc.Z;
+		return nLoc;
+	}
+
 	void AHeroBase::UpdateCameraView(float delta)
 	{
 		switch (CameraMode)
@@ -418,11 +447,18 @@ AMyPlayerController * AHeroBase::getController()
 		CameraMode = ECameraMode::Free;
 	}
 
-	void AHeroBase::SetCameraViewA(FVector CameraLocation)
+	void AHeroBase::SetCameraViewA(FVector CameraLocation, float Duration)
 	{
+		CameraLastMode = CameraMode;
 		CameraView = CameraLocation;
 		CameraMode = ECameraMode::Action;
-		
+
+		SET_TIMER(CamActionTimer, this, &AHeroBase::DisableCameraViewA, FMath::Max(Duration, 0.2f));
+	}
+
+	void AHeroBase::DisableCameraViewA()
+	{
+		CameraMode = CameraLastMode;
 	}
 
 	void AHeroBase::SetCameraTarget(APawn * target)
@@ -584,7 +620,7 @@ AMyPlayerController * AHeroBase::getController()
 		if (IsImmortal())
 			return;
 
-		if (!getHeroStatsComp()->checkStamina(1.F / getHeroStatsComp()->getTeleportCost(), false))
+		if (!getHeroStatsComp()->checkStamina(1.f / getHeroStatsComp()->getTeleportCost(), false))
 			return;
 
 		if (MoveVector == FVector::ZeroVector || checkState(EBaseStates::Fall) || checkState(EBaseStates::Teleport) || IsDead())

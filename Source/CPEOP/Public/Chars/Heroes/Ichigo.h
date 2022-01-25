@@ -40,8 +40,11 @@ enum class EIchigoBankai : uint8
 	Attack_1 = (uint8)EIchigoShikai::LastIndex,
 	Attack_2,
 	Attack_3,
+	Attack_4,
 	Attack_FW,
 	Attack_B,
+
+	Shikai,
 	LastIndex,
 };
 
@@ -55,13 +58,7 @@ class CPEOP_API AIchigo : public AHeroBase
 public:
 	AIchigo();
 
-	UPROPERTY(EditDefaultsOnly)
-	UCurveFloat* TpCurve;
 
-	UFUNCTION()
-	void TpProgress(float value);
-
-	FVector StartLoc;
 
 private:
 	// Animations
@@ -110,6 +107,17 @@ public:
 	void b_Attack_1();
 	void b_Attack_2();
 	void b_Attack_3();
+	void b_Attack_4();
 	void b_Attack_FW();
 	void b_Attack_B();
+
+	void b_Shikai();
+
+	// Bankai Dash Attack (FW)
+protected:
+	UFUNCTION()
+	void b_AttackDash(float value);
+private:
+	UCurveFloat* b_AttackDashCurve;
+	FVector DashStartLoc;
 };

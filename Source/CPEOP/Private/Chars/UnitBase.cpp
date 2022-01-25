@@ -16,7 +16,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "UObject/ConstructorHelpers.h"
-#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "Kismet/GameplayStatics.h"
 
 // Settings
 #define HIT_TIME 0.2f

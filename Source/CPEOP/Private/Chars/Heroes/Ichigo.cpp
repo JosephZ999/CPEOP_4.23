@@ -45,6 +45,10 @@ AIchigo::AIchigo()
 
 	InitHelper("b_Attack_1",			HIT_LOC_B "b_Attack_1");
 	InitHelper("b_Attack_2",			HIT_LOC_B "b_Attack_2");
+	InitHelper("b_Attack_3",			HIT_LOC_B "b_Attack_3");
+	InitHelper("b_Attack_4",			HIT_LOC_B "b_Attack_4");
+
+	InitHelper("b_Attack_FW",			HIT_LOC_B "b_Attack_FW");
 	InitHelper("b_Attack_B",			HIT_LOC_B "b_Attack_B");
 
 
@@ -105,11 +109,16 @@ AIchigo::AIchigo()
 
 	AddAnimation("Attack_1",        ANIM_LOC_B "Attack1");
 	AddAnimation("Attack_2",        ANIM_LOC_B "Attack2");
-
+	AddAnimation("Attack_3",        ANIM_LOC_B "Attack3");
+	AddAnimation("Attack_4",        ANIM_LOC_B "Attack4");
+	AddAnimation("Attack_FW",       ANIM_LOC_B "AttackFW");
 	AddAnimation("Attack_B",        ANIM_LOC_B "AttackB");
 
+	AddAnimation("Shikai",          ANIM_LOC_B "Shikai");
 
 	AnimData = &ShikaiAnim;
+
+	b_AttackDashCurve = FindCurveFloat("Blueprint/Chars/Ichigo/Bankai/DashAttackVel");
 }
 
 void AIchigo::BeginPlay()
@@ -118,11 +127,22 @@ void AIchigo::BeginPlay()
 	ChangeForm(SHIKAI_NAME);
 }
 
-void AIchigo::TpProgress(float value)
+void AIchigo::b_AttackDash(float value)
 {
-	FVector TargetLocation = StartLoc;
-	TargetLocation.X = FMath::Lerp(TargetLocation.X, TargetLocation.X + 100.f, value);
-	SetActorLocation(TargetLocation);
+	FVector TargetLocation = DashStartLoc;
+	if (isLookingRight())
+	{
+		TargetLocation.X = FMath::Lerp(TargetLocation.X, TargetLocation.X + 200.f, value);
+	}
+	else
+	{
+		TargetLocation.X = FMath::Lerp(TargetLocation.X, TargetLocation.X - 200.f, value);
+	}
+	SetActorLocation(TargetLocation, true);
+	if (!checkState((uint8)EIchigoBankai::Attack_FW))
+	{
+		StopTimeline();
+	}
 }
 
 //---------------------------------------------// Inputs
@@ -172,6 +192,16 @@ void AIchigo::TpProgress(float value)
 			case (uint8)EIchigoBankai::Attack_1:
 			{
 				if (isComboTime()) { b_Attack_2(); resetKeys(); }
+				break;
+			}
+			case (uint8)EIchigoBankai::Attack_2:
+			{
+				if (isComboTime()) { b_Attack_3(); resetKeys(); }
+				break;
+			}
+			case (uint8)EIchigoBankai::Attack_3:
+			{
+				if (isComboTime()) { b_Attack_4(); resetKeys(); }
 				break;
 			}
 			} // Switch End
@@ -225,6 +255,7 @@ void AIchigo::TpProgress(float value)
 			} // Switch End
 		}
 	}
+
 	void AIchigo::AttackForward()
 	{
 		Super::AttackForward();
@@ -250,7 +281,29 @@ void AIchigo::TpProgress(float value)
 			case EBaseStates::PowChargeLoop: { sh_GetsugaStart(); break; }
 			} // End Switch
 		}
+
+		if (getHeroStatsComp()->FormName == BANKAI_NAME)
+		{
+			switch (getState())
+			{
+			case EBaseStates::Stand:
+			{
+				if (SkillisActive())
+				{
+					//sh_GetsugaStart();
+				}
+				else
+				{
+					b_Attack_FW();
+				}
+				break;
+			}
+			case EBaseStates::Jumping: { break; }
+			case (uint8)EIchigoBankai::Attack_2: { if (isComboTime()) { b_Attack_FW(); resetKeys(); } break; }
+			} // End Switch
+		}
 	}
+
 	void AIchigo::Btn_Bankai()
 	{
 		if (getHeroStatsComp()->FormName == SHIKAI_NAME)
@@ -259,6 +312,15 @@ void AIchigo::TpProgress(float value)
 			{
 			case EBaseStates::Stand: { if (SkillisActive()) { sh_Bankai(); } break; }
 			case EBaseStates::PowChargeLoop: { sh_Bankai(); break; }
+			}
+		}
+
+		if (getHeroStatsComp()->FormName == BANKAI_NAME)
+		{
+			switch (getState())
+			{
+			case EBaseStates::Stand: { if (SkillisActive()) { b_Shikai(); } break; }
+			case EBaseStates::PowChargeLoop: { b_Shikai(); break; }
 			}
 		}
 	}
@@ -439,8 +501,10 @@ void AIchigo::TpProgress(float value)
 			return;
 
 		NewState((uint8)EIchigoShikai::Bankai, "Bankai");
+		SpawnHelper("sh_ReiatsuExplosion", getFrameTime(28), FRotator(0.f), FVector(2.f));
 		SetImmortality(AnimElemTime(35));
 		Bankai();
+		GET_STATS->SetExpMultiplier(0.5f);
 	}
 
 //---------------------------------------------// Bankai Actions //////////////////////////////////
@@ -470,10 +534,57 @@ void AIchigo::TpProgress(float value)
 
 	void AIchigo::b_Attack_3()
 	{
+		NewState((uint8)EIchigoBankai::Attack_3, "Attack_3");
+		SetRotation(isMovingRight());
+		AddImpulse(BASE_VELOCITY, getFrameTime(3));
+		SpawnHelper("b_Attack_3", getFrameTime(4));
+		Combo(getFrameTime(11));
+
+		SetBlockingAttack(EBlockType::Both, getFrameTime(3), getFrameTime(4));
+		DangerN(getFrameTime(6), EDangerType::MeleeAttack);
+	}
+
+	void AIchigo::b_Attack_4()
+	{
+		NewState((uint8)EIchigoBankai::Attack_4, "Attack_4");
+		SetRotation(isMovingRight());
+		AddImpulse(BASE_VELOCITY, getFrameTime(2));
+		SpawnHelper("b_Attack_4", getFrameTime(3));
+		Combo(getFrameTime(10));
+
+		SetBlockingAttack(EBlockType::Forward, getFrameTime(3), BLOCK_DURATION);
+		DangerN(getFrameTime(4), EDangerType::MeleeAttack);
 	}
 
 	void AIchigo::b_Attack_FW()
 	{
+		if (!GET_STATS->checkStamina(2.f / getHeroStatsComp()->getTeleportCost(), false))
+			return;
+
+		NewState((uint8)EIchigoBankai::Attack_FW, "Attack_FW");
+		SetRotation(isMovingRight());
+
+		// Helpers
+		SpawnHelper("b_Attack_FW", getFrameTime(5));
+		SpawnHelper("Teleport", getFrameTime(3), GetActorRotation());
+
+		// Camera Behaviour
+		SetCameraViewA(GetCameraLocation(), 1.f);
+		
+		// Stamina
+		GET_STATS->AddStamina(
+			-2.f / getHeroStatsComp()->getTeleportCost(), 
+			getFrameTime(4), 
+			false, 
+			(uint8)EIchigoBankai::Attack_FW
+		);
+
+		SetBlockingAttack(EBlockType::Forward, getFrameTime(4), BLOCK_DURATION);
+		DangerN(getFrameTime(5), EDangerType::MeleeAttack);
+		Combo(getFrameTime(11));
+
+		DashStartLoc = GetActorLocation();
+		PlayTimeline(this, b_AttackDashCurve, "b_AttackDash", false);
 	}
 
 	void AIchigo::b_Attack_B()
@@ -486,6 +597,17 @@ void AIchigo::TpProgress(float value)
 
 		SetBlockingAttack(EBlockType::Forward, getFrameTime(7), BLOCK_DURATION);
 		DangerN(getFrameTime(6), EDangerType::MeleeAttack);
+	}
+
+	void AIchigo::b_Shikai()
+	{
+		if (!getHeroStatsComp()->CheckSkill("Bankai"))
+			return;
+
+		NewState((uint8)EIchigoBankai::Shikai, "Shikai");
+		SetImmortality(AnimElemTime(4));
+		Shikai();
+		GET_STATS->SetExpMultiplier(1.f);
 	}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -547,16 +669,36 @@ void AIchigo::TpProgress(float value)
 			{
 			case EComboKey::CK_Attack: { b_Attack_2(); break; }
 			case EComboKey::CK_Dash:   { DoDash();     break; }
-			}
+			} // Switch End
 			break;
 		}
 		case (uint8)EIchigoBankai::Attack_2:
 		{
 			switch (key)
 			{
-			// case EComboKey::CK_Attack: { b_Attack_2(); break; }
-			case EComboKey::CK_ABackward: { b_Attack_B(); break; }
-			case EComboKey::CK_Dash:      { DoDash();     break; }
+			case EComboKey::CK_Attack:    { b_Attack_3();  break; }
+			case EComboKey::CK_ABackward: { b_Attack_B();  break; }
+			case EComboKey::CK_AForward:  { b_Attack_FW(); break; }
+			case EComboKey::CK_Dash:      { DoDash();      break; }
+			} // Switch End
+			break;
+		}
+		case (uint8)EIchigoBankai::Attack_3:
+		{
+			switch (key)
+			{
+			case EComboKey::CK_Attack:    { b_Attack_4();  break; }
+			case EComboKey::CK_ABackward: { b_Attack_B();  break; }
+			case EComboKey::CK_AForward:  { b_Attack_FW(); break; }
+			case EComboKey::CK_Dash:      { DoDash();      break; }
+			} // Switch End
+			break;
+		}
+		case (uint8)EIchigoBankai::Attack_4:
+		{
+			switch (key)
+			{
+			case EComboKey::CK_Dash:      { DoDash();      break; }
 			} // Switch End
 			break;
 		}

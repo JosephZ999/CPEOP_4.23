@@ -118,6 +118,7 @@ void UHeroStats::Init()
 
 void UHeroStats::AddExp(int32 exp)
 {
+	exp = (float)exp * ExpMultiplier;
 	Exp += exp;
 
 	if (Exp < MaxExp)
@@ -166,7 +167,7 @@ bool UHeroStats::AddStats(FVector stats, bool force)
 
 int32 UHeroStats::GetLevelScore() const
 {
-	return SavedStats.level - (SavedStats.strength + SavedStats.agility + SavedStats.spirit + 1);
+	return SavedStats.level * 1.5f - (SavedStats.strength + SavedStats.agility + SavedStats.spirit + 1);
 }
 
 float UHeroStats::TakeDamage(float damage, bool blocked)

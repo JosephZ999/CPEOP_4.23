@@ -87,6 +87,8 @@ private:
 	float SkillReducer; // Уменьшает затраты навыков
 	float StaminaRestoreSpeed;
 
+	float ExpMultiplier{ 1.f };
+
 	UPROPERTY(EditDefaultsOnly, Meta = (AllowPrivateAccess = "true"))
 	TMap<FName, FFormStats> HeroForms;
 
@@ -104,6 +106,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetForm(FName name);
+
+	void SetExpMultiplier(float value) { ExpMultiplier = value; }
 
 	// Get
 	virtual float GetHealth()const		override { return Health; }
