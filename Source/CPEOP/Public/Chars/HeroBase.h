@@ -144,7 +144,7 @@ private:
 	// Action Mode
 public:
 	UFUNCTION(BlueprintCallable)
-	void SetCameraViewA(FVector CameraLocation, float Duration);
+	void SetCameraViewA(FVector CameraLocation, float Duration, ECameraMode NextCamMode = ECameraMode::Free);
 private:
 	void DisableCameraViewA();
 	FVector CameraView{ FVector::ZeroVector }; // Camera view in Action Mode

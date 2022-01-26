@@ -164,7 +164,6 @@ void AIchigo::b_AttackDash(float value)
 			case (uint8)EIchigoShikai::AttackFW:
 			{
 				SkillEnable();
-				UE_LOG(LogTemp, Warning, TEXT("Activate this fucking skill"));
 				break;
 			}
 			case (uint8)EIchigoShikai::AttackB:
@@ -242,8 +241,28 @@ void AIchigo::b_AttackDash(float value)
 		{
 			switch (getState())
 			{
-			case EBaseStates::Stand: { b_Attack_B(); break; }
+			case EBaseStates::Stand: 
+			{ 
+				if (SkillisActive())
+				{
+					b_RExplosion(); SkillDisable();
+				}
+				else
+				{
+					b_Attack_B(); 
+				}
+				
+				break; 
+			}
 			case (uint8)EIchigoBankai::Attack_2:
+			{
+				if (isComboTime())
+				{
+					b_Attack_B(); resetKeys();
+				}
+				break;
+			}
+			case (uint8)EIchigoBankai::Attack_3:
 			{
 				if (isComboTime())
 				{
@@ -294,12 +313,13 @@ void AIchigo::b_AttackDash(float value)
 				}
 				else
 				{
-					b_Attack_FW();
+					b_Attack_FW(); resetKeys();
 				}
 				break;
 			}
 			case EBaseStates::Jumping: { break; }
 			case (uint8)EIchigoBankai::Attack_2: { if (isComboTime()) { b_Attack_FW(); resetKeys(); } break; }
+			case (uint8)EIchigoBankai::Attack_3: { if (isComboTime()) { b_Attack_FW(); resetKeys(); } break; }
 			} // End Switch
 		}
 	}
@@ -356,6 +376,7 @@ void AIchigo::b_AttackDash(float value)
 		SetRotation		(isMovingRight());
 		AddImpulse		(SP_VELOCITY, getFrameTime(1));
 		SpawnHelper		("sh_AttackForward", getFrameTime(5), FRotator(20.f, 0.f, 0.f));
+		Combo(getFrameTime(12));
 
 		SetBlockingAttack(EBlockType::Forward, getFrameTime(5), BLOCK_DURATION);
 		DangerN(getFrameTime(7), EDangerType::MeleeAttack);
@@ -388,10 +409,10 @@ void AIchigo::b_AttackDash(float value)
 		SetRotation		(isMovingRight());
 		AddImpulse		(SP_VELOCITY, getFrameTime(4));
 		SpawnHelper		("sh_AttackBack", getFrameTime(6), FRotator(20.f, 0.f, 0.f));
+		Combo(getFrameTime(14));
 
 		SetBlockingAttack(EBlockType::Forward, getFrameTime(6), BLOCK_DURATION);
 		DangerN(getFrameTime(8), EDangerType::MeleeAttack);
-
 
 		FTimerHandle nTimer;
 		SET_TIMER(nTimer, this, &AIchigo::sh_GetsugaB, getFrameTime(6));
@@ -501,10 +522,15 @@ void AIchigo::b_AttackDash(float value)
 			return;
 
 		NewState((uint8)EIchigoShikai::Bankai, "Bankai");
+		Combo(getFrameTime(30));
 		SpawnHelper("sh_ReiatsuExplosion", getFrameTime(28), FRotator(0.f), FVector(2.f));
 		SetImmortality(AnimElemTime(35));
 		Bankai();
+
 		GET_STATS->SetExpMultiplier(0.5f);
+		GET_STATS->AddPower(-3.f);
+		GET_STATS->AddStamina(2.f);
+		
 	}
 
 //---------------------------------------------// Bankai Actions //////////////////////////////////
@@ -538,7 +564,7 @@ void AIchigo::b_AttackDash(float value)
 		SetRotation(isMovingRight());
 		AddImpulse(BASE_VELOCITY, getFrameTime(3));
 		SpawnHelper("b_Attack_3", getFrameTime(4));
-		Combo(getFrameTime(11));
+		Combo(getFrameTime(9));
 
 		SetBlockingAttack(EBlockType::Both, getFrameTime(3), getFrameTime(4));
 		DangerN(getFrameTime(6), EDangerType::MeleeAttack);
@@ -599,12 +625,20 @@ void AIchigo::b_AttackDash(float value)
 		DangerN(getFrameTime(6), EDangerType::MeleeAttack);
 	}
 
+	// Bankai Skills
+
+	void AIchigo::b_RExplosion()
+	{
+
+	}
+
 	void AIchigo::b_Shikai()
 	{
 		if (!getHeroStatsComp()->CheckSkill("Bankai"))
 			return;
 
 		NewState((uint8)EIchigoBankai::Shikai, "Shikai");
+		Combo(getFrameTime(8));
 		SetImmortality(AnimElemTime(4));
 		Shikai();
 		GET_STATS->SetExpMultiplier(1.f);
@@ -687,9 +721,6 @@ void AIchigo::b_AttackDash(float value)
 		{
 			switch (key)
 			{
-			case EComboKey::CK_Attack:    { b_Attack_4();  break; }
-			case EComboKey::CK_ABackward: { b_Attack_B();  break; }
-			case EComboKey::CK_AForward:  { b_Attack_FW(); break; }
 			case EComboKey::CK_Dash:      { DoDash();      break; }
 			} // Switch End
 			break;

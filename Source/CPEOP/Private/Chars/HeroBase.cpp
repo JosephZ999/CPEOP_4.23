@@ -194,7 +194,7 @@ AMyPlayerController * AHeroBase::getController()
 		fwVector.Z = DASH_VELOCITY_Z;
 		DashVector = fwVector;
 
-		if ((isComboTime() && GetCharacterMovement()->IsMovingOnGround()) || (checkState(EBaseStates::Blocking) && GetCharacterMovement()->IsMovingOnGround()))
+		if (GetCharacterMovement()->IsMovingOnGround() && (isComboTime() || checkState(EBaseStates::Blocking)))
 		{
 			DoDash();
 		}
@@ -447,9 +447,9 @@ AMyPlayerController * AHeroBase::getController()
 		CameraMode = ECameraMode::Free;
 	}
 
-	void AHeroBase::SetCameraViewA(FVector CameraLocation, float Duration)
+	void AHeroBase::SetCameraViewA(FVector CameraLocation, float Duration, ECameraMode NextCamMode)
 	{
-		CameraLastMode = CameraMode;
+		CameraLastMode = NextCamMode;
 		CameraView = CameraLocation;
 		CameraMode = ECameraMode::Action;
 
@@ -584,15 +584,16 @@ AMyPlayerController * AHeroBase::getController()
 // Actions Combination //========================------------------------------
 	void AHeroBase::Combo(float time)
 	{
-		SET_TIMER(ComboTimer, this, &AHeroBase::ComboI, time, false);
-		ComboSuccess = false;
+		if (time > 0.f)
+		{
+			SET_TIMER(ComboTimer, this, &AHeroBase::ComboI, time, false);
+			ComboSuccess = false;
+		}
 	}
 
 	void AHeroBase::ComboI()
 	{
 		ComboSuccess = true;
-
-
 	}
 
 	void AHeroBase::addKey(EComboKey key)

@@ -44,6 +44,8 @@ enum class EIchigoBankai : uint8
 	Attack_FW,
 	Attack_B,
 
+	RExplosion,
+
 	Shikai,
 	LastIndex,
 };
@@ -110,6 +112,8 @@ public:
 	void b_Attack_4();
 	void b_Attack_FW();
 	void b_Attack_B();
+
+	void b_RExplosion();
 
 	void b_Shikai();
 

@@ -43,9 +43,9 @@ void AHollow_01::UpdateAnim()
 	{
 	case EBaseStates::Stand:
 	{
-		float Speed = GetVelocity().X + GetVelocity().Y;
-
-		if (GetCharacterMovement()->IsWalking(), !FMath::IsNearlyEqual(Speed, 0.f, 10.f))
+		FVector2D Speed = { GetVelocity().X, GetVelocity().Y };
+		
+		if (GetCharacterMovement()->IsMovingOnGround() && !Speed.IsNearlyZero(10.f))
 		{
 			SetAnim(FName("Walk"), false);
 		}
