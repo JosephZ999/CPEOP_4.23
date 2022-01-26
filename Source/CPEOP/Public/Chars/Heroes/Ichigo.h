@@ -16,41 +16,28 @@
 
 /* */
 UENUM()
-enum class EIchigoShikai : uint8
+enum EIchigoState
 {
-	Intro = (uint8)EBaseStates::LastIndex,
+	Intro = EBaseStates::LastIndex,
 	Attack_1,
-	Attack_2,
-	AttackFW,
-	AttackB,
-	SwordTwist,
-	SwordTwistLoop,
-	SwordTwistEnd,
-	GetsugaStart,
-	GetsugaFW,
-	RExplosion,
-
-	Bankai,
-	LastIndex,
-};
-
-UENUM()
-enum class EIchigoBankai : uint8
-{
-	Attack_1 = (uint8)EIchigoShikai::LastIndex,
 	Attack_2,
 	Attack_3,
 	Attack_4,
 	Attack_FW,
 	Attack_B,
 
+	SwordTwist,
+	SwordTwistLoop,
+	SwordTwistEnd,
+	GetsugaStart,
+	GetsugaFW,
+
 	RExplosion,
 
 	Shikai,
-	LastIndex,
+	Bankai,
+
 };
-
-
 
 UCLASS()
 class CPEOP_API AIchigo : public AHeroBase
@@ -59,8 +46,6 @@ class CPEOP_API AIchigo : public AHeroBase
 
 public:
 	AIchigo();
-
-
 
 private:
 	// Animations

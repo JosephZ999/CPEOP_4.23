@@ -87,7 +87,7 @@ bool AUnitAIBase::SearchEnemy(uint8 team)
 		for (const AActor* elem : OverActors)
 		{
 			AUnitBase* unit = (AUnitBase*)elem;
-			if (elem != GetPawn() && !unit->checkTeam(team))
+			if (elem != GetPawn() && !unit->CheckTeam(team))
 			{
 				Enemy = unit;
 				SphereComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);

@@ -28,10 +28,12 @@ void AHollow_01::EndState()
 {
 	Super::EndState();
 
-	switch (getState())
+	FState nState;
+
+	switch (GetState())
 	{
-	case EBaseStates::Jumping: { NewState(EBaseStates::Stand, "None"); break; }
-	case EBaseStates::JumpLand: { NewState(EBaseStates::Stand, "None"); break; }
+	case EBaseStates::Jumping: { NewState(nState); break; }
+	case EBaseStates::JumpLand: { NewState(nState); break; }
 	} // Switch End
 
 	UpdateAnim();
@@ -39,7 +41,7 @@ void AHollow_01::EndState()
 
 void AHollow_01::UpdateAnim()
 {
-	switch (getState())
+	switch (GetState())
 	{
 	case EBaseStates::Stand:
 	{
@@ -60,8 +62,10 @@ void AHollow_01::UpdateAnim()
 
 void AHollow_01::Attack()
 {
-	NewState((int)EMonsterStates::Attack_1, "None");
-	SetAnim("Attack", true);
+	FState nState;
+	nState.State = EMonsterStates::Attack_1;
+	nState.Animation = "Attack";
+	NewState(nState);
 
 	SpawnHelper("AttackSlash", AnimElemTime(AttackHelperFrame));
 

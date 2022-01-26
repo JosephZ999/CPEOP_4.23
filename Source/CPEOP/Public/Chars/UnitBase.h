@@ -18,6 +18,20 @@ class UPaperFlipbook;
 class AHitBoxBase;
 
 USTRUCT()
+struct FState // Used in AUnitBase::NewState() function parameter;
+{
+	GENERATED_BODY()
+
+	FState() {};
+
+	uint8 State				{ 0 };
+	FName Animation			{ "None" };
+	uint8 AnimationFrame	{ 0 };
+	bool Rotate				{ true };
+	bool EndState			{ true }; // Finish state when the animation ends;
+};
+
+USTRUCT()
 struct FHelperInfo
 {
 	GENERATED_BODY()
@@ -32,7 +46,7 @@ struct FHelperInfo
 
 	FHelperInfo() {}
 
-	uint16		state;
+	uint8		state;
 	FName		name;
 	FRotator	rotation;
 	FVector		scale;
@@ -116,17 +130,15 @@ private:
 	uint8   State{ 0 };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = "true"))
-		uint8   Team {
-		0
-	};
+	uint8   Team { 0 };
 
 	UPROPERTY(BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
-		bool    Dead;
+	bool    Dead;
 
 	bool    Immortal;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
-		class UShadowComponent* ShadowComp;
+	class UShadowComponent* ShadowComp;
 
 protected:
 	bool CanFall{ true };
@@ -134,49 +146,48 @@ protected:
 public:
 	// AI
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = AI)
-		void    StartAI();
+	void    StartAI();
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = AI)
-		void    StopAI();
+	void    StopAI();
 
 	// Getters and Setters //
 	UFUNCTION(BlueprintCallable)
-		bool	checkState(uint8 nState) const { return State == nState; }
+	bool	CheckState(uint8 nState) const { return State == nState; }
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-		FORCEINLINE uint8 getState() { return State; }
-	uint8& getStateRef() { return State; }
+	FORCEINLINE uint8 GetState() { return State; }
 
-	bool	checkTeam(uint8 nTeam) { return Team == nTeam; }
+	uint8& GetStateRef() { return State; }
 
-	void	setTeam(uint8 nTeam) { Team = nTeam; }
+	bool	CheckTeam(uint8 nTeam) { return Team == nTeam; }
 
-	FORCEINLINE const uint8& getTeam() { return Team; }
+	void	SetTeam(uint8 nTeam) { Team = nTeam; }
 
-	UFUNCTION(BlueprintCallable)
-		virtual class UUnitStatsBase* getStatsComp() const { return nullptr; }
+	FORCEINLINE const uint8& GetTeam() { return Team; }
 
 	UFUNCTION(BlueprintCallable)
-		FORCEINLINE UShadowComponent* getShadow() const { return ShadowComp; }
+	virtual class UUnitStatsBase* getStatsComp() const { return nullptr; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE UShadowComponent* getShadow() const { return ShadowComp; }
 
 	// Conditions //
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-		virtual bool IsDead() { return Dead; }
+	virtual bool IsDead() { return Dead; }
 
 	FORCEINLINE bool IsImmortal() { return Immortal; }
 
 	/* Условия блокировки атак */
-	FORCEINLINE virtual bool isBlockingAttack() { return State == EBaseStates::Blocking; }
+	FORCEINLINE virtual bool IsBlocking() { return State == EBaseStates::Blocking; }
 
 	/* Смотрит вправо */
-	FORCEINLINE virtual bool isLookingRight() { return int(GetActorRotation().Yaw) == 0; }
+	FORCEINLINE virtual bool IsLookingRight() { return int(GetActorRotation().Yaw) == 0; }
 
-	FORCEINLINE bool isMovingRight() { return MoveVector.X > 0.f; }
-
-	FORCEINLINE virtual bool isBeginAttack() { return false; }
+	FORCEINLINE bool IsMovingRight() { return MoveVector.X > 0.f; }
 
 	UFUNCTION(BlueprintCallable)
-		FORCEINLINE bool isFalling() const { return State == EBaseStates::Fall; }
+	FORCEINLINE bool IsFalling() const { return State == EBaseStates::Fall; }
 
 	// Functions //----------------------------------
 	void FindHelper(FString objectPath, TSubclassOf<class AHelper>& Class);
@@ -286,8 +297,7 @@ public:
 
 // State Type //=================================------------------------------
 protected:
-	UFUNCTION(BlueprintCallable)
-	void NewState(uint8 state, FName anim, uint8 frame=0, bool ctrl=false, bool endState=true);
+	void NewState(FState& state);
 	void NewState(uint8 state);
 	
 protected:

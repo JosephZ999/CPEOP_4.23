@@ -23,7 +23,7 @@ void AHollowAI_1::AIBody()
 	// Search Enemy
 	if (!getEnemy())
 	{
-		if (!SearchEnemy(OwnerRef->getTeam()))
+		if (!SearchEnemy(OwnerRef->GetTeam()))
 		{
 			Wait(1.f);
 			return;
@@ -47,7 +47,7 @@ void AHollowAI_1::AIBody()
 
 void AHollowAI_1::AITypeDef()
 {
-	switch (OwnerRef->getState())
+	switch (OwnerRef->GetState())
 	{
 	case EBaseStates::Stand:
 	{
@@ -62,7 +62,7 @@ void AHollowAI_1::AITypeDef()
 			StopMoving();
 			OwnerRef->SetRotation(isEnemyOnRight(), false);
 			OwnerRef->Attack();
-			if (OwnerRef->getState() == EMonsterStates::Attack_1)
+			if (OwnerRef->GetState() == EMonsterStates::Attack_1)
 			{
 				FVector vec = (getForwardVector() * getDistance() * 5.f) * AttackVelScale;
 				OwnerRef->AddImpulse(FVector(vec.X, vec.Y, 20.f), 0.1f);
@@ -70,9 +70,9 @@ void AHollowAI_1::AITypeDef()
 		}
 
 		// Lose sight of the enemy
-		if (getEnemy()->checkState(EBaseStates::Teleport) && getDistance() < 120.f)
+		if (getEnemy()->CheckState(EBaseStates::Teleport) && getDistance() < 120.f)
 		{
-			if (!(OwnerRef->isLookingRight() == isEnemyOnRight()))
+			if (!(OwnerRef->IsLookingRight() == isEnemyOnRight()))
 				return;
 
 			StopMoving();
@@ -104,7 +104,7 @@ void AHollowAI_1::AITypeDef()
 
 void AHollowAI_1::AITypeRanged()
 {
-	switch (OwnerRef->getState())
+	switch (OwnerRef->GetState())
 	{
 	case EBaseStates::Stand:
 	{
@@ -118,7 +118,7 @@ void AHollowAI_1::AITypeRanged()
 			StopMoving();
 			OwnerRef->SetRotation(isEnemyOnRight(), false);
 			OwnerRef->Attack();
-			if (OwnerRef->getState() == EMonsterStates::Attack_1)
+			if (OwnerRef->GetState() == EMonsterStates::Attack_1)
 			{
 				FVector vel{ 0.f, 0.f, 20.f };
 				vel.Y = getDistanceY() * 5 * ((getEnemyLocation().Y > getPawnLocation().Y) ? 1.f : -1.f);

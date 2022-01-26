@@ -113,17 +113,17 @@ void AOgichi::Attack()
 
 	if (getHeroStatsComp()->FormName == SHIKAI_NAME)
 	{
-		switch (getState())
+		switch (GetState())
 		{
 		case EBaseStates::Stand:		{ sh_Attack_1(); break; }
 		case EBaseStates::Jumping:		{ break; }
-		case (uint8)EOgichiShikai::SwordTwistLoop:		
+		case EOgichiState::SwordTwistLoop:
 		{ 
 			SET_TIMER(sh_STwistEndTimer, this, &AOgichi::sh_SwordTwistEnd, cTime(1.f));
 			GET_STATS->AddStamina(0.07);
 			break; 
 		}
-		case (uint8)EOgichiShikai::Attack_1: { if (isComboTime()) { sh_Attack_2(); resetKeys(); } break; }
+		case EOgichiState::Attack_1: { if (isComboTime()) { sh_Attack_2(); resetKeys(); } break; }
 		
 		} // End Switch
 
@@ -135,23 +135,23 @@ void AOgichi::AttackBack()
 
 	if (getHeroStatsComp()->FormName == SHIKAI_NAME)
 	{
-		switch (getState())
+		switch (GetState())
 		{
 		case EBaseStates::Stand:
 		{
-			if (SkillisActive()) { sh_SwordTwist(); SkillDisable(); }
+			if (IsSkillActive()) { sh_SwordTwist(); SkillDisable(); }
 			else { sh_AttackB(); }
 			break;
 		}
 		case EBaseStates::Jumping: { break; }
 
-		case (uint8)EOgichiShikai::SwordTwistLoop:
+		case EOgichiState::SwordTwistLoop:
 		{
-			if (SkillisActive()) { SkillDisable(); }
+			if (IsSkillActive()) { SkillDisable(); }
 			else { sh_AttackB2(); }
 			break;
 		}
-		case (uint8)EOgichiShikai::Attack_2: { if (isComboTime()) { sh_SwordTwist(); resetKeys(); } break; }
+		case EOgichiState::Attack_2: { if (isComboTime()) { sh_SwordTwist(); resetKeys(); } break; }
 		case EBaseStates::PowChargeLoop: { sh_SwordTwist(); SkillDisable(); break; }
 
 		} // End Switch
@@ -163,7 +163,7 @@ void AOgichi::AttackForward()
 
 	if (getHeroStatsComp()->FormName == SHIKAI_NAME)
 	{
-		switch (getState())
+		switch (GetState())
 		{
 		case EBaseStates::Stand:	
 		{ 
@@ -171,13 +171,13 @@ void AOgichi::AttackForward()
 			break;
 		}
 		case EBaseStates::Jumping:	{ break; }
-		case (uint8)EOgichiShikai::SwordTwistLoop: 
+		case EOgichiState::SwordTwistLoop:
 		{ 
-			if (SkillisActive())	{ sh_Getsuga(); SkillDisable(); }
+			if (IsSkillActive())	{ sh_Getsuga(); SkillDisable(); }
 			else					{ sh_SwordThrow(); }
 			break;
 		}
-		case (uint8)EOgichiShikai::Attack_2: { if (isComboTime()) { sh_AttackFW(); resetKeys(); } break; }
+		case EOgichiState::Attack_2: { if (isComboTime()) { sh_AttackFW(); resetKeys(); } break; }
 		case EBaseStates::PowChargeLoop: { sh_Getsuga(); break; }
 		} // End Switch
 	}
@@ -187,9 +187,9 @@ void AOgichi::Btn_Bankai()
 {
 	if (getHeroStatsComp()->FormName == SHIKAI_NAME)
 	{
-		switch (getState())
+		switch (GetState())
 		{
-		case EBaseStates::Stand: { if (SkillisActive()) { sh_Bankai(); } break; }
+		case EBaseStates::Stand: { if (IsSkillActive()) { sh_Bankai(); } break; }
 		case EBaseStates::PowChargeLoop: { sh_Bankai(); break; }
 		}
 	}
@@ -199,8 +199,11 @@ void AOgichi::Btn_Bankai()
 //---------------------------------------------// Attacks
 void AOgichi::sh_Attack_1()
 {
-	NewState		((uint8)EOgichiShikai::Attack_1, "Attack_1");
-	SetRotation		(isMovingRight());
+	FState nState;
+	nState.State = EOgichiState::Attack_1;
+	nState.Animation = "Attack_1";
+	NewState(nState);
+
 	AddImpulse		(BASE_VELOCITY, getFrameTime(2));
 	SpawnHelper		("sh_Attack_1", getFrameTime(4));
 	Combo			(getFrameTime(9));
@@ -209,8 +212,11 @@ void AOgichi::sh_Attack_1()
 }
 void AOgichi::sh_Attack_2()
 {
-	NewState		((uint8)EOgichiShikai::Attack_2, "Attack_2");
-	SetRotation		(isMovingRight());
+	FState nState;
+	nState.State = EOgichiState::Attack_2;
+	nState.Animation = "Attack_2";
+	NewState(nState);
+
 	AddImpulse		(BASE_VELOCITY, getFrameTime(1));
 	SpawnHelper		("sh_Attack_2", getFrameTime(4));
 	Combo			(getFrameTime(9));
@@ -219,14 +225,17 @@ void AOgichi::sh_Attack_2()
 }
 void AOgichi::sh_AttackFW()
 {
-	NewState		((uint8)EOgichiShikai::AttackFW, "AttackFW");
-	SetRotation		(isMovingRight());
+	FState nState;
+	nState.State = EOgichiState::AttackFW;
+	nState.Animation = "AttackFW";
+	NewState(nState);
+
 	AddImpulse		(SP_VELOCITY, getFrameTime(1));
 	SpawnHelper		("sh_AttackForward", getFrameTime(5), FRotator(20.f, 0.f, 0.f));
 
 	SetBlockingAttack(EBlockType::Forward, getFrameTime(5), BLOCK_DURATION);
 
-	if (SkillisActive()
+	if (IsSkillActive()
 		&& getHeroStatsComp()->checkStamina(-(GETSUGA_COST))
 		&& getHeroStatsComp()->checkPower(-(GETSUGA_COST)))
 	{
@@ -237,8 +246,11 @@ void AOgichi::sh_AttackFW()
 }
 void AOgichi::sh_AttackB()
 {
-	NewState		((uint8)EOgichiShikai::AttackB, "AttackB");
-	SetRotation		(isMovingRight());
+	FState nState;
+	nState.State = EOgichiState::AttackB;
+	nState.Animation = "AttackB";
+	NewState(nState);
+
 	AddImpulse		(SP_VELOCITY, getFrameTime(4));
 	SpawnHelper		("sh_AttackBack", getFrameTime(6), FRotator(20.f, 0.f, 0.f));
 
@@ -246,8 +258,11 @@ void AOgichi::sh_AttackB()
 }
 void AOgichi::sh_AttackB2()
 {
-	NewState		((uint8)EOgichiShikai::AttackB, "AttackB2");
-	SetRotation		(isMovingRight());
+	FState nState;
+	nState.State = EOgichiState::AttackB;
+	nState.Animation = "AttackB2";
+	NewState(nState);
+
 	AddImpulse		(SP_VELOCITY, getFrameTime(7));
 	SpawnHelper		("sh_AttackBack", getFrameTime(9), FRotator(20.f, 0.f, 0.f));
 
@@ -257,8 +272,12 @@ void AOgichi::sh_AttackB2()
 //---------------------------------------------// Sword Twist
 void AOgichi::sh_SwordTwist()
 {
-	NewState		((uint8)EOgichiShikai::SwordTwist, "SwordTwist", 0, false, false);
-	SetRotation		(isMovingRight());
+	FState nState;
+	nState.State = EOgichiState::SwordTwist;
+	nState.Animation = "SwordTwist";
+	nState.EndState = false;
+	NewState(nState);
+
 	SpawnHelper		("sh_SwordTwist", getFrameTime(4));
 	SetBlockingAttack(EBlockType::Both, AnimElemTime(4), AnimElemTime(10));
 
@@ -268,26 +287,40 @@ void AOgichi::sh_SwordTwist()
 }
 void AOgichi::sh_SwordTwistLoop()
 {
-	if (getState() == (uint8)EOgichiShikai::SwordTwist)
+	if (CheckState(EOgichiState::SwordTwist))
 	{
-		NewState((uint8)EOgichiShikai::SwordTwistLoop, "SwordTwistLoop", 0, false, false);
+		FState nState;
+		nState.State = EOgichiState::SwordTwistLoop;
+		nState.Animation = "SwordTwistLoop";
+		nState.EndState = false;
+		nState.Rotate = false;
+		NewState(nState);
+
 		GetWorldTimerManager().SetTimer(sh_STwistEndTimer, this, &AOgichi::sh_SwordTwistEnd, cTime(1.f));
 		Combo(getFrameTime(3));
 	}
 }
 void AOgichi::sh_SwordTwistEnd()
 {
-	if (getState() == (uint8)EOgichiShikai::SwordTwistLoop)
+	if (CheckState(EOgichiState::SwordTwistLoop))
 	{
-		NewState((uint8)EOgichiShikai::SwordTwistEnd, "SwordTwist", 11);
+		FState nState;
+		nState.State = EOgichiState::SwordTwistEnd;
+		nState.Animation = "SwordTwist";
+		nState.AnimationFrame = 11;
+		nState.Rotate = false;
+		NewState(nState);
 	}
 }
 
 //---------------------------------------------// Sword Throw
 void AOgichi::sh_SwordThrow()
 {
-	NewState		((uint8)EOgichiShikai::AttackB, "SwordThrow");
-	SetRotation		(isMovingRight());
+	FState nState;
+	nState.State = EOgichiState::SwordThrow;
+	nState.Animation = "SwordThrow";
+	NewState(nState);
+
 	AddImpulse		(MoveVector * 300, getFrameTime(2));
 	SpawnHelper		("sh_SwordThrow", getFrameTime(5));
 
@@ -300,8 +333,11 @@ void AOgichi::sh_Getsuga()
 	if (getHeroStatsComp()->checkStamina(-(GETSUGA_TENSHOU_COST))
 		&& getHeroStatsComp()->checkPower(-(GETSUGA_TENSHOU_COST)))
 	{
-		NewState		((uint8)EOgichiShikai::Getsuga, "Getsuga");
-		SetRotation		(isMovingRight());
+		FState nState;
+		nState.State = EOgichiState::Getsuga;
+		nState.Animation = "Getsuga";
+		NewState(nState);
+
 		SpawnHelper		("sh_GetsugaHelper", getFrameTime(4));
 
 		GET_STATS->AddStamina(GETSUGA_TENSHOU_COST, getFrameTime(2), true);
@@ -315,7 +351,11 @@ void AOgichi::sh_Bankai()
 	if (!getHeroStatsComp()->CheckSkill("Bankai"))
 		return;
 
-	NewState((uint8)EOgichiShikai::Bankai, "Bankai");
+	FState nState;
+	nState.State = EOgichiState::Bankai;
+	nState.Animation = "Bankai";
+	NewState(nState);
+
 	SetImmortality(AnimElemTime(35));
 	Bankai();
 }
@@ -328,23 +368,19 @@ void AOgichi::ComboI()
 
 	FName form = getHeroStatsComp()->FormName;
 
-	if (form == SHIKAI_NAME) { ShikaiComboI(); }
-	else if (form == BANKAI_NAME) { BankaiComboI(); }
-	else
-	{
-
-	}
+	if (form == SHIKAI_NAME)		{ ShikaiComboI(); }
+	else if (form == BANKAI_NAME)	{ BankaiComboI(); }
 }
 
 void AOgichi::ShikaiComboI()
 {
 	EComboKey key = getNextKey();
 
-	switch (getState())
+	switch (GetState())
 	{
 
-	case (uint8)EOgichiShikai::Attack_1: { if (key == EComboKey::CK_Attack) { sh_Attack_2(); }	break; }
-	case (uint8)EOgichiShikai::Attack_2:
+	case EOgichiState::Attack_1: { if (key == EComboKey::CK_Attack) { sh_Attack_2(); }	break; }
+	case EOgichiState::Attack_2:
 	{
 		switch (key)
 		{
@@ -353,7 +389,7 @@ void AOgichi::ShikaiComboI()
 		}
 		break;
 	}
-	case (uint8)EOgichiShikai::SwordTwistLoop:
+	case EOgichiState::SwordTwistLoop:
 	{
 		switch (key)
 		{

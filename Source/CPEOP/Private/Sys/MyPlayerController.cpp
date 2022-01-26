@@ -43,14 +43,14 @@ void AMyPlayerController::BtnDash(FVector forwardVector, bool Released)
 			}
 		}
 
-		if (!PlayerCharacter->checkState(EBaseStates::Stand))
+		if (!PlayerCharacter->CheckState(EBaseStates::Stand))
 		{
 			PlayerCharacter->Dash(DashVector);
 		}
 	}	// Released End
 	else
 	{
-		if (PlayerCharacter->checkState(EBaseStates::Stand) && DashVector.Equals(forwardVector))
+		if (PlayerCharacter->CheckState(EBaseStates::Stand) && DashVector.Equals(forwardVector))
 		{
 			// PlayerCharacter->Sprint(DashVector);
 		}
@@ -102,7 +102,7 @@ void AMyPlayerController::BtnAction(EInputActionType action, bool btnReleased)
 	{
 		if (btnReleased)
 		{
-			if (PlayerCharacter->isLookingRight())	
+			if (PlayerCharacter->IsLookingRight())	
 			{ 
 				PlayerCharacter->AttackForward();
 				PlayerCharacter->addKey(EComboKey::CK_AForward);
@@ -119,7 +119,7 @@ void AMyPlayerController::BtnAction(EInputActionType action, bool btnReleased)
 	{
 		if (btnReleased)
 		{
-			if (PlayerCharacter->isLookingRight())	
+			if (PlayerCharacter->IsLookingRight())	
 			{ 
 				PlayerCharacter->AttackBack();	
 				PlayerCharacter->addKey(EComboKey::CK_ABackward);
@@ -135,7 +135,7 @@ void AMyPlayerController::BtnAction(EInputActionType action, bool btnReleased)
 
 	case EInputActionType::A_BlockStart:		
 	{ 
-		if (!PlayerCharacter->SkillisActive())
+		if (!PlayerCharacter->IsSkillActive())
 		{
 			PlayerCharacter->Block(); 
 			PlayerCharacter->SkillCanceled();		

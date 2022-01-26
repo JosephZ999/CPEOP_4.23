@@ -42,7 +42,7 @@ void AOgichiAI::AIBody()
 	// Search Enemy
 	if (!getEnemy())
 	{
-		if (!SearchEnemy(OgichiRef->getTeam()))
+		if (!SearchEnemy(OgichiRef->GetTeam()))
 		{
 			Wait(1.f);
 			return;
@@ -73,13 +73,13 @@ void AOgichiAI::AIBody()
 		return;
 	}
 
-	switch (OgichiRef->getState())
+	switch (OgichiRef->GetState())
 	{
 	case EBaseStates::Stand:
 	{
 
 		// Swort Twist if enemy fall
-		if (getEnemy()->isFalling())
+		if (getEnemy()->IsFalling())
 		{
 			OgichiRef->SkillEnable();
 			OgichiRef->AttackBack();
@@ -92,7 +92,7 @@ void AOgichiAI::AIBody()
 		{
 			// Block
 			if (getEnemy()->GetDangerType() == EDangerType::MeleeAttack
-				&& ((isEnemyOnRight() && !getEnemy()->isLookingRight()) || (!isEnemyOnRight() && getEnemy()->isLookingRight()))
+				&& ((isEnemyOnRight() && !getEnemy()->IsLookingRight()) || (!isEnemyOnRight() && getEnemy()->IsLookingRight()))
 				)
 			{
 				OgichiRef->SetMoveVector(getForwardVector());
@@ -168,7 +168,7 @@ void AOgichiAI::AIBody()
 		}
 	}
 
-	case (uint8)EOgichiShikai::Attack_1:
+	case EOgichiState::Attack_1:
 	{
 		if (!OgichiRef->isComboTime()) { return; }
 
@@ -194,7 +194,7 @@ void AOgichiAI::AIBody()
 		break;
 	}
 
-	case (uint8)EOgichiShikai::Attack_2:
+	case EOgichiState::Attack_2:
 	{
 		if (!OgichiRef->isComboTime()) { return; }
 
@@ -233,9 +233,9 @@ void AOgichiAI::AIBody()
 		}
 	}
 
-	case (uint8)EOgichiShikai::SwordTwistLoop:
+	case EOgichiState::SwordTwistLoop:
 	{
-		if (getEnemy()->isFalling())
+		if (getEnemy()->IsFalling())
 		{
 			OgichiRef->Attack();
 			return;

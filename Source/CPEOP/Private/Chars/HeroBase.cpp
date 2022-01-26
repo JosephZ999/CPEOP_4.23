@@ -5,7 +5,8 @@
 
 #include "sys/MyPlayerController.h"
 #include "sys/MyGameInstance.h"
-#include "Paper2D/Classes/PaperFlipbookComponent.h"
+#include "PaperFlipbookComponent.h"
+#include "PaperFlipbook.h"
 #include "Chars/Components/ShadowComponent.h"
 
 #include "Components/SceneComponent.h"
@@ -194,7 +195,7 @@ AMyPlayerController * AHeroBase::getController()
 		fwVector.Z = DASH_VELOCITY_Z;
 		DashVector = fwVector;
 
-		if (GetCharacterMovement()->IsMovingOnGround() && (isComboTime() || checkState(EBaseStates::Blocking)))
+		if (GetCharacterMovement()->IsMovingOnGround() && (isComboTime() || CheckState(EBaseStates::Blocking)))
 		{
 			DoDash();
 		}
@@ -206,7 +207,12 @@ AMyPlayerController * AHeroBase::getController()
 
 	void AHeroBase::DoDash()
 	{
-		NewState(EBaseStates::Dash, "JumpLand");
+		FState nState;
+		nState.State = EBaseStates::Dash;
+		nState.Animation = "JumpLand";
+		nState.Rotate = false;
+		NewState(nState);
+
 		AddImpulse(DashVector, cTime(DASH_WAIT_TIME));
 		EndStateDeferred(DASH_WAIT_TIME + 0.01f);
 	}
@@ -244,7 +250,7 @@ AMyPlayerController * AHeroBase::getController()
 			AddMovementInput(MoveVector, MovementScale);
 			if (MoveVector != FVector::ZeroVector)
 			{
-				SetRotation(isMovingRight());
+				SetRotation(IsMovingRight());
 			}
 		}
 	}
@@ -253,13 +259,15 @@ AMyPlayerController * AHeroBase::getController()
 	{
 		const FVector velocity = GetVelocity();
 		UPaperFlipbook* anim{ nullptr };
-		switch (getState())
+		switch (GetState())
 		{
 		case EBaseStates::Stand:
 		{
 			if (!(GetCharacterMovement()->IsMovingOnGround()))
 			{
-				NewState(EBaseStates::Jumping, "None");
+				FState nState;
+				nState.State = EBaseStates::Jumping;
+				NewState(nState);
 				return;
 			}
 
@@ -497,13 +505,14 @@ AMyPlayerController * AHeroBase::getController()
 	
 	void AHeroBase::Block()
 	{
-		if (getState() == EBaseStates::Stand || getState() == EBaseStates::Jumping)
+		if (CheckState(EBaseStates::Stand) || CheckState(EBaseStates::Jumping))
 		{
-			NewState(EBaseStates::Blocking, "Block", 0, false, false);
-			if (!FMath::IsNearlyZero(MoveVector.X))
-			{
-				SetRotation(isMovingRight());
-			}
+			FState nState;
+			nState.State = EBaseStates::Blocking;
+			nState.Animation = "Block";
+			nState.EndState = false;
+			NewState(nState);
+
 			PAUSE_TIMER(BlockTimer);
 			PowChargeEnd();
 		}
@@ -516,7 +525,7 @@ AMyPlayerController * AHeroBase::getController()
 	void AHeroBase::BlockStop()
 	{
 		PAUSE_TIMER(BlockTimer);
-		if (getState() == EBaseStates::Blocking)
+		if (GetState() == EBaseStates::Blocking)
 		{
 			EndStateDeferred(cTime(0.1f));
 		}
@@ -524,21 +533,33 @@ AMyPlayerController * AHeroBase::getController()
 
 	void AHeroBase::PowCharge()
 	{
-		if (getState() == EBaseStates::Stand)
+		if (CheckState(EBaseStates::Stand))
 		{
-			NewState(EBaseStates::PowCharge, "PowChargeStart", 0, false, false);
-			SET_TIMER(PowChargeLoopTimer, this, &AHeroBase::PowCharge, cTime(0.35f));
+			FState nState;
+			nState.State = EBaseStates::PowCharge;
+			nState.Animation = "PowChargeStart";
+			nState.Rotate = false;
+			nState.EndState = false;
+			NewState(nState);
+
+			SET_TIMER(PowChargeLoopTimer, this, &AHeroBase::PowCharge, AnimElemTime(GetAnim(nState.Animation)->GetNumFrames()));
 		}
-		else if (getState() == EBaseStates::PowCharge)
+		else if (CheckState(EBaseStates::PowCharge))
 		{
-			NewState(EBaseStates::PowChargeLoop, "PowChargeLoop", 0, false, false);
+			FState nState;
+			nState.State = EBaseStates::PowChargeLoop;
+			nState.Animation = "PowChargeLoop";
+			nState.Rotate = false;
+			nState.EndState = false;
+			NewState(nState);
+
 			SET_TIMER(PowChargeLoopTimer, this, &AHeroBase::PowChargeLoop, cTime(0.05f));
 		}
 	}
 	
 	void AHeroBase::PowChargeLoop()
 	{
-		if (getState() == EBaseStates::PowChargeLoop)
+		if (CheckState(EBaseStates::PowChargeLoop))
 		{
 			SET_TIMER(PowChargeLoopTimer, this, &AHeroBase::PowChargeLoop, cTime(0.05f));
 			// Add Power
@@ -552,9 +573,13 @@ AMyPlayerController * AHeroBase::getController()
 		PAUSE_TIMER(PowChargeTimer);
 		PAUSE_TIMER(PowChargeLoopTimer);
 
-		if (getState() == EBaseStates::PowChargeLoop || getState() == EBaseStates::PowCharge)
+		if (CheckState(EBaseStates::PowChargeLoop) || CheckState(EBaseStates::PowCharge))
 		{
-			NewState(EBaseStates::PowChargeEnd, "PowChargeEnd");
+			FState nState;
+			nState.State = EBaseStates::PowChargeEnd;
+			nState.Animation = "PowChargeEnd";
+			nState.Rotate = false;
+			NewState(nState);
 		}
 	}
 
@@ -624,7 +649,7 @@ AMyPlayerController * AHeroBase::getController()
 		if (!getHeroStatsComp()->checkStamina(1.f / getHeroStatsComp()->getTeleportCost(), false))
 			return;
 
-		if (MoveVector == FVector::ZeroVector || checkState(EBaseStates::Fall) || checkState(EBaseStates::Teleport) || IsDead())
+		if (MoveVector == FVector::ZeroVector || CheckState(EBaseStates::Fall) || CheckState(EBaseStates::Teleport) || IsDead())
 			return;
 
 		if (BlockAttackType != EBlockType::None && !isComboTime())
@@ -663,7 +688,7 @@ AMyPlayerController * AHeroBase::getController()
 		if (!getHeroStatsComp()->checkStamina(1.F / getHeroStatsComp()->getTeleportCost(), false))
 			return;
 
-		if (checkState(EBaseStates::Fall) || checkState(EBaseStates::Teleport) || IsDead())
+		if (CheckState(EBaseStates::Fall) || CheckState(EBaseStates::Teleport) || IsDead())
 			return;
 
 		tp_initialLocation = GetActorLocation();
@@ -695,9 +720,9 @@ AMyPlayerController * AHeroBase::getController()
 		getShadow()->HideShadow();
 	}
 
-	inline void AHeroBase::TeleportTick(float delta)
+	void AHeroBase::TeleportTick(float delta)
 	{
-		if (getState() == EBaseStates::Teleport)
+		if (CheckState(EBaseStates::Teleport))
 		{
 			float speed{ 1000 * delta };
 			tp_DistPassed += speed;

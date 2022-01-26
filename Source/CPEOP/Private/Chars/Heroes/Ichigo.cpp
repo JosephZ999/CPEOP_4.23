@@ -2,16 +2,13 @@
 
 
 #include "Chars/Heroes/Ichigo.h"
-#include "TimerManager.h"
-
-#include "PaperFlipbook.h"
 
 #define ANIM_LOC		"Texture/Chars/Ichigo/FBook/"
 #define ANIM_LOC_B		"Texture/Chars/Ichigo_Bankai/FBook/"
 #define HIT_LOC			"Blueprint/Chars/Ichigo/Shikai/"
 #define HIT_LOC_B		"Blueprint/Chars/Ichigo/Bankai/"
 
-// Attack Options
+/* Attack Options */
 #define BASE_VELOCITY	(MoveVector + GetActorForwardVector()) * 150
 #define SP_VELOCITY		(MoveVector + GetActorForwardVector()) * 200
 
@@ -130,7 +127,7 @@ void AIchigo::BeginPlay()
 void AIchigo::b_AttackDash(float value)
 {
 	FVector TargetLocation = DashStartLoc;
-	if (isLookingRight())
+	if (IsLookingRight())
 	{
 		TargetLocation.X = FMath::Lerp(TargetLocation.X, TargetLocation.X + 200.f, value);
 	}
@@ -139,7 +136,7 @@ void AIchigo::b_AttackDash(float value)
 		TargetLocation.X = FMath::Lerp(TargetLocation.X, TargetLocation.X - 200.f, value);
 	}
 	SetActorLocation(TargetLocation, true);
-	if (!checkState((uint8)EIchigoBankai::Attack_FW))
+	if (!CheckState(EIchigoState::Attack_FW))
 	{
 		StopTimeline();
 	}
@@ -152,27 +149,27 @@ void AIchigo::b_AttackDash(float value)
 		
 		if (getHeroStatsComp()->FormName == SHIKAI_NAME)
 		{
-			switch (getState())
+			switch (GetState())
 			{
 			case EBaseStates::Stand: { sh_Attack_1(); break; }
 			case EBaseStates::Jumping: { break; }
-			case (uint8)EIchigoShikai::Attack_1: 
+			case EIchigoState::Attack_1:
 			{ 
 				if (isComboTime()) { sh_Attack_2(); resetKeys(); } 
 				break; 
 			}
-			case (uint8)EIchigoShikai::AttackFW:
+			case EIchigoState::Attack_FW:
 			{
 				SkillEnable();
 				break;
 			}
-			case (uint8)EIchigoShikai::AttackB:
+			case EIchigoState::Attack_B:
 			{
 				SkillEnable();
 				break;
 			}
 
-			case (uint8)EIchigoShikai::SwordTwistLoop:
+			case EIchigoState::SwordTwistLoop:
 			{
 				SET_TIMER(sh_STwistEndTimer, this, &AIchigo::sh_SwordTwistEnd, cTime(1.f));
 				GET_STATS->AddStamina(0.07);
@@ -185,20 +182,20 @@ void AIchigo::b_AttackDash(float value)
 	
 		if (getHeroStatsComp()->FormName == BANKAI_NAME)
 		{
-			switch (getState())
+			switch (GetState())
 			{
 			case EBaseStates::Stand: { b_Attack_1(); break; }
-			case (uint8)EIchigoBankai::Attack_1:
+			case EIchigoState::Attack_1:
 			{
 				if (isComboTime()) { b_Attack_2(); resetKeys(); }
 				break;
 			}
-			case (uint8)EIchigoBankai::Attack_2:
+			case EIchigoState::Attack_2:
 			{
 				if (isComboTime()) { b_Attack_3(); resetKeys(); }
 				break;
 			}
-			case (uint8)EIchigoBankai::Attack_3:
+			case EIchigoState::Attack_3:
 			{
 				if (isComboTime()) { b_Attack_4(); resetKeys(); }
 				break;
@@ -212,11 +209,11 @@ void AIchigo::b_AttackDash(float value)
 
 		if (getHeroStatsComp()->FormName == SHIKAI_NAME)
 		{
-			switch (getState())
+			switch (GetState())
 			{
 			case EBaseStates::Stand:
 			{
-				if (SkillisActive())
+				if (IsSkillActive())
 				{
 					sh_SwordTwist(); SkillDisable();
 				}
@@ -227,9 +224,9 @@ void AIchigo::b_AttackDash(float value)
 				break;
 			}
 			case EBaseStates::Jumping: { break; }
-			case (uint8)EIchigoShikai::Attack_2: { if (isComboTime()) { sh_AttackB(); resetKeys(); } break; }
+			case EIchigoState::Attack_2: { if (isComboTime()) { sh_AttackB(); resetKeys(); } break; }
 			case EBaseStates::PowChargeLoop: { sh_SwordTwist(); SkillDisable(); break; }
-			case (uint8)EIchigoShikai::SwordTwistLoop:
+			case EIchigoState::SwordTwistLoop:
 			{
 				sh_RExplosion(); break;
 			}
@@ -239,11 +236,11 @@ void AIchigo::b_AttackDash(float value)
 
 		if (getHeroStatsComp()->FormName == BANKAI_NAME)
 		{
-			switch (getState())
+			switch (GetState())
 			{
 			case EBaseStates::Stand: 
 			{ 
-				if (SkillisActive())
+				if (IsSkillActive())
 				{
 					b_RExplosion(); SkillDisable();
 				}
@@ -254,7 +251,7 @@ void AIchigo::b_AttackDash(float value)
 				
 				break; 
 			}
-			case (uint8)EIchigoBankai::Attack_2:
+			case EIchigoState::Attack_2:
 			{
 				if (isComboTime())
 				{
@@ -262,7 +259,7 @@ void AIchigo::b_AttackDash(float value)
 				}
 				break;
 			}
-			case (uint8)EIchigoBankai::Attack_3:
+			case EIchigoState::Attack_3:
 			{
 				if (isComboTime())
 				{
@@ -281,11 +278,11 @@ void AIchigo::b_AttackDash(float value)
 
 		if (getHeroStatsComp()->FormName == SHIKAI_NAME)
 		{
-			switch (getState())
+			switch (GetState())
 			{
 			case EBaseStates::Stand:
 			{
-				if (SkillisActive())
+				if (IsSkillActive())
 				{
 					sh_GetsugaStart();
 				}
@@ -296,18 +293,18 @@ void AIchigo::b_AttackDash(float value)
 				break;
 			}
 			case EBaseStates::Jumping: { break; }
-			case (uint8)EIchigoShikai::Attack_2: { if (isComboTime()) { sh_AttackFW(); resetKeys(); } break; }
+			case EIchigoState::Attack_2: { if (isComboTime()) { sh_AttackFW(); resetKeys(); } break; }
 			case EBaseStates::PowChargeLoop: { sh_GetsugaStart(); break; }
 			} // End Switch
 		}
 
 		if (getHeroStatsComp()->FormName == BANKAI_NAME)
 		{
-			switch (getState())
+			switch (GetState())
 			{
 			case EBaseStates::Stand:
 			{
-				if (SkillisActive())
+				if (IsSkillActive())
 				{
 					//sh_GetsugaStart();
 				}
@@ -318,8 +315,8 @@ void AIchigo::b_AttackDash(float value)
 				break;
 			}
 			case EBaseStates::Jumping: { break; }
-			case (uint8)EIchigoBankai::Attack_2: { if (isComboTime()) { b_Attack_FW(); resetKeys(); } break; }
-			case (uint8)EIchigoBankai::Attack_3: { if (isComboTime()) { b_Attack_FW(); resetKeys(); } break; }
+			case EIchigoState::Attack_2: { if (isComboTime()) { b_Attack_FW(); resetKeys(); } break; }
+			case EIchigoState::Attack_3: { if (isComboTime()) { b_Attack_FW(); resetKeys(); } break; }
 			} // End Switch
 		}
 	}
@@ -328,18 +325,18 @@ void AIchigo::b_AttackDash(float value)
 	{
 		if (getHeroStatsComp()->FormName == SHIKAI_NAME)
 		{
-			switch (getState())
+			switch (GetState())
 			{
-			case EBaseStates::Stand: { if (SkillisActive()) { sh_Bankai(); } break; }
+			case EBaseStates::Stand: { if (IsSkillActive()) { sh_Bankai(); } break; }
 			case EBaseStates::PowChargeLoop: { sh_Bankai(); break; }
 			}
 		}
 
 		if (getHeroStatsComp()->FormName == BANKAI_NAME)
 		{
-			switch (getState())
+			switch (GetState())
 			{
-			case EBaseStates::Stand: { if (SkillisActive()) { b_Shikai(); } break; }
+			case EBaseStates::Stand: { if (IsSkillActive()) { b_Shikai(); } break; }
 			case EBaseStates::PowChargeLoop: { b_Shikai(); break; }
 			}
 		}
@@ -349,8 +346,11 @@ void AIchigo::b_AttackDash(float value)
 //---------------------------------------------// Attacks
 	void AIchigo::sh_Attack_1()
 	{
-		NewState		((uint8)EIchigoShikai::Attack_1, "Attack_1");
-		SetRotation		(isMovingRight());
+		FState nState;
+		nState.State = EIchigoState::Attack_1;
+		nState.Animation = "Attack_1";
+		NewState( nState );
+
 		AddImpulse		(BASE_VELOCITY, getFrameTime(2));
 		SpawnHelper		("sh_Attack_1", getFrameTime(4));
 		Combo			(getFrameTime(9));
@@ -361,8 +361,11 @@ void AIchigo::b_AttackDash(float value)
 	}
 	void AIchigo::sh_Attack_2()
 	{
-		NewState		((uint8)EIchigoShikai::Attack_2, "Attack_2");
-		SetRotation		(isMovingRight());
+		FState nState;
+		nState.State = EIchigoState::Attack_2;
+		nState.Animation = "Attack_2";
+		NewState(nState);
+
 		AddImpulse		(BASE_VELOCITY, getFrameTime(1));
 		SpawnHelper		("sh_Attack_2", getFrameTime(4));
 		Combo			(getFrameTime(9));
@@ -372,8 +375,11 @@ void AIchigo::b_AttackDash(float value)
 	}
 	void AIchigo::sh_AttackFW()
 	{
-		NewState		((uint8)EIchigoShikai::AttackFW, "AttackFW");
-		SetRotation		(isMovingRight());
+		FState nState;
+		nState.State = EIchigoState::Attack_FW;
+		nState.Animation = "AttackFW";
+		NewState(nState);
+
 		AddImpulse		(SP_VELOCITY, getFrameTime(1));
 		SpawnHelper		("sh_AttackForward", getFrameTime(5), FRotator(20.f, 0.f, 0.f));
 		Combo(getFrameTime(12));
@@ -387,13 +393,13 @@ void AIchigo::b_AttackDash(float value)
 
 	void AIchigo::sh_GetsugaFW()
 	{
-		if (!checkState((uint8)EIchigoShikai::AttackFW))
+		if (!CheckState(EIchigoState::Attack_FW))
 			return;
 
 		if (!getHeroStatsComp()->CheckSkill("Getsuga"))
 			return;
 
-		if (SkillisActive()
+		if (IsSkillActive()
 			&& getHeroStatsComp()->checkStamina(-(GETSUGA_COST))
 			&& getHeroStatsComp()->checkPower(-(GETSUGA_COST)))
 		{
@@ -405,8 +411,11 @@ void AIchigo::b_AttackDash(float value)
 
 	void AIchigo::sh_AttackB()
 	{
-		NewState		((uint8)EIchigoShikai::AttackB, "AttackB");
-		SetRotation		(isMovingRight());
+		FState nState;
+		nState.State = EIchigoState::Attack_B;
+		nState.Animation = "AttackB";
+		NewState(nState);
+
 		AddImpulse		(SP_VELOCITY, getFrameTime(4));
 		SpawnHelper		("sh_AttackBack", getFrameTime(6), FRotator(20.f, 0.f, 0.f));
 		Combo(getFrameTime(14));
@@ -420,13 +429,13 @@ void AIchigo::b_AttackDash(float value)
 
 	void AIchigo::sh_GetsugaB()
 	{
-		if (!checkState((uint8)EIchigoShikai::AttackB))
+		if (!CheckState(EIchigoState::Attack_B))
 			return;
 
 		if (!getHeroStatsComp()->CheckSkill("Getsuga"))
 			return;
 
-		if (SkillisActive()
+		if (IsSkillActive()
 			&& getHeroStatsComp()->checkStamina(-(GETSUGA_COST))
 			&& getHeroStatsComp()->checkPower(-(GETSUGA_COST)))
 		{
@@ -442,8 +451,12 @@ void AIchigo::b_AttackDash(float value)
 		if (!getHeroStatsComp()->CheckSkill("SwordTwist"))
 			return;
 
-		NewState((uint8)EIchigoShikai::SwordTwist, "SwordTwist", 0, false, false);
-		SetRotation(isMovingRight());
+		FState nState;
+		nState.State = EIchigoState::SwordTwist;
+		nState.Animation = "SwordTwist";
+		nState.EndState = false;
+		NewState(nState);
+
 		SpawnHelper("sh_SwordTwist", getFrameTime(4));
 		SetBlockingAttack(EBlockType::Both, AnimElemTime(4), AnimElemTime(10));
 
@@ -453,19 +466,28 @@ void AIchigo::b_AttackDash(float value)
 
 	void AIchigo::sh_SwordTwistLoop()
 	{
-		if (getState() == (uint8)EIchigoShikai::SwordTwist)
+		if (CheckState(EIchigoState::SwordTwist))
 		{
-			NewState((uint8)EIchigoShikai::SwordTwistLoop, "SwordTwistLoop", 0, false, false);
-			GetWorldTimerManager().SetTimer(sh_STwistEndTimer, this, &AIchigo::sh_SwordTwistEnd, cTime(1.f));
+			FState nState;
+			nState.State = EIchigoState::SwordTwistLoop;
+			nState.Animation = "SwordTwistLoop";
+			nState.EndState = false;
+			NewState(nState);
+
+			SET_TIMER(sh_STwistEndTimer, this, &AIchigo::sh_SwordTwistEnd, cTime(1.f));
 			Combo(getFrameTime(3));
 		}
 	}
 
 	void AIchigo::sh_SwordTwistEnd()
 	{
-		if (getState() == (uint8)EIchigoShikai::SwordTwistLoop)
+		if (CheckState(EIchigoState::SwordTwistLoop))
 		{
-			NewState((uint8)EIchigoShikai::SwordTwistEnd, "SwordTwist", 11);
+			FState nState;
+			nState.State = EIchigoState::SwordTwistEnd;
+			nState.Animation = "SwordTwist";
+			nState.AnimationFrame = 11;
+			NewState(nState);
 		}
 	}
 
@@ -475,18 +497,24 @@ void AIchigo::b_AttackDash(float value)
 		if (getHeroStatsComp()->checkStamina(-(GETSUGA_TENSHOU_COST))
 			&& getHeroStatsComp()->checkPower(-(GETSUGA_TENSHOU_COST)))
 		{
-			NewState		((uint8)EIchigoShikai::GetsugaStart, "GetsugaStart");
-			SetRotation		(isMovingRight());
+			FState nState;
+			nState.State = EIchigoState::GetsugaStart;
+			nState.Animation = "GetsugaStart";
+			NewState(nState);
+
 			Combo			(getFrameTime(10));
 		}
 	}
 
 	void AIchigo::sh_GetsugaSlash()
 	{
-		NewState		((uint8)EIchigoShikai::GetsugaFW, "GetsugaFW");
-		SetRotation		(isMovingRight());
+		FState nState;
+		nState.State = EIchigoState::GetsugaFW;
+		nState.Animation = "GetsugaFW";
+		NewState(nState);
+
 		SpawnHelper		("sh_GetsugaHelper", getFrameTime(3));
-		GET_STATS->AddStamina(GETSUGA_TENSHOU_COST, getFrameTime(2), true, getState());
+		GET_STATS->AddStamina(GETSUGA_TENSHOU_COST, getFrameTime(2), true, GetState());
 
 		SetBlockingAttack
 			(EBlockType::Both, getFrameTime(0), BLOCK_DURATION);
@@ -503,14 +531,19 @@ void AIchigo::b_AttackDash(float value)
 
 		if (getHeroStatsComp()->checkStamina(-(EXPLOSION_COST)) && getHeroStatsComp()->checkPower(-(EXPLOSION_COST)))
 		{
-			NewState((uint8)EIchigoShikai::RExplosion, "RExplosion");
+			FState nState;
+			nState.State = EIchigoState::RExplosion;
+			nState.Animation = "RExplosion";
+			nState.Rotate = false;
+			NewState(nState);
+
 			SpawnHelper("sh_ReiatsuExplosion", getFrameTime(8), FRotator(0.f), FVector(1.5f));
 			Combo(getFrameTime(18));
 
 			DangerN(getFrameTime(5), EDangerType::MeleeAttack);
 			SetBlockingAttack(EBlockType::Both, AnimElemTime(5), AnimElemTime(15));
 
-			GET_STATS->AddStamina(EXPLOSION_COST, AnimElemTime(10), true, getState());
+			GET_STATS->AddStamina(EXPLOSION_COST, AnimElemTime(10), true, GetState());
 		}
 	}
 
@@ -521,8 +554,13 @@ void AIchigo::b_AttackDash(float value)
 		if (!getHeroStatsComp()->CheckSkill("Bankai"))
 			return;
 
-		NewState((uint8)EIchigoShikai::Bankai, "Bankai");
-		Combo(getFrameTime(30));
+		FState nState;
+		nState.State = EIchigoState::Bankai;
+		nState.Animation = "Bankai";
+		nState.Rotate = false;
+		NewState(nState);
+
+		Combo(getFrameTime(32));
 		SpawnHelper("sh_ReiatsuExplosion", getFrameTime(28), FRotator(0.f), FVector(2.f));
 		SetImmortality(AnimElemTime(35));
 		Bankai();
@@ -536,8 +574,11 @@ void AIchigo::b_AttackDash(float value)
 //---------------------------------------------// Bankai Actions //////////////////////////////////
 	void AIchigo::b_Attack_1()
 	{
-		NewState((uint8)EIchigoBankai::Attack_1, "Attack_1");
-		SetRotation(isMovingRight());
+		FState nState;
+		nState.State = EIchigoState::Attack_1;
+		nState.Animation = "Attack_1";
+		NewState(nState);
+
 		AddImpulse(BASE_VELOCITY, getFrameTime(1));
 		SpawnHelper("b_Attack_1", getFrameTime(3));
 		Combo(getFrameTime(7));
@@ -548,8 +589,11 @@ void AIchigo::b_AttackDash(float value)
 
 	void AIchigo::b_Attack_2()
 	{
-		NewState((uint8)EIchigoBankai::Attack_2, "Attack_2");
-		SetRotation(isMovingRight());
+		FState nState;
+		nState.State = EIchigoState::Attack_2;
+		nState.Animation = "Attack_2";
+		NewState(nState);
+
 		AddImpulse(BASE_VELOCITY, getFrameTime(1));
 		SpawnHelper("b_Attack_2", getFrameTime(3));
 		Combo(getFrameTime(7));
@@ -560,8 +604,11 @@ void AIchigo::b_AttackDash(float value)
 
 	void AIchigo::b_Attack_3()
 	{
-		NewState((uint8)EIchigoBankai::Attack_3, "Attack_3");
-		SetRotation(isMovingRight());
+		FState nState;
+		nState.State = EIchigoState::Attack_3;
+		nState.Animation = "Attack_3";
+		NewState(nState);
+
 		AddImpulse(BASE_VELOCITY, getFrameTime(3));
 		SpawnHelper("b_Attack_3", getFrameTime(4));
 		Combo(getFrameTime(9));
@@ -572,8 +619,11 @@ void AIchigo::b_AttackDash(float value)
 
 	void AIchigo::b_Attack_4()
 	{
-		NewState((uint8)EIchigoBankai::Attack_4, "Attack_4");
-		SetRotation(isMovingRight());
+		FState nState;
+		nState.State = EIchigoState::Attack_4;
+		nState.Animation = "Attack_4";
+		NewState(nState);
+
 		AddImpulse(BASE_VELOCITY, getFrameTime(2));
 		SpawnHelper("b_Attack_4", getFrameTime(3));
 		Combo(getFrameTime(10));
@@ -587,8 +637,10 @@ void AIchigo::b_AttackDash(float value)
 		if (!GET_STATS->checkStamina(2.f / getHeroStatsComp()->getTeleportCost(), false))
 			return;
 
-		NewState((uint8)EIchigoBankai::Attack_FW, "Attack_FW");
-		SetRotation(isMovingRight());
+		FState nState;
+		nState.State = EIchigoState::Attack_FW;
+		nState.Animation = "Attack_FW";
+		NewState(nState);
 
 		// Helpers
 		SpawnHelper("b_Attack_FW", getFrameTime(5));
@@ -602,7 +654,7 @@ void AIchigo::b_AttackDash(float value)
 			-2.f / getHeroStatsComp()->getTeleportCost(), 
 			getFrameTime(4), 
 			false, 
-			(uint8)EIchigoBankai::Attack_FW
+			EIchigoState::Attack_FW
 		);
 
 		SetBlockingAttack(EBlockType::Forward, getFrameTime(4), BLOCK_DURATION);
@@ -615,8 +667,11 @@ void AIchigo::b_AttackDash(float value)
 
 	void AIchigo::b_Attack_B()
 	{
-		NewState((uint8)EIchigoBankai::Attack_B, "Attack_B");
-		SetRotation(isMovingRight());
+		FState nState;
+		nState.State = EIchigoState::Attack_B;
+		nState.Animation = "Attack_B";
+		NewState(nState);
+
 		AddImpulse(SP_VELOCITY, getFrameTime(4));
 		SpawnHelper("b_Attack_B", getFrameTime(6));
 		Combo(getFrameTime(11));
@@ -637,7 +692,11 @@ void AIchigo::b_AttackDash(float value)
 		if (!getHeroStatsComp()->CheckSkill("Bankai"))
 			return;
 
-		NewState((uint8)EIchigoBankai::Shikai, "Shikai");
+		FState nState;
+		nState.State = EIchigoState::Shikai;
+		nState.Animation = "Shikai";
+		NewState(nState);
+
 		Combo(getFrameTime(8));
 		SetImmortality(AnimElemTime(4));
 		Shikai();
@@ -660,10 +719,10 @@ void AIchigo::b_AttackDash(float value)
 	{
 		EComboKey key = getNextKey();
 
-		switch (getState())
+		switch (GetState())
 		{
 
-		case (uint8)EIchigoShikai::Attack_1: 
+		case EIchigoState::Attack_1:
 		{ 
 			switch (key)
 			{
@@ -672,7 +731,7 @@ void AIchigo::b_AttackDash(float value)
 			}
 			break;
 		}
-		case (uint8)EIchigoShikai::Attack_2:
+		case EIchigoState::Attack_2:
 		{
 			switch (key)
 			{
@@ -682,7 +741,7 @@ void AIchigo::b_AttackDash(float value)
 			}
 			break;
 		}
-		case (uint8)EIchigoShikai::GetsugaStart:
+		case EIchigoState::GetsugaStart:
 		{
 			sh_GetsugaSlash();
 			break;
@@ -694,10 +753,10 @@ void AIchigo::b_AttackDash(float value)
 	{
 		EComboKey key = getNextKey();
 
-		switch (getState())
+		switch (GetState())
 		{
 
-		case (uint8)EIchigoBankai::Attack_1:
+		case EIchigoState::Attack_1:
 		{
 			switch (key)
 			{
@@ -706,7 +765,7 @@ void AIchigo::b_AttackDash(float value)
 			} // Switch End
 			break;
 		}
-		case (uint8)EIchigoBankai::Attack_2:
+		case EIchigoState::Attack_2:
 		{
 			switch (key)
 			{
@@ -717,7 +776,7 @@ void AIchigo::b_AttackDash(float value)
 			} // Switch End
 			break;
 		}
-		case (uint8)EIchigoBankai::Attack_3:
+		case EIchigoState::Attack_3:
 		{
 			switch (key)
 			{
@@ -725,7 +784,7 @@ void AIchigo::b_AttackDash(float value)
 			} // Switch End
 			break;
 		}
-		case (uint8)EIchigoBankai::Attack_4:
+		case EIchigoState::Attack_4:
 		{
 			switch (key)
 			{

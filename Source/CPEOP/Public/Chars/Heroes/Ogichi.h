@@ -15,11 +15,12 @@
 
 /* */
 UENUM()
-enum class EOgichiShikai : uint8
+enum EOgichiState
 {
-	Intro = (uint8)EBaseStates::LastIndex,
+	Intro = EBaseStates::LastIndex,
 	Attack_1,
 	Attack_2,
+	Attack_3,
 	AttackFW,
 	AttackB,
 	SwordTwist,
@@ -30,17 +31,7 @@ enum class EOgichiShikai : uint8
 	Getsuga,
 
 	Bankai,
-	LastIndex,
-};
 
-UENUM()
-enum class EOgichiBankai : uint8
-{
-	Intro = (uint8)EOgichiShikai::LastIndex,
-	Attack_1,
-	Attack_2,
-	Attack_3,
-	LastIndex,
 };
 
 UCLASS()

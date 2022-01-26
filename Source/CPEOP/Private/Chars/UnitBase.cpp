@@ -116,7 +116,7 @@ void AUnitBase::Tick(float delta)
 		if (Control)
 		{
 			AddMovementInput(MoveVector, 1.f);
-			SetRotation(isMovingRight());
+			SetRotation(IsMovingRight());
 		}
 	}
 
@@ -127,7 +127,7 @@ void AUnitBase::Tick(float delta)
 
 	void AUnitBase::SetRotation(bool right, bool moveVec)
 	{
-		if (checkState(EBaseStates::Fall))
+		if (CheckState(EBaseStates::Fall))
 			return;
 
 		if (moveVec)
@@ -182,9 +182,14 @@ void AUnitBase::Tick(float delta)
 	{
 		if (State == EBaseStates::Stand)
 		{
-			NewState(EBaseStates::JumpStart, "JumpStart", 0, false, false);
+			FState nState;
+			nState.State = EBaseStates::JumpStart;
+			nState.Animation = "JumpStart";
+			nState.EndState = false;
+			NewState(nState);
+
 			FTimerHandle nTimer;
-			SET_TIMER(nTimer, this, &AUnitBase::Jumping, cTime(0.2f));
+			SET_TIMER(nTimer, this, &AUnitBase::Jumping, AnimElemTime(GetAnim(nState.Animation)->GetNumFrames()));
 		}
 		else if (State == EBaseStates::Fall)
 		{
@@ -196,7 +201,11 @@ void AUnitBase::Tick(float delta)
 	{
 		if (State == EBaseStates::JumpStart)
 		{
-			NewState(EBaseStates::Jumping, "None", 0, true, false);
+			FState nState;
+			nState.State = EBaseStates::Jumping;
+			nState.EndState = false;
+			NewState(nState);
+
 			FVector jumpVector = MoveVector * GetCharacterMovement()->MaxWalkSpeed;
 			jumpVector.Z = GetCharacterMovement()->JumpZVelocity;
 
@@ -208,7 +217,10 @@ void AUnitBase::Tick(float delta)
 	{
 		if (State == EBaseStates::Jumping || State == EBaseStates::Stand)
 		{
-			NewState(EBaseStates::JumpLand, "JumpLand", 0, false, true);
+			FState nState;
+			nState.State = EBaseStates::JumpLand;
+			nState.Animation = "JumpLand";
+			NewState(nState);
 		}
 	}
 // End Movement //===============================------------------------------
@@ -275,8 +287,8 @@ void AUnitBase::Tick(float delta)
 			
 			if (nHelper->bAttachRotation)
 			{
-				info.rotation.Yaw	= (isLookingRight()) ? 0.f : 180.f;
-				nHelper->InitialLocation.X = (isLookingRight()) ? nHelper->InitialLocation.X : nHelper->InitialLocation.X *-1.f;
+				info.rotation.Yaw	= (IsLookingRight()) ? 0.f : 180.f;
+				nHelper->InitialLocation.X = (IsLookingRight()) ? nHelper->InitialLocation.X : nHelper->InitialLocation.X *-1.f;
 			}
 
 			nHelper->InitialLocation.Y += 1.f;
@@ -304,9 +316,9 @@ void AUnitBase::Tick(float delta)
 		bool crit   { false };
 	
 		FVector2D impulse = damageOption->impulse;
-		impulse.X = ((fromBehind && !isLookingRight()) || (!fromBehind && isLookingRight())) ? impulse.X * -1.f : impulse.X;
+		impulse.X = ((fromBehind && !IsLookingRight()) || (!fromBehind && IsLookingRight())) ? impulse.X * -1.f : impulse.X;
 
-		if (isBlockingAttack())
+		if (IsBlocking())
 		{
 			block = !fromBehind;
 		}
@@ -337,7 +349,7 @@ void AUnitBase::Tick(float delta)
 			crit = damageOption->isCriticalDamage(); 
 			
 			// Spark
-			CreateSpark(damageOption->sparkIndex, damageOption->sparkScale, (damageCauser->isLookingRight()) ? damageOption->sparkRotation : damageOption->sparkRotation * -1.f);
+			CreateSpark(damageOption->sparkIndex, damageOption->sparkScale, (damageCauser->IsLookingRight()) ? damageOption->sparkRotation : damageOption->sparkRotation * -1.f);
 		}
 
 		// Taking Damage
@@ -346,14 +358,19 @@ void AUnitBase::Tick(float delta)
 		else		{ damage = getStatsComp()->TakeDamage(damageOption->damage, block);			}
 
 		// Damage Text
-		CreateDamageText(damage, damageCauser->isLookingRight(), crit);
+		CreateDamageText(damage, damageCauser->IsLookingRight(), crit);
 
 		AddImpulse(impulse, HIT_TIME);
 
 		// Change State
 		if (!block)
 		{
-			NewState(EBaseStates::Hit, "Hit", 0, false, true);
+			FState nState;
+			nState.State = EBaseStates::Hit;
+			nState.Animation = "Hit";
+			nState.EndState = false;
+			NewState(nState);
+
 			EndStateDeferred(0.4f);
 			
 			Dead = getStatsComp()->GetHealth() < 0.f;
@@ -389,7 +406,12 @@ void AUnitBase::Tick(float delta)
 	{
 		if (State == EBaseStates::Hit)
 		{
-			NewState(EBaseStates::Fall, "FallUp", 0, false, false);
+			FState nState;
+			nState.State = EBaseStates::Fall;
+			nState.Animation = "FallUp";
+			nState.EndState = false;
+			NewState(nState);
+
 			EndStateDeferred(3.f);
 		}
 	}
@@ -422,14 +444,20 @@ void AUnitBase::Tick(float delta)
 		if (GetCharacterMovement()->IsMovingOnGround() 
 			&& FMath::IsNearlyZero(GetVelocity().X + GetVelocity().Z))
 		{
-			NewState(EBaseStates::StandUp, "StandUp");
+			FState nState;
+			nState.State = EBaseStates::StandUp;
+			nState.Animation = "StandUp";
+			NewState(nState);
 		}
 		else
 		{
 			if (GetVelocity().Z > 20.f)
 			{
-				NewState(EBaseStates::StandUp, "StandUpAir");
-				GetSprite()->PlayFromStart();
+				FState nState;
+				nState.State = EBaseStates::StandUp;
+				nState.Animation = "StandUpAir";
+				NewState(nState);
+				//GetSprite()->PlayFromStart();
 			}
 		}
 	}
@@ -496,24 +524,28 @@ void AUnitBase::Tick(float delta)
 // End Taking Damage //==========================------------------------------
 
 // State Type //=================================------------------------------	
-	void AUnitBase::NewState(uint8 state, FName anim, uint8 frame, bool ctrl, bool endState)
+	void AUnitBase::NewState(FState& state)
 	{
-		State = state;
-		UPaperFlipbook* nAnim{ AnimData->FindRef(anim) };
+		State = state.State;
+		UPaperFlipbook* nAnim{ AnimData->FindRef(state.Animation) };
 		if (nAnim)
 		{
-			Control = ctrl;
+			Control = false;
 			GetSprite()->SetFlipbook(nAnim);
-			GetSprite()->SetLooping(!endState);
-			GetSprite()->SetPlaybackPositionInFrames(frame, false);
-			if (endState)
+			GetSprite()->SetLooping(!state.EndState);
+			GetSprite()->SetPlaybackPositionInFrames(state.AnimationFrame, false);
+			GetSprite()->Play();
+
+			if (state.Rotate)
 			{
-				EndStateDeferred(getFrameTime(nAnim->GetNumFrames() - frame));
+				SetRotation(IsMovingRight());
 			}
-			else
+
+			if (state.EndState)
 			{
-				PAUSE_TIMER(EndStateTimer);
+				EndStateDeferred(getFrameTime(nAnim->GetNumFrames() - state.AnimationFrame));
 			}
+			else { PAUSE_TIMER(EndStateTimer); }
 		}
 		else
 		{
@@ -556,11 +588,15 @@ void AUnitBase::Tick(float delta)
 		{
 			if (GetCharacterMovement()->IsMovingOnGround())
 			{
-				NewState(EBaseStates::Stand, "None");
+				FState nState;
+				nState.State = EBaseStates::Stand;
+				NewState(nState);
 			}
 			else
 			{
-				NewState(EBaseStates::Jumping, "None");
+				FState nState;
+				nState.State = EBaseStates::Jumping;
+				NewState(nState);
 			}
 		}
 	}

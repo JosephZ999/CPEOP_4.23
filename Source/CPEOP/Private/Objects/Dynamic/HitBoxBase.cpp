@@ -65,7 +65,7 @@ void AHitBoxBase::Init(AUnitBase* ownerChar, float damage, float crit)
 void AHitBoxBase::OnBeginOverlap(AActor * OverlappedActor, AActor * OtherActor)
 {
 	AUnitBase* HitUnit = Cast<AUnitBase>(OtherActor);
-	if (HitUnit && !HitUnit->checkTeam(OwnerCharacter->getTeam()) && !HitUnit->isFalling() && !HitUnit->checkState(EBaseStates::Teleport))
+	if (HitUnit && !HitUnit->CheckTeam(OwnerCharacter->GetTeam()) && !HitUnit->IsFalling() && !HitUnit->CheckState(EBaseStates::Teleport))
 	{
 		++HitCount;
 		OnHit(HitCount, HitUnit);
@@ -76,15 +76,15 @@ void AHitBoxBase::OnBeginOverlap(AActor * OverlappedActor, AActor * OtherActor)
 		{
 		case EImpulseType::Rotation: 
 		{
-			fBehind =	(FMath::IsNearlyZero(GetActorRotation().Yaw) && HitUnit->isLookingRight()) 
-				||		(!FMath::IsNearlyZero(GetActorRotation().Yaw) && !HitUnit->isLookingRight());
+			fBehind =	(FMath::IsNearlyZero(GetActorRotation().Yaw) && HitUnit->IsLookingRight()) 
+				||		(!FMath::IsNearlyZero(GetActorRotation().Yaw) && !HitUnit->IsLookingRight());
 			break;
 		}
 		// case EImpulseType::Location: break;
 		case EImpulseType::OwnerLocation:
 		{
-			fBehind =	(HitUnit->GetActorLocation().X > OwnerCharacter->GetActorLocation().X && HitUnit->isLookingRight()) 
-					||	(HitUnit->GetActorLocation().X < OwnerCharacter->GetActorLocation().X && !HitUnit->isLookingRight());
+			fBehind =	(HitUnit->GetActorLocation().X > OwnerCharacter->GetActorLocation().X && HitUnit->IsLookingRight()) 
+					||	(HitUnit->GetActorLocation().X < OwnerCharacter->GetActorLocation().X && !HitUnit->IsLookingRight());
 			break;
 		}
 

@@ -17,22 +17,13 @@
 class UCurveFloat;
 
 UENUM()
-enum class ECameraMode : uint8
-{
-	Free,
-	Action,
-	Target,
-};
-
+enum class ECameraMode : uint8 { Free, Action, Target, };
 enum EComboKey { CK_None, CK_Attack, CK_AForward, CK_ABackward, CK_Jump, CK_Block, CK_Dash };
 
 UCLASS()
 class CPEOP_API AHeroBase : public AUnitBase
 {
 	GENERATED_BODY()
-
-	// Лучше переименовать тип указателей на функции
-	typedef void(*FuncPtr)(void);
 
 public:
 	AHeroBase();
@@ -184,7 +175,7 @@ public:
 	void SkillEnable();
 	void SkillDisable();
 	void SkillCanceled();
-	bool SkillisActive()const { return Skill; }
+	bool IsSkillActive()const { return Skill; }
 private:
 	FTimerHandle skillEnTimer;
 	FTimerHandle skillDisTimer;
@@ -218,7 +209,7 @@ public:
 	void Teleport(FVector nLocation);
 
 private:
-	inline void TeleportTick(float delta);
+	void TeleportTick(float delta);
 	FVector tp_initialLocation;
 	FVector tp_Vector;
 	float tp_DistPassed;

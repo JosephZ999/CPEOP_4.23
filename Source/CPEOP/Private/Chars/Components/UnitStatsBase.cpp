@@ -26,7 +26,7 @@ void UUnitStatsBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OwnerState = &(Cast<AUnitBase>(GetOwner())->getStateRef());
+	OwnerState = &(Cast<AUnitBase>(GetOwner())->GetStateRef());
 }
 
 
