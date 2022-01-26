@@ -167,13 +167,13 @@ bool UHeroStats::AddStats(FVector stats, bool force)
 
 int32 UHeroStats::GetLevelScore() const
 {
-	return SavedStats.level * 1.5f - (SavedStats.strength + SavedStats.agility + SavedStats.spirit + 1);
+	return SavedStats.level * 2 - (SavedStats.strength + SavedStats.agility + SavedStats.spirit + 2);
 }
 
 float UHeroStats::TakeDamage(float damage, bool blocked)
 {
 	if (blocked)
-		damage = FMath::Max(0.f, damage - Armor * 5);
+		damage = FMath::Max(0.f, damage - Armor * 10);
 	else
 		damage = FMath::Max(0.f, damage - Armor);
 
