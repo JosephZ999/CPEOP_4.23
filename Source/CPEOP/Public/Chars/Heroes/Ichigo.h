@@ -18,24 +18,24 @@
 UENUM()
 enum EIchigoState
 {
-	Intro = EBaseStates::LastIndex,
-	Attack_1,
-	Attack_2,
-	Attack_3,
-	Attack_4,
-	Attack_FW,
-	Attack_B,
+	Ichi_Intro = EBaseStates::LastIndex,
+	Ichi_Attack_1,
+	Ichi_Attack_2,
+	Ichi_Attack_3,
+	Ichi_Attack_4,
+	Ichi_Attack_FW,
+	Ichi_Attack_B,
 
-	SwordTwist,
-	SwordTwistLoop,
-	SwordTwistEnd,
-	GetsugaStart,
-	GetsugaFW,
+	Ichi_SwordTwist,
+	Ichi_SwordTwistLoop,
+	Ichi_SwordTwistEnd,
+	Ichi_GetsugaStart,
+	Ichi_GetsugaFW,
 
-	RExplosion,
+	Ichi_RExplosion,
 
-	Shikai,
-	Bankai,
+	Ichi_Shikai,
+	Ichi_Bankai,
 
 };
 
@@ -69,7 +69,7 @@ public:
 	void Shikai() { ChangeForm(SHIKAI_NAME);	AnimData = &ShikaiAnim; }
 	void Bankai() {	ChangeForm(BANKAI_NAME);	AnimData = &BankaiAnim;	}
 
-	// Shikai Actions
+	// Ichi_Shikai Actions
 	void sh_Attack_1();
 	void sh_Attack_2();
 	void sh_AttackFW();
@@ -98,6 +98,7 @@ public:
 	void b_Attack_FW();
 	void b_Attack_B();
 
+	void b_Getsuga();
 	void b_RExplosion();
 
 	void b_Shikai();

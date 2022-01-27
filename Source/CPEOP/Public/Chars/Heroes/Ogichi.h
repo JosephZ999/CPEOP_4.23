@@ -64,7 +64,7 @@ public:
 	void Shikai() { ChangeForm(SHIKAI_NAME);	AnimData = &ShikaiAnim; }
 	void Bankai() { ChangeForm(BANKAI_NAME);	AnimData = &BankaiAnim; }
 
-	// Shikai Actions
+	// Ichi_Shikai Actions
 	void sh_Attack_1();
 	void sh_Attack_2();
 	void sh_AttackFW();

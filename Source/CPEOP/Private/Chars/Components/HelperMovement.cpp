@@ -15,7 +15,7 @@ UHelperMovement::UHelperMovement()
 	// ...
 
 	IsEnabled = false;
-	Speed = 200.f;
+	Speed = 250.f;
 	MoveVector = FVector(1.f, 0.f, 0.f);
 	UpdatedVector = FVector(0.f);
 }

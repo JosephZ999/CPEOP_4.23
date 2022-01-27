@@ -36,7 +36,7 @@ AOgichi::AOgichi()
 	InitHelper("sh_GetsugaFWHelper",	HIT_LOC "sh_GetsugaFWHelper");
 
 // Animations //
-	// Shikai
+	// Ichi_Shikai
 	AnimData = &ShikaiAnim;
 	AddAnimation("Stand",			ANIM_LOC "Stand");
 	AddAnimation("Walk",			ANIM_LOC "Walk");
@@ -195,7 +195,7 @@ void AOgichi::Btn_Bankai()
 	}
 }
 
-//---------------------------------------------// Shikai Actions //////////////////////////////////
+//---------------------------------------------// Ichi_Shikai Actions //////////////////////////////////
 //---------------------------------------------// Attacks
 void AOgichi::sh_Attack_1()
 {
