@@ -18,11 +18,11 @@ class UMonsterStats;
 UENUM()
 enum EMonsterStates
 {
-	Attack_1 = EBaseStates::LastIndex,
-	Attack_2,
-	AttackRanged_1,
-	AttackRanged_2,
-	Super,
+	M_Attack_1 = EBaseStates::LastIndex,
+	M_Attack_2,
+	M_AttackRanged_1,
+	M_AttackRanged_2,
+	M_Super,
 };
 
 UCLASS()

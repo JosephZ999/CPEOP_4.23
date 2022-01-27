@@ -17,20 +17,20 @@
 UENUM()
 enum EOgichiState
 {
-	Intro = EBaseStates::LastIndex,
-	Attack_1,
-	Attack_2,
-	Attack_3,
-	AttackFW,
-	AttackB,
-	SwordTwist,
-	SwordTwistLoop,
-	SwordTwistEnd,
-	SwordThrow,
+	Ogi_Intro = EBaseStates::LastIndex,
+	Ogi_Attack_1,
+	Ogi_Attack_2,
+	Ogi_Attack_3,
+	Ogi_AttackFW,
+	Ogi_AttackB,
+	Ogi_SwordTwist,
+	Ogi_SwordTwistLoop,
+	Ogi_SwordTwistEnd,
+	Ogi_SwordThrow,
 
-	Getsuga,
+	Ogi_Getsuga,
 
-	Bankai,
+	Ogi_Bankai,
 
 };
 

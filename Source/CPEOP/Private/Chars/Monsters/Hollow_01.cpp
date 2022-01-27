@@ -63,7 +63,7 @@ void AHollow_01::UpdateAnim()
 void AHollow_01::Attack()
 {
 	FState nState;
-	nState.State = EMonsterStates::Attack_1;
+	nState.State = EMonsterStates::M_Attack_1;
 	nState.Animation = "Attack";
 	NewState(nState);
 

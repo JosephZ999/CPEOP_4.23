@@ -62,7 +62,7 @@ void AHollowAI_1::AITypeDef()
 			StopMoving();
 			OwnerRef->SetRotation(isEnemyOnRight(), false);
 			OwnerRef->Attack();
-			if (OwnerRef->GetState() == EMonsterStates::Attack_1)
+			if (OwnerRef->GetState() == EMonsterStates::M_Attack_1)
 			{
 				FVector vec = (getForwardVector() * getDistance() * 5.f) * AttackVelScale;
 				OwnerRef->AddImpulse(FVector(vec.X, vec.Y, 20.f), 0.1f);
@@ -82,7 +82,7 @@ void AHollowAI_1::AITypeDef()
 
 		break;
 	}
-	case EMonsterStates::Attack_1:
+	case EMonsterStates::M_Attack_1:
 	{
 		if (OwnerRef->ComboTime())
 		{
@@ -118,7 +118,7 @@ void AHollowAI_1::AITypeRanged()
 			StopMoving();
 			OwnerRef->SetRotation(isEnemyOnRight(), false);
 			OwnerRef->Attack();
-			if (OwnerRef->GetState() == EMonsterStates::Attack_1)
+			if (OwnerRef->GetState() == EMonsterStates::M_Attack_1)
 			{
 				FVector vel{ 0.f, 0.f, 20.f };
 				vel.Y = getDistanceY() * 5 * ((getEnemyLocation().Y > getPawnLocation().Y) ? 1.f : -1.f);
@@ -127,7 +127,7 @@ void AHollowAI_1::AITypeRanged()
 		}
 		break;
 	}
-	case EMonsterStates::Attack_1:
+	case EMonsterStates::M_Attack_1:
 	{
 		if (OwnerRef->ComboTime())
 		{

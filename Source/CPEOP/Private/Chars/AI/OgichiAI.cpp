@@ -122,7 +122,7 @@ void AOgichiAI::AIBody()
 		{
 			OgichiRef->SetMoveVector(getForwardVector(60));
 
-			// Getsuga
+			// Ogi_Getsuga
 			if (UKismetMathLibrary::RandomBoolWithWeight(0.01f) 
 				&& OgichiRef->getHeroStatsComp()->checkStamina(-(GETSUGA_COST))
 				&& OgichiRef->getHeroStatsComp()->checkPower(-(GETSUGA_COST))
@@ -168,7 +168,7 @@ void AOgichiAI::AIBody()
 		}
 	}
 
-	case EOgichiState::Attack_1:
+	case EOgichiState::Ogi_Attack_1:
 	{
 		if (!OgichiRef->isComboTime()) { return; }
 
@@ -194,7 +194,7 @@ void AOgichiAI::AIBody()
 		break;
 	}
 
-	case EOgichiState::Attack_2:
+	case EOgichiState::Ogi_Attack_2:
 	{
 		if (!OgichiRef->isComboTime()) { return; }
 
@@ -233,7 +233,7 @@ void AOgichiAI::AIBody()
 		}
 	}
 
-	case EOgichiState::SwordTwistLoop:
+	case EOgichiState::Ogi_SwordTwistLoop:
 	{
 		if (getEnemy()->IsFalling())
 		{
@@ -244,7 +244,7 @@ void AOgichiAI::AIBody()
 		if (getDistanceY() > MAX_DIST_Y)
 			return;
 
-		// Getsuga
+		// Ogi_Getsuga
 		if (getDistanceX() > MAX_DIST_X && getDistanceX() < MAX_DIST_X * 4
 			&& UKismetMathLibrary::RandomBoolWithWeight(0.2f)
 			&& OgichiRef->getHeroStatsComp()->checkStamina(-(GETSUGA_TENSHOU_COST))

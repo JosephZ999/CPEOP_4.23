@@ -54,6 +54,8 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+public:
+	virtual void Tick(float DeltaTime) override;
 
 public:	
 	// HitBox Initialization

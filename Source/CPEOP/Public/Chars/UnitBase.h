@@ -236,7 +236,7 @@ public:
 	// Helper //=====================================------------------------------
 protected:
 	/*Добавляет класс "HitBox" в массив компонента "HitComp"
-	* Пример: InitHelper("Attack_1, "Blueprint/HitBox/Attack_1")*/
+	* Пример: InitHelper("Ogi_Attack_1, "Blueprint/HitBox/Ogi_Attack_1")*/
 	void InitHelper(FName name, FString classPath = FString());
 
 	/* Собирает данные о создаваемом обьекте и запускает таймер для спавна */

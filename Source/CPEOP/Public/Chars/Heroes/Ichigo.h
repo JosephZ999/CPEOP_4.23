@@ -90,7 +90,7 @@ public:
 
 	void sh_Bankai();
 
-	// Bankai Actions
+	// Ogi_Bankai Actions
 	void b_Attack_1();
 	void b_Attack_2();
 	void b_Attack_3();
@@ -102,7 +102,7 @@ public:
 
 	void b_Shikai();
 
-	// Bankai Dash Attack (FW)
+	// Ogi_Bankai Dash Attack (FW)
 protected:
 	UFUNCTION()
 	void b_AttackDash(float value);

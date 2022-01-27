@@ -117,13 +117,13 @@ void AOgichi::Attack()
 		{
 		case EBaseStates::Stand:		{ sh_Attack_1(); break; }
 		case EBaseStates::Jumping:		{ break; }
-		case EOgichiState::SwordTwistLoop:
+		case EOgichiState::Ogi_SwordTwistLoop:
 		{ 
 			SET_TIMER(sh_STwistEndTimer, this, &AOgichi::sh_SwordTwistEnd, cTime(1.f));
 			GET_STATS->AddStamina(0.07);
 			break; 
 		}
-		case EOgichiState::Attack_1: { if (isComboTime()) { sh_Attack_2(); resetKeys(); } break; }
+		case EOgichiState::Ogi_Attack_1: { if (isComboTime()) { sh_Attack_2(); resetKeys(); } break; }
 		
 		} // End Switch
 
@@ -145,13 +145,13 @@ void AOgichi::AttackBack()
 		}
 		case EBaseStates::Jumping: { break; }
 
-		case EOgichiState::SwordTwistLoop:
+		case EOgichiState::Ogi_SwordTwistLoop:
 		{
 			if (IsSkillActive()) { SkillDisable(); }
 			else { sh_AttackB2(); }
 			break;
 		}
-		case EOgichiState::Attack_2: { if (isComboTime()) { sh_SwordTwist(); resetKeys(); } break; }
+		case EOgichiState::Ogi_Attack_2: { if (isComboTime()) { sh_SwordTwist(); resetKeys(); } break; }
 		case EBaseStates::PowChargeLoop: { sh_SwordTwist(); SkillDisable(); break; }
 
 		} // End Switch
@@ -171,13 +171,13 @@ void AOgichi::AttackForward()
 			break;
 		}
 		case EBaseStates::Jumping:	{ break; }
-		case EOgichiState::SwordTwistLoop:
+		case EOgichiState::Ogi_SwordTwistLoop:
 		{ 
 			if (IsSkillActive())	{ sh_Getsuga(); SkillDisable(); }
 			else					{ sh_SwordThrow(); }
 			break;
 		}
-		case EOgichiState::Attack_2: { if (isComboTime()) { sh_AttackFW(); resetKeys(); } break; }
+		case EOgichiState::Ogi_Attack_2: { if (isComboTime()) { sh_AttackFW(); resetKeys(); } break; }
 		case EBaseStates::PowChargeLoop: { sh_Getsuga(); break; }
 		} // End Switch
 	}
@@ -200,7 +200,7 @@ void AOgichi::Btn_Bankai()
 void AOgichi::sh_Attack_1()
 {
 	FState nState;
-	nState.State = EOgichiState::Attack_1;
+	nState.State = EOgichiState::Ogi_Attack_1;
 	nState.Animation = "Attack_1";
 	NewState(nState);
 
@@ -213,7 +213,7 @@ void AOgichi::sh_Attack_1()
 void AOgichi::sh_Attack_2()
 {
 	FState nState;
-	nState.State = EOgichiState::Attack_2;
+	nState.State = EOgichiState::Ogi_Attack_2;
 	nState.Animation = "Attack_2";
 	NewState(nState);
 
@@ -226,7 +226,7 @@ void AOgichi::sh_Attack_2()
 void AOgichi::sh_AttackFW()
 {
 	FState nState;
-	nState.State = EOgichiState::AttackFW;
+	nState.State = EOgichiState::Ogi_AttackFW;
 	nState.Animation = "AttackFW";
 	NewState(nState);
 
@@ -247,7 +247,7 @@ void AOgichi::sh_AttackFW()
 void AOgichi::sh_AttackB()
 {
 	FState nState;
-	nState.State = EOgichiState::AttackB;
+	nState.State = EOgichiState::Ogi_AttackB;
 	nState.Animation = "AttackB";
 	NewState(nState);
 
@@ -259,7 +259,7 @@ void AOgichi::sh_AttackB()
 void AOgichi::sh_AttackB2()
 {
 	FState nState;
-	nState.State = EOgichiState::AttackB;
+	nState.State = EOgichiState::Ogi_AttackB;
 	nState.Animation = "AttackB2";
 	NewState(nState);
 
@@ -273,7 +273,7 @@ void AOgichi::sh_AttackB2()
 void AOgichi::sh_SwordTwist()
 {
 	FState nState;
-	nState.State = EOgichiState::SwordTwist;
+	nState.State = EOgichiState::Ogi_SwordTwist;
 	nState.Animation = "SwordTwist";
 	nState.EndState = false;
 	NewState(nState);
@@ -287,10 +287,10 @@ void AOgichi::sh_SwordTwist()
 }
 void AOgichi::sh_SwordTwistLoop()
 {
-	if (CheckState(EOgichiState::SwordTwist))
+	if (CheckState(EOgichiState::Ogi_SwordTwist))
 	{
 		FState nState;
-		nState.State = EOgichiState::SwordTwistLoop;
+		nState.State = EOgichiState::Ogi_SwordTwistLoop;
 		nState.Animation = "SwordTwistLoop";
 		nState.EndState = false;
 		nState.Rotate = false;
@@ -302,10 +302,10 @@ void AOgichi::sh_SwordTwistLoop()
 }
 void AOgichi::sh_SwordTwistEnd()
 {
-	if (CheckState(EOgichiState::SwordTwistLoop))
+	if (CheckState(EOgichiState::Ogi_SwordTwistLoop))
 	{
 		FState nState;
-		nState.State = EOgichiState::SwordTwistEnd;
+		nState.State = EOgichiState::Ogi_SwordTwistEnd;
 		nState.Animation = "SwordTwist";
 		nState.AnimationFrame = 11;
 		nState.Rotate = false;
@@ -317,7 +317,7 @@ void AOgichi::sh_SwordTwistEnd()
 void AOgichi::sh_SwordThrow()
 {
 	FState nState;
-	nState.State = EOgichiState::SwordThrow;
+	nState.State = EOgichiState::Ogi_SwordThrow;
 	nState.Animation = "SwordThrow";
 	NewState(nState);
 
@@ -327,14 +327,14 @@ void AOgichi::sh_SwordThrow()
 	SetBlockingAttack(EBlockType::Forward, getFrameTime(5), BLOCK_DURATION);
 }
 
-//---------------------------------------------// Getsuga Tensho
+//---------------------------------------------// Ogi_Getsuga Tensho
 void AOgichi::sh_Getsuga()
 {
 	if (getHeroStatsComp()->checkStamina(-(GETSUGA_TENSHOU_COST))
 		&& getHeroStatsComp()->checkPower(-(GETSUGA_TENSHOU_COST)))
 	{
 		FState nState;
-		nState.State = EOgichiState::Getsuga;
+		nState.State = EOgichiState::Ogi_Getsuga;
 		nState.Animation = "Getsuga";
 		NewState(nState);
 
@@ -345,14 +345,14 @@ void AOgichi::sh_Getsuga()
 	}
 }
 
-// Bankai
+// Ogi_Bankai
 void AOgichi::sh_Bankai()
 {
 	if (!getHeroStatsComp()->CheckSkill("Bankai"))
 		return;
 
 	FState nState;
-	nState.State = EOgichiState::Bankai;
+	nState.State = EOgichiState::Ogi_Bankai;
 	nState.Animation = "Bankai";
 	NewState(nState);
 
@@ -379,8 +379,8 @@ void AOgichi::ShikaiComboI()
 	switch (GetState())
 	{
 
-	case EOgichiState::Attack_1: { if (key == EComboKey::CK_Attack) { sh_Attack_2(); }	break; }
-	case EOgichiState::Attack_2:
+	case EOgichiState::Ogi_Attack_1: { if (key == EComboKey::CK_Attack) { sh_Attack_2(); }	break; }
+	case EOgichiState::Ogi_Attack_2:
 	{
 		switch (key)
 		{
@@ -389,7 +389,7 @@ void AOgichi::ShikaiComboI()
 		}
 		break;
 	}
-	case EOgichiState::SwordTwistLoop:
+	case EOgichiState::Ogi_SwordTwistLoop:
 	{
 		switch (key)
 		{
