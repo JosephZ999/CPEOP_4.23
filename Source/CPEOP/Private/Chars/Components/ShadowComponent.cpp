@@ -24,7 +24,12 @@ void UShadowComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	class TSubclassOf<AActor> ShadowClass = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(this))->getShadowClass();
+	UMyGameInstance* GameIns = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(this));
+	class TSubclassOf<AActor> ShadowClass;
+	if (GameIns)
+	{
+		ShadowClass = GameIns->getShadowClass();
+	}
 
 	if (ShadowClass)
 	{

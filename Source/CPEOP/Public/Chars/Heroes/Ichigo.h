@@ -10,9 +10,10 @@
 #define BANKAI_NAME "Bankai"
 
 // Skills
-#define GETSUGA_COST -2.f
-#define GETSUGA_TENSHOU_COST -4.f
-#define EXPLOSION_COST -4.f
+#define GETSUGA_COST			-2.f
+#define GETSUGA_TENSHOU_COST	-4.f
+#define EXPLOSION_COST			-4.f
+#define BANKAI_COST				-3.f
 
 /* */
 UENUM()

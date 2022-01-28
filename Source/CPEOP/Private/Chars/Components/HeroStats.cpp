@@ -235,12 +235,12 @@ float UHeroStats::TakeDamage(float damage, bool blocked)
 
 	void UHeroStats::AddHealth(float value)
 	{
-		Health = FMath::Clamp(Health + value, 0.f, MaxHealth);
+		Health = FMath::Clamp(Health + value, 0.1f, MaxHealth);
 	}
 
 	void UHeroStats::AddPower(float value)
 	{
-		Power = FMath::Clamp(Power + value, 0.f, MaxPower);
+		Power = FMath::Clamp(Power + value, 0.1f, MaxPower);
 	}
 
 

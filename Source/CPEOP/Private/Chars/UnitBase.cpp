@@ -330,7 +330,13 @@ void AUnitBase::Tick(float delta)
 				{
 				case EBlockType::Forward:	{ block = !fromBehind; break; }
 				case EBlockType::Back:		{ block = fromBehind; break; }
-				case EBlockType::Both:		{ block = true; break; }
+				case EBlockType::Both:		
+				{ 
+					block = true; 
+					damageOption->impulse = FVector2D(0.f, 0.f);
+					break; 
+				}
+
 				}
 			}
 		}

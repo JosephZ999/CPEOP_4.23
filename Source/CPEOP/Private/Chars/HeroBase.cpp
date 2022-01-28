@@ -685,10 +685,13 @@ AMyPlayerController * AHeroBase::getController()
 		if (IsImmortal())
 			return;
 
-		if (!getHeroStatsComp()->checkStamina(1.F / getHeroStatsComp()->getTeleportCost(), false))
+		if (!getHeroStatsComp()->checkStamina(1.f / getHeroStatsComp()->getTeleportCost(), false))
 			return;
 
 		if (CheckState(EBaseStates::Fall) || CheckState(EBaseStates::Teleport) || IsDead())
+			return;
+
+		if (BlockAttackType != EBlockType::None && !isComboTime())
 			return;
 
 		tp_initialLocation = GetActorLocation();
@@ -737,6 +740,7 @@ AMyPlayerController * AHeroBase::getController()
 				float minusStamina = FMath::Min(1.2f, dist / 100.f) / getHeroStatsComp()->getTeleportCost();
 				GET_STATS->AddStamina(-(minusStamina));
 				getShadow()->ShowShadow();
+				resetKeys();
 			}
 		}
 	}
