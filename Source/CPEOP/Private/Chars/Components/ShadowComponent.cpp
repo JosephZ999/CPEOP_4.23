@@ -4,8 +4,10 @@
 #include "ShadowComponent.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
-#include "Sys/MyGameInstance.h"
-#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "Kismet/GameplayStatics.h"
+#include "UObject/ConstructorHelpers.h"
+
+#define CLASS_PATH "Blueprint'/Game/Blueprint/Objects/Dynamic/Shadow.Shadow_C'"
 
 // Sets default values for this component's properties
 UShadowComponent::UShadowComponent()
@@ -16,6 +18,14 @@ UShadowComponent::UShadowComponent()
 
 	Scale = 1.f;
 	// ...
+
+	// Init shadow static class
+
+	ConstructorHelpers::FClassFinder<AActor> nObject(*FString(CLASS_PATH));
+	if (nObject.Succeeded())
+	{
+		ShadowClass = nObject.Class;
+	}
 }
 
 
@@ -23,13 +33,6 @@ UShadowComponent::UShadowComponent()
 void UShadowComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	UMyGameInstance* GameIns = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(this));
-	class TSubclassOf<AActor> ShadowClass;
-	if (GameIns)
-	{
-		ShadowClass = GameIns->getShadowClass();
-	}
 
 	if (ShadowClass)
 	{

@@ -39,7 +39,6 @@
 // Dash Settings
 #define DASH_VELOCITY		250.f
 #define DASH_VELOCITY_Z		200.f
-#define DASH_WAIT_TIME		0.2f
 
 // Action Settings
 #define SKILL_TIMER			0.2f
@@ -195,7 +194,11 @@ AMyPlayerController * AHeroBase::getController()
 		fwVector.Z = DASH_VELOCITY_Z;
 		DashVector = fwVector;
 
-		if (GetCharacterMovement()->IsMovingOnGround() && (isComboTime() || CheckState(EBaseStates::Blocking)))
+		if (
+			GetCharacterMovement()->IsMovingOnGround() && (isComboTime() 
+			|| CheckState(EBaseStates::Blocking))
+			|| CheckState(EBaseStates::JumpLand)
+			)
 		{
 			DoDash();
 		}
@@ -209,12 +212,16 @@ AMyPlayerController * AHeroBase::getController()
 	{
 		FState nState;
 		nState.State = EBaseStates::Dash;
-		nState.Animation = "JumpLand";
+		nState.Animation = "JumpStart";
+		nState.AnimationFrame = (CheckState(EBaseStates::JumpLand)) ? 1 : 0;
 		nState.Rotate = false;
+		nState.EndState = false;
 		NewState(nState);
 
-		AddImpulse(DashVector, cTime(DASH_WAIT_TIME));
-		EndStateDeferred(DASH_WAIT_TIME + 0.01f);
+		float DashTime = AnimElemTime(GetAnim("JumpStart")->GetNumFrames() - nState.AnimationFrame);
+
+		AddImpulse(DashVector, DashTime);
+		EndStateDeferred(DashTime + cTime(0.01f));
 	}
 // End
 

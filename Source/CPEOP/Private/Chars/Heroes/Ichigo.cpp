@@ -134,6 +134,8 @@ void AIchigo::BeginPlay()
 	ChangeForm(SHIKAI_NAME);
 }
 
+
+// TimeLine Action
 void AIchigo::b_AttackDash(float value)
 {
 	FVector TargetLocation = DashStartLoc;
@@ -161,8 +163,16 @@ void AIchigo::b_AttackDash(float value)
 		{
 			switch (GetState())
 			{
-			case EBaseStates::Stand: { sh_Attack_1(); break; }
-			case EBaseStates::Jumping: { break; }
+			case EBaseStates::Stand: 
+			{ 
+				sh_Attack_1(); break; 
+			}
+
+			case EBaseStates::Jumping: 
+			{ 
+				break;
+			}
+
 			case EIchigoState::Ichi_Attack_1:
 			{ 
 				if (isComboTime()) { sh_Attack_2(); resetKeys(); } 
@@ -213,6 +223,7 @@ void AIchigo::b_AttackDash(float value)
 			} // Switch End
 		}
 	}
+
 	void AIchigo::AttackBack()
 	{
 		Super::AttackBack();
@@ -800,7 +811,10 @@ void AIchigo::b_AttackDash(float value)
 
 		if		(form == SHIKAI_NAME)	{ ShikaiComboI(); }
 		else if (form == BANKAI_NAME)	{ BankaiComboI(); }
+
 	}
+
+	//-----------------------------------//
 
 	void AIchigo::ShikaiComboI()
 	{
@@ -808,7 +822,6 @@ void AIchigo::b_AttackDash(float value)
 
 		switch (GetState())
 		{
-
 		case EIchigoState::Ichi_Attack_1:
 		{ 
 			switch (key)
@@ -822,12 +835,30 @@ void AIchigo::b_AttackDash(float value)
 		{
 			switch (key)
 			{
-			case EComboKey::CK_AForward:	{ sh_AttackFW(); break;}
+			case EComboKey::CK_AForward:	{ sh_AttackFW(); break; }
 			case EComboKey::CK_ABackward:	{ sh_AttackB();	 break; }
 			case EComboKey::CK_Dash:		{ DoDash();		 break; }
 			}
 			break;
 		}
+
+		case EIchigoState::Ichi_Attack_B:
+		{
+			if (key == EComboKey::CK_Dash)
+			{
+				DoDash();
+			}
+			break;
+		}
+		case EIchigoState::Ichi_Attack_FW:
+		{
+			if (key == EComboKey::CK_Dash)
+			{
+				DoDash();
+			}
+			break;
+		}
+
 		case EIchigoState::Ichi_GetsugaStart:
 		{
 			sh_GetsugaSlash();
@@ -836,13 +867,14 @@ void AIchigo::b_AttackDash(float value)
 		} // End Switch
 	}
 
+	//-----------------------------------//
+
 	void AIchigo::BankaiComboI()
 	{
 		EComboKey key = getNextKey();
 
 		switch (GetState())
 		{
-
 		case EIchigoState::Ichi_Attack_1:
 		{
 			switch (key)
@@ -880,5 +912,21 @@ void AIchigo::b_AttackDash(float value)
 			break;
 		}
 
+		case EIchigoState::Ichi_Attack_B:
+		{
+			if (key == EComboKey::CK_Dash)
+			{
+				DoDash();
+			}
+			break;
+		}
+		case EIchigoState::Ichi_Attack_FW:
+		{
+			if (key == EComboKey::CK_Dash)
+			{
+				DoDash();
+			}
+			break;
+		}
 		} // Switch End
 	}

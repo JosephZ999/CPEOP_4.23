@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-
 #include "ShadowComponent.generated.h"
 
 
@@ -27,6 +26,8 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	class AActor* ShadowObj;
+	class TSubclassOf<AActor> ShadowClass;
+
 
 	UPROPERTY(EditDefaultsOnly)
 	float Scale;
