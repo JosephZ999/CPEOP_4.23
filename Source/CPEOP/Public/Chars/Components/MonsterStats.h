@@ -38,6 +38,9 @@ public:
 
 	virtual float TakeDamage(float damage, bool block) override;
 
+	//
+
+	uint8 GetLevel() { return Level; }
 
 
 };

@@ -47,10 +47,11 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Monster Options")
 	float SpawnEffScale{ 1.f };
 
-
 public:
 	FORCEINLINE virtual UUnitStatsBase* getStatsComp() const { return Stats; }
 	FORCEINLINE UMonsterStats* getStats()              const { return Stats; }
+
+	bool IsOnGround();
 
 	void AddAnimation(FName index, UPaperFlipbook* elem = nullptr);
 	UPaperFlipbook* GetAnimation(FName index);
@@ -65,6 +66,15 @@ protected:
 private:
 	void Appearance();
 	void Death();
+
+// Animation
+protected:
+	virtual void AnimUpdate() {}
+private:
+	FTimerHandle AnimUpdateTimer;
+	
+	UPROPERTY(EditDefaultsOnly)
+	float AnimUpdateRate{ 0.03f };
 
 
 //---------------------------------------------// Attack / Combo Time

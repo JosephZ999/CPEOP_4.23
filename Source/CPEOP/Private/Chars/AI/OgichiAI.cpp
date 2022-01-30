@@ -81,9 +81,7 @@ void AOgichiAI::AIBody()
 		// Swort Twist if enemy fall
 		if (getEnemy()->IsFalling())
 		{
-			OgichiRef->SkillEnable();
-			OgichiRef->AttackBack();
-			OgichiRef->SkillDisable();
+			OgichiRef->sh_SwordTwist();
 			Wait(0.5f);
 			return;
 		}

@@ -16,6 +16,8 @@ AUnitAIBase::AUnitAIBase()
 	SphereComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	SphereComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 	bAttachToPawn = true;
+	SearchStepRadius = 50.f;
+	SearchSteps = 10;
 	
 }
 
@@ -33,11 +35,11 @@ FVector AUnitAIBase::getEnemyLocation(float dist) const
 {
 	if (getPawnLocation().X > getEnemyLocation().X)
 	{
-		return getEnemyLocation() + FVector(dist, 0.f, 0.f);
+		return getEnemyLocation() + FVector(dist, 1.f, 0.f);
 	}
 	else
 	{
-		return getEnemyLocation() - FVector(dist, 0.f, 0.f);
+		return getEnemyLocation() - FVector(dist, 1.f, 0.f);
 	}
 }
 
@@ -57,6 +59,11 @@ FVector AUnitAIBase::getForwardVector(float addDistX) const
 	return  UKismetMathLibrary::GetForwardVector(lookRot);
 }
 
+FVector AUnitAIBase::getForwardVector(const FVector & A, const FVector & B)
+{
+	return FVector(UKismetMathLibrary::FindLookAtRotation(A, B).Vector());
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void AUnitAIBase::BeginPlay()
 {
@@ -73,15 +80,20 @@ void AUnitAIBase::StopAI()
 	GetWorldTimerManager().PauseTimer(AITick);
 }
 
+void AUnitAIBase::SetEnemy(AUnitBase * Unit)
+{
+	Enemy = Unit;
+}
+
 bool AUnitAIBase::SearchEnemy(uint8 team)
 {
 	SphereComp->SetSphereRadius(0.f);
 	SphereComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 	TArray<AActor*> OverActors;
-	for (uint8 i = 1; i <= 15; i++)
+	for (uint8 i = 1; i <= SearchSteps; i++)
 	{
-		SphereComp->SetSphereRadius(i * 32);
+		SphereComp->SetSphereRadius(i * SearchStepRadius);
 		SphereComp->GetOverlappingActors(OverActors, AUnitBase::StaticClass());
 
 		for (const AActor* elem : OverActors)

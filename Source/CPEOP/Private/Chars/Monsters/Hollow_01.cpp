@@ -18,12 +18,6 @@ AHollow_01::AHollow_01()
 	CanFall = false;
 }
 
-void AHollow_01::Tick(float delta)
-{
-	Super::Tick(delta);
-	UpdateAnim();
-}
-
 void AHollow_01::EndState()
 {
 	Super::EndState();
@@ -36,10 +30,10 @@ void AHollow_01::EndState()
 	case EBaseStates::JumpLand: { NewState(nState); break; }
 	} // Switch End
 
-	UpdateAnim();
+	AnimUpdate();
 }
 
-void AHollow_01::UpdateAnim()
+void AHollow_01::AnimUpdate()
 {
 	switch (GetState())
 	{
@@ -57,6 +51,8 @@ void AHollow_01::UpdateAnim()
 		}
 		break;
 	}
+	case EBaseStates::Jumping: { SetAnim(FName("Stand"), false); break; }
+
 	} // Switch End
 }
 

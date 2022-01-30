@@ -7,6 +7,8 @@
 #include "Objects/Dynamic/HitSparkBase.h"
 #include "Chars/Components/UnitStatsBase.h"
 #include "Chars/Components/ShadowComponent.h"
+#include "Chars/AI/UnitAIBase.h"
+
 #include "Sys/MyGameInstance.h"
 #include "Sys/MyFunctionLibrary.h"
 
@@ -47,12 +49,29 @@ void AUnitBase::BeginPlay()
 
 	const FVector spriteScale = GetSprite()->GetComponentScale();
 	GetSprite()->SetRelativeScale3D(FVector(spriteScale.X, spriteScale.Y, spriteScale.Z * 1.1f));
+	EndState();
 }
 
 void AUnitBase::Tick(float delta)
 {
 	Super::Tick(delta);
 	Move();
+}
+
+AUnitAIBase * AUnitBase::GetUnitAI()
+{
+	if (UnitAI)
+	{
+		return UnitAI;
+	}
+	else
+	{
+		UnitAI = Cast<AUnitAIBase>(GetController());
+		if (UnitAI) { return UnitAI; }
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Casting to AI controller failed - func. name - GetUnitAI"));
+	return nullptr;
 }
 
 // Functions
@@ -94,6 +113,11 @@ void AUnitBase::Tick(float delta)
 		return (frame / GetSprite()->GetFlipbookFramerate()) / CustomTimeDilation;
 	}
 
+	FVector & AUnitBase::GetUnitVelocity()
+	{
+		return GetCharacterMovement()->Velocity;
+	}
+
 	void AUnitBase::SetImmortality(float duration)
 	{
 		Immortal = true;
@@ -122,11 +146,14 @@ void AUnitBase::Tick(float delta)
 
 	void AUnitBase::SetMoveVector(FVector nVec)
 	{
-		MoveVector = { nVec.X, nVec.Y, 0.f };
+		MoveVector = { nVec.X, nVec.Y, nVec.Z };
 	}
 
 	void AUnitBase::SetRotation(bool right, bool moveVec)
 	{
+		if (!Controller)
+			return;
+
 		if (CheckState(EBaseStates::Fall))
 			return;
 
@@ -217,6 +244,14 @@ void AUnitBase::Tick(float delta)
 	{
 		if (State == EBaseStates::Jumping || State == EBaseStates::Stand)
 		{
+			if (!GetAnim(FName("JumpLand")))
+			{
+				FState nState;
+				nState.State = EBaseStates::Stand;
+				NewState(nState);
+				return;
+			}
+
 			FState nState;
 			nState.State = EBaseStates::JumpLand;
 			nState.Animation = "JumpLand";
@@ -609,7 +644,7 @@ void AUnitBase::Tick(float delta)
 
 //---------------------------------------------// Animations
 	
-	void AUnitBase::AddAnimation(FName name, FString flipbookPath)
+	void AUnitBase::InitAnim(FName name, FString flipbookPath)
 	{
 		if(AnimData)
 		{

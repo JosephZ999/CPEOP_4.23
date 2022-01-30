@@ -145,9 +145,9 @@ private:
 public:
 	// Target Mode
 	UFUNCTION(BlueprintCallable)
-	void SetCameraTarget(APawn* target);
+	void SetCameraTarget(AUnitBase* target);
 private:
-	APawn* CameraTargetActor;
+	AUnitBase* CameraTargetActor;
 
 //---------------------------------------------// End
 

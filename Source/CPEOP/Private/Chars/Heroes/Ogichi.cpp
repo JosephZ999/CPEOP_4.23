@@ -38,63 +38,63 @@ AOgichi::AOgichi()
 // Animations //
 	// Ichi_Shikai
 	AnimData = &ShikaiAnim;
-	AddAnimation("Stand",			ANIM_LOC "Stand");
-	AddAnimation("Walk",			ANIM_LOC "Walk");
-	AddAnimation("JumpStart",		ANIM_LOC "JumpStart");
-	AddAnimation("JumpUp",			ANIM_LOC "JumpUp");
-	AddAnimation("JumpHold",		ANIM_LOC "JumpHold");
-	AddAnimation("JumpDown",		ANIM_LOC "JumpDown");
-	AddAnimation("JumpLand",		ANIM_LOC "JumpLand");
+	InitAnim("Stand",			ANIM_LOC "Stand");
+	InitAnim("Walk",			ANIM_LOC "Walk");
+	InitAnim("JumpStart",		ANIM_LOC "JumpStart");
+	InitAnim("JumpUp",			ANIM_LOC "JumpUp");
+	InitAnim("JumpHold",		ANIM_LOC "JumpHold");
+	InitAnim("JumpDown",		ANIM_LOC "JumpDown");
+	InitAnim("JumpLand",		ANIM_LOC "JumpLand");
 
-	AddAnimation("Hit",				ANIM_LOC "Hit1");
-	AddAnimation("FallHold",		ANIM_LOC "FallHold");
-	AddAnimation("FallUp",			ANIM_LOC "FallUp");
-	AddAnimation("FallDown",		ANIM_LOC "FallDown");
-	AddAnimation("StandUp",			ANIM_LOC "StandUp");
-	AddAnimation("StandUpAir",		ANIM_LOC "StandUpAir");
+	InitAnim("Hit",				ANIM_LOC "Hit1");
+	InitAnim("FallHold",		ANIM_LOC "FallHold");
+	InitAnim("FallUp",			ANIM_LOC "FallUp");
+	InitAnim("FallDown",		ANIM_LOC "FallDown");
+	InitAnim("StandUp",			ANIM_LOC "StandUp");
+	InitAnim("StandUpAir",		ANIM_LOC "StandUpAir");
 
-	AddAnimation("Block",			ANIM_LOC "Block");
-	AddAnimation("BlockAir",		ANIM_LOC "BlockAir");
+	InitAnim("Block",			ANIM_LOC "Block");
+	InitAnim("BlockAir",		ANIM_LOC "BlockAir");
 
-	AddAnimation("PowChargeStart",	ANIM_LOC "PowChStart");
-	AddAnimation("PowChargeLoop",	ANIM_LOC "PowChLoop");
-	AddAnimation("PowChargeEnd",	ANIM_LOC "PowChEnd");
+	InitAnim("PowChargeStart",	ANIM_LOC "PowChStart");
+	InitAnim("PowChargeLoop",	ANIM_LOC "PowChLoop");
+	InitAnim("PowChargeEnd",	ANIM_LOC "PowChEnd");
 
-	AddAnimation("Attack_1",		ANIM_LOC "Attack1");
-	AddAnimation("Attack_2",		ANIM_LOC "Attack2");
-	AddAnimation("AttackFW",		ANIM_LOC "AttackForward");
-	AddAnimation("AttackB",			ANIM_LOC "AttackBack");
-	AddAnimation("AttackB2",		ANIM_LOC "AttackBack2");
-	AddAnimation("SwordTwist",		ANIM_LOC "SwordTwist");
-	AddAnimation("SwordTwistLoop",	ANIM_LOC "SwordTwistLoop");
-	AddAnimation("SwordThrow",		ANIM_LOC "SwordThrow");
+	InitAnim("Attack_1",		ANIM_LOC "Attack1");
+	InitAnim("Attack_2",		ANIM_LOC "Attack2");
+	InitAnim("AttackFW",		ANIM_LOC "AttackForward");
+	InitAnim("AttackB",			ANIM_LOC "AttackBack");
+	InitAnim("AttackB2",		ANIM_LOC "AttackBack2");
+	InitAnim("SwordTwist",		ANIM_LOC "SwordTwist");
+	InitAnim("SwordTwistLoop",	ANIM_LOC "SwordTwistLoop");
+	InitAnim("SwordThrow",		ANIM_LOC "SwordThrow");
 
-	AddAnimation("Getsuga",			ANIM_LOC "Getsuga");
-	AddAnimation("Bankai",			ANIM_LOC_2 "Bankai");
+	InitAnim("Getsuga",			ANIM_LOC "Getsuga");
+	InitAnim("Bankai",			ANIM_LOC_2 "Bankai");
 
 	AnimData = &BankaiAnim;
 
-	AddAnimation("Stand",			ANIM_LOC_2 "Stand");
-	AddAnimation("Walk",			ANIM_LOC_2 "Run");
-	AddAnimation("JumpStart",		ANIM_LOC_2 "JumpStart");
-	AddAnimation("JumpUp",			ANIM_LOC_2 "JumpUp");
-	AddAnimation("JumpHold",		ANIM_LOC_2 "JumpHold");
-	AddAnimation("JumpDown",		ANIM_LOC_2 "JumpDown");
-	AddAnimation("JumpLand",		ANIM_LOC_2 "JumpLand");
+	InitAnim("Stand",			ANIM_LOC_2 "Stand");
+	InitAnim("Walk",			ANIM_LOC_2 "Run");
+	InitAnim("JumpStart",		ANIM_LOC_2 "JumpStart");
+	InitAnim("JumpUp",			ANIM_LOC_2 "JumpUp");
+	InitAnim("JumpHold",		ANIM_LOC_2 "JumpHold");
+	InitAnim("JumpDown",		ANIM_LOC_2 "JumpDown");
+	InitAnim("JumpLand",		ANIM_LOC_2 "JumpLand");
 
-	AddAnimation("Hit",				ANIM_LOC_2 "Hit");
-	AddAnimation("FallHold",		ANIM_LOC_2 "FallHold");
-	AddAnimation("FallUp",			ANIM_LOC_2 "FallUp");
-	AddAnimation("FallDown",		ANIM_LOC_2 "FallDown");
-	AddAnimation("StandUp",			ANIM_LOC_2 "StandUp");
-	AddAnimation("StandUpAir",		ANIM_LOC_2 "StandUpAir");
+	InitAnim("Hit",				ANIM_LOC_2 "Hit");
+	InitAnim("FallHold",		ANIM_LOC_2 "FallHold");
+	InitAnim("FallUp",			ANIM_LOC_2 "FallUp");
+	InitAnim("FallDown",		ANIM_LOC_2 "FallDown");
+	InitAnim("StandUp",			ANIM_LOC_2 "StandUp");
+	InitAnim("StandUpAir",		ANIM_LOC_2 "StandUpAir");
 
-	AddAnimation("Block",			ANIM_LOC_2 "Block");
-	AddAnimation("BlockAir",		ANIM_LOC_2 "Block");
+	InitAnim("Block",			ANIM_LOC_2 "Block");
+	InitAnim("BlockAir",		ANIM_LOC_2 "Block");
 
-	AddAnimation("PowChargeStart",	ANIM_LOC_2 "ChargeStart");
-	AddAnimation("PowChargeLoop",	ANIM_LOC_2 "ChargeLoop");
-	AddAnimation("PowChargeEnd",	ANIM_LOC_2 "ChargeEnd");
+	InitAnim("PowChargeStart",	ANIM_LOC_2 "ChargeStart");
+	InitAnim("PowChargeLoop",	ANIM_LOC_2 "ChargeLoop");
+	InitAnim("PowChargeEnd",	ANIM_LOC_2 "ChargeEnd");
 
 	AnimData = &ShikaiAnim;
 
@@ -139,7 +139,7 @@ void AOgichi::AttackBack()
 		{
 		case EBaseStates::Stand:
 		{
-			if (IsSkillActive()) { sh_SwordTwist(); SkillDisable(); }
+			if (IsSkillActive()) { sh_SwordTwist(); }
 			else { sh_AttackB(); }
 			break;
 		}
@@ -147,12 +147,12 @@ void AOgichi::AttackBack()
 
 		case EOgichiState::Ogi_SwordTwistLoop:
 		{
-			if (IsSkillActive()) { SkillDisable(); }
+			if (IsSkillActive()) { }
 			else { sh_AttackB2(); }
 			break;
 		}
 		case EOgichiState::Ogi_Attack_2: { if (isComboTime()) { sh_SwordTwist(); resetKeys(); } break; }
-		case EBaseStates::PowChargeLoop: { sh_SwordTwist(); SkillDisable(); break; }
+		case EBaseStates::PowChargeLoop: { sh_SwordTwist(); break; }
 
 		} // End Switch
 	}
@@ -173,7 +173,7 @@ void AOgichi::AttackForward()
 		case EBaseStates::Jumping:	{ break; }
 		case EOgichiState::Ogi_SwordTwistLoop:
 		{ 
-			if (IsSkillActive())	{ sh_Getsuga(); SkillDisable(); }
+			if (IsSkillActive())	{ sh_Getsuga(); }
 			else					{ sh_SwordThrow(); }
 			break;
 		}
@@ -283,7 +283,7 @@ void AOgichi::sh_SwordTwist()
 
 	FTimerHandle timer;
 	GetWorldTimerManager().SetTimer(timer, this, &AOgichi::sh_SwordTwistLoop, getFrameTime(10));
-	
+	SkillDisable();
 }
 void AOgichi::sh_SwordTwistLoop()
 {
@@ -342,6 +342,7 @@ void AOgichi::sh_Getsuga()
 
 		GET_STATS->AddStamina(GETSUGA_TENSHOU_COST, getFrameTime(2), true);
 		SetBlockingAttack(EBlockType::Forward, getFrameTime(4), BLOCK_DURATION);
+		SkillDisable();
 	}
 }
 
@@ -358,6 +359,7 @@ void AOgichi::sh_Bankai()
 
 	SetImmortality(AnimElemTime(35));
 	Bankai();
+	SkillDisable();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

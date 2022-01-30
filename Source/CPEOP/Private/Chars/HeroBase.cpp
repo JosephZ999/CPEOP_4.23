@@ -152,6 +152,7 @@ void AHeroBase::EndState()
 {
 	Super::EndState();
 	resetKeys();
+	SkillDisable();
 }
 
 AMyPlayerController * AHeroBase::getController()
@@ -400,9 +401,9 @@ AMyPlayerController * AHeroBase::getController()
 
 			ArmComp->SetWorldLocation(FMath::VInterpTo(ArmLoc, nLoc, delta, CAM_INTERP));
 
-			if (CameraTargetActor)
+			if (CameraTargetActor && !CameraTargetActor->IsDead())
 			{
-				if (FVector::Distance(GetActorLocation(), CameraTargetActor->GetActorLocation()) < CAM_TARGET_DIST)
+				if (FVector::Distance(GetActorLocation(), CameraTargetActor->GetActorLocation()) < CAM_TARGET_DIST && CameraTargetActor->GetActorLocation().Z < CAM_TARGET_DIST / 2.f)
 				{
 					CameraMode = ECameraMode::Target;
 				}
@@ -418,10 +419,16 @@ AMyPlayerController * AHeroBase::getController()
 		}
 		case ECameraMode::Target:
 		{
-			if (CameraTargetActor)
+			if (CameraTargetActor && !CameraTargetActor->IsDead())
 			{
 				const FVector myLoc = GetActorLocation();
 				const FVector targetLoc = CameraTargetActor->GetActorLocation();
+
+				if (FVector::Distance(myLoc, targetLoc) > CAM_TARGET_DIST || targetLoc.Z > CAM_TARGET_DIST / 2.f)
+				{
+					CameraMode = ECameraMode::Free;
+					return;
+				}
 
 				FVector nLoc
 				{
@@ -431,15 +438,11 @@ AMyPlayerController * AHeroBase::getController()
 				};
 
 				ArmComp->SetWorldLocation(FMath::VInterpTo(ArmComp->GetComponentLocation(), nLoc, delta, CAM_INTERP));
-
-				if (FVector::Distance(myLoc, targetLoc) > CAM_TARGET_DIST)
-				{
-					CameraMode = ECameraMode::Free;
-				}
 			}
 			else
 			{
 				CameraMode = ECameraMode::Free;
+				CameraTargetActor = nullptr;
 			}
 		}
 		} // End Switch
@@ -476,11 +479,11 @@ AMyPlayerController * AHeroBase::getController()
 		CameraMode = CameraLastMode;
 	}
 
-	void AHeroBase::SetCameraTarget(APawn * target)
+	void AHeroBase::SetCameraTarget(AUnitBase * target)
 	{
 		if (target == nullptr || target == this)
 		{
-			CameraMode = ECameraMode::Free;
+			CameraTargetActor = nullptr;
 		}
 		else
 		{
@@ -747,7 +750,6 @@ AMyPlayerController * AHeroBase::getController()
 				float minusStamina = FMath::Min(1.2f, dist / 100.f) / getHeroStatsComp()->getTeleportCost();
 				GET_STATS->AddStamina(-(minusStamina));
 				getShadow()->ShowShadow();
-				resetKeys();
 			}
 		}
 	}

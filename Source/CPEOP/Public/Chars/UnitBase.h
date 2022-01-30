@@ -127,31 +127,43 @@ public:		virtual void Tick(float delta);
 			bool    Control = true;		// Запрещает любые движение
 private:
 	// Variables //
-	uint8   State{ 0 };
+	uint8 State{ 0 };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (AllowPrivateAccess = "true"))
-	uint8   Team { 0 };
+	uint8 Team { 0 };
 
 	UPROPERTY(BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
-	bool    Dead;
+	bool Dead;
 
-	bool    Immortal;
+	bool Immortal;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
 	class UShadowComponent* ShadowComp;
 
+	class AUnitAIBase* UnitAI;
+
 protected:
 	bool CanFall{ true };
 
+	//--------------------------// AI
 public:
-	// AI
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = AI)
-	void    StartAI();
+	void StartAI();
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = AI)
-	void    StopAI();
+	void StopAI();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = AI)
+	class AUnitAIBase* GetUnitAI();
+
+private:
+
+
+
+
 
 	// Getters and Setters //
+public:
 	UFUNCTION(BlueprintCallable)
 	bool	CheckState(uint8 nState) const { return State == nState; }
 
@@ -190,6 +202,7 @@ public:
 	FORCEINLINE bool IsFalling() const { return State == EBaseStates::Fall; }
 
 	// Functions //----------------------------------
+public:
 	void FindHelper(FString objectPath, TSubclassOf<class AHelper>& Class);
 	UPaperFlipbook* FindAnim(FString objectPath);
 
@@ -198,6 +211,9 @@ public:
 
 	/* Get Animation frame time */
 	float getFrameTime(uint8 frame);
+
+	/* Get Character Movement's Velocity*/
+	FVector & GetUnitVelocity();
 
 public:
 	void SetImmortality(float duration);
@@ -243,8 +259,8 @@ protected:
 	void SpawnHelper(FName name, float time = 0.f, FRotator rotation = { 0.f, 0.f, 0.f }, FVector scale = FVector::OneVector);
 private:
 	/* Список всех обьектов 'HitBox' */
-	UPROPERTY(EditDefaultsOnly, Category = "UnitOptions|Data")
-		TMap<FName, TSubclassOf<class AHelper>> HelpersData;
+	UPROPERTY(EditDefaultsOnly, Category = "UnitData")
+	TMap<FName, TSubclassOf<class AHelper>> HelpersData;
 
 	/* Сортированный список обьектов 'HitBox' для спавна*/
 	TArray<FHelperInfo> HelpersOrder;
@@ -307,7 +323,7 @@ protected:
 
 	// Animations
 	TMap<FName, class UPaperFlipbook*>* AnimData{ nullptr };
-	void AddAnimation(FName name, FString flipbookPath);
+	void InitAnim(FName name, FString flipbookPath);
 	void SetAnim(UPaperFlipbook* anim, bool playFromStart);
 	void SetAnim(FName name, bool playFromStart);
 	UPaperFlipbook* GetAnim(FName AnimName);

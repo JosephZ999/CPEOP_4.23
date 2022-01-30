@@ -34,9 +34,11 @@ void UShadowComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	Owner = GetOwner();
+
 	if (ShadowClass)
 	{
-		ShadowObj = GetWorld()->SpawnActor<AActor>(ShadowClass, GetOwner()->GetTransform());
+		ShadowObj = GetWorld()->SpawnActor<AActor>(ShadowClass, Owner->GetTransform());
 		if (ShadowObj)
 		{
 			ShadowObj->SetActorScale3D(FVector(Scale));
@@ -44,7 +46,7 @@ void UShadowComponent::BeginPlay()
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Failed creating shadow - %s"), *GetOwner()->GetName());
+			UE_LOG(LogTemp, Warning, TEXT("Failed creating shadow - %s"), *Owner->GetName());
 		}
 	}
 	else
@@ -61,7 +63,7 @@ void UShadowComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 	if (ShadowObj)
 	{
-		FVector nLoc = GetOwner()->GetActorLocation();
+		FVector nLoc = Owner->GetActorLocation();
 		nLoc.Z = 0.f;
 		ShadowObj->SetActorLocation(nLoc);
 	}

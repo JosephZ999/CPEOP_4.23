@@ -59,6 +59,7 @@ public:
 	/* Get Vector to enemy*/
 	FVector getForwardVector()const;
 	FVector getForwardVector(float addDistX)const;
+	FVector getForwardVector(const FVector& A, const FVector& B);
 
 public:
 	AUnitAIBase();
@@ -66,6 +67,8 @@ protected: virtual void BeginPlay() override;
 
 public:
 	bool SearchEnemy(uint8 team);
+	float SearchStepRadius;
+	uint8 SearchSteps;
 
 	UFUNCTION(BlueprintCallable, Category = AI)
 	void StartAI(float timeDelay);
@@ -75,6 +78,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = AI)
 	void Wait(float time);
+
+	UFUNCTION(BlueprintCallable, Category = AI)
+	void SetEnemy(AUnitBase* Unit);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = AI)
+	AUnitBase* GetEnemy() const { return Enemy; }
 
 protected:
 	FTimerHandle AITick;
