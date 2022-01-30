@@ -26,7 +26,6 @@
 #define ARM_LENGTH			600.f
 
 #define CAM_INTERP			3.f
-#define CAM_TARGET_DIST		350.f
 
 // Movement Settings
 #define MAX_WALK_SPEED		200.f
@@ -403,7 +402,7 @@ AMyPlayerController * AHeroBase::getController()
 
 			if (CameraTargetActor && !CameraTargetActor->IsDead())
 			{
-				if (FVector::Distance(GetActorLocation(), CameraTargetActor->GetActorLocation()) < CAM_TARGET_DIST && CameraTargetActor->GetActorLocation().Z < CAM_TARGET_DIST / 2.f)
+				if (FVector::Distance(GetActorLocation(), CameraTargetActor->GetActorLocation()) < CameraTargetDist && CameraTargetActor->GetActorLocation().Z < CameraTargetDist / 2.f)
 				{
 					CameraMode = ECameraMode::Target;
 				}
@@ -424,7 +423,7 @@ AMyPlayerController * AHeroBase::getController()
 				const FVector myLoc = GetActorLocation();
 				const FVector targetLoc = CameraTargetActor->GetActorLocation();
 
-				if (FVector::Distance(myLoc, targetLoc) > CAM_TARGET_DIST || targetLoc.Z > CAM_TARGET_DIST / 2.f)
+				if (FVector::Distance(myLoc, targetLoc) > CameraTargetDist || targetLoc.Z > CameraTargetDist / 2.f)
 				{
 					CameraMode = ECameraMode::Free;
 					return;
@@ -479,7 +478,7 @@ AMyPlayerController * AHeroBase::getController()
 		CameraMode = CameraLastMode;
 	}
 
-	void AHeroBase::SetCameraTarget(AUnitBase * target)
+	void AHeroBase::SetCameraTarget(AUnitBase * target, float dist)
 	{
 		if (target == nullptr || target == this)
 		{
@@ -488,6 +487,7 @@ AMyPlayerController * AHeroBase::getController()
 		else
 		{
 			CameraTargetActor = target;
+			CameraTargetDist = dist;
 			CameraMode = ECameraMode::Target;
 		}
 	}

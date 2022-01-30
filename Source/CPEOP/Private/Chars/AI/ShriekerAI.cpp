@@ -185,14 +185,10 @@ void AShriekerAI::Summon()
 		IsMovingAway = false;
 	}
 
-
 	if (OwnerRef->SummonsNum == 0)
 	{
-		if (OwnerRef->AliveSummonsNum() == 0)
-		{
-			Action = EActionType::Attack;
-		}
-		Wait(1.f);
+		Action = EActionType::Attack;
+		Wait(3.f);
 	}
 
 	if (

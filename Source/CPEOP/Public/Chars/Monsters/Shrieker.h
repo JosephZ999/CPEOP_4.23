@@ -27,7 +27,7 @@ public:
 	void Summon();
 
 	UFUNCTION(BlueprintCallable)
-	void SpawnSummon(TSubclassOf<class AShriekerSummon> Class, FVector Location);
+	AShriekerSummon * SpawnSummon(TSubclassOf<class AShriekerSummon> Class, FVector Location);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void BP_Summon();
@@ -36,10 +36,10 @@ public:
 	TArray<class AShriekerSummon*> SummonArr;
 
 	UFUNCTION(BlueprintCallable)
-	uint8 AliveSummonsNum();
-
-	UFUNCTION(BlueprintCallable)
 	void SetSummonsNum(uint8 Num);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	uint8 GetSummonsNum() { return SummonsNum; }
 
 protected:
 	virtual void BeginPlay() override;

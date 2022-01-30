@@ -39,6 +39,10 @@ private:
 	bool CanOwnerMoveAway() { return MoveAwayProgress < 10.f; }
 	bool IsMovingAway;
 
+public:
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool IsSummoning() { return Action == EActionType::Summon; }
+
 
 private:
 	virtual void AIBody() override;

@@ -93,7 +93,7 @@ void AShrieker::Summon()
 	BP_Summon();
 }
 
-void AShrieker::SpawnSummon(TSubclassOf<class AShriekerSummon> Class, FVector Location)
+AShriekerSummon * AShrieker::SpawnSummon(TSubclassOf<class AShriekerSummon> Class, FVector Location)
 {
 	if (SummonsNum > 0)
 	{
@@ -106,22 +106,10 @@ void AShrieker::SpawnSummon(TSubclassOf<class AShriekerSummon> Class, FVector Lo
 			nSummon->SetTeam(GetTeam());
 			--SummonsNum;
 			SummonArr.Add(nSummon);
+			return nSummon;
 		}
 	}
-}
-
-uint8 AShrieker::AliveSummonsNum()
-{
-	uint8 Num{ 0 };
-
-	for (AShriekerSummon* summon : SummonArr)
-	{
-		if (summon && !summon->IsDead())
-		{
-			++Num;
-		}
-	}
-	return Num;
+	return nullptr;
 }
 
 void AShrieker::SetSummonsNum(uint8 Num)
