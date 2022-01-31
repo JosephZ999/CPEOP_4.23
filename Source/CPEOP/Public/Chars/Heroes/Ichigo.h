@@ -26,6 +26,7 @@ enum EIchigoState
 	Ichi_Attack_4,
 	Ichi_Attack_FW,
 	Ichi_Attack_B,
+	Ichi_Attack_Air,
 
 	Ichi_SwordTwist,
 	Ichi_SwordTwistLoop,
@@ -54,6 +55,7 @@ private:
 	TMap<FName, class UPaperFlipbook*> BankaiAnim;
 protected:
 	virtual void BeginPlay() override;
+	virtual void Landed(const FHitResult& Hit) override;
 
 public:
 	// Input Actions
@@ -75,6 +77,8 @@ public:
 	void sh_Attack_2();
 	void sh_AttackFW();
 	void sh_AttackB();
+
+	void sh_Attack_Air();
 
 	void sh_GetsugaFW();
 	void sh_GetsugaB();
@@ -98,6 +102,8 @@ public:
 	void b_Attack_4();
 	void b_Attack_FW();
 	void b_Attack_B();
+
+	void b_Attack_Air();
 
 	void b_Getsuga();
 	void b_RExplosion();

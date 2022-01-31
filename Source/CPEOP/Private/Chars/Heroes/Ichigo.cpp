@@ -38,6 +38,8 @@ AIchigo::AIchigo()
 	InitHelper("sh_Attack_2",			ICHI_HIT_LOC "sh_Attack_2");
 	InitHelper("sh_AttackBack",			ICHI_HIT_LOC "sh_AttackBack");
 	InitHelper("sh_AttackForward",		ICHI_HIT_LOC "sh_AttackForward");
+	InitHelper("sh_AttackAir",			ICHI_HIT_LOC "sh_AttackAir");
+
 	InitHelper("sh_GetsugaHelper",		ICHI_HIT_LOC "sh_GetsugaHelper");
 	InitHelper("sh_GetsugaFWHelper",	ICHI_HIT_LOC "sh_GetsugaFWHelper");
 	InitHelper("sh_ReiatsuExplosion",	ICHI_HIT_LOC "sh_ReiatsuExplosion");
@@ -48,9 +50,9 @@ AIchigo::AIchigo()
 	InitHelper("b_Attack_2",			ICHI_HIT_LOC_B "b_Attack_2");
 	InitHelper("b_Attack_3",			ICHI_HIT_LOC_B "b_Attack_3");
 	InitHelper("b_Attack_4",			ICHI_HIT_LOC_B "b_Attack_4");
-
 	InitHelper("b_Attack_FW",			ICHI_HIT_LOC_B "b_Attack_FW");
 	InitHelper("b_Attack_B",			ICHI_HIT_LOC_B "b_Attack_B");
+	InitHelper("b_AttackAir",			ICHI_HIT_LOC_B "b_AttackAir");
 
 	InitHelper("b_GetsugaEff",			ICHI_HIT_LOC_B "GetsugaEff");
 	InitHelper("b_Getsuga",				ICHI_HIT_LOC_B "GetsugaHelper");
@@ -82,6 +84,8 @@ AIchigo::AIchigo()
 	InitAnim("Attack_2",		ICHI_ANIM_LOC "Attack2");
 	InitAnim("AttackFW",		ICHI_ANIM_LOC "AttackForward");
 	InitAnim("AttackB",			ICHI_ANIM_LOC "AttackBack");
+	InitAnim("AttackAir",		ICHI_ANIM_LOC "AttackAir");
+
 	InitAnim("SwordTwist",		ICHI_ANIM_LOC "SwordTwist");
 	InitAnim("SwordTwistLoop",	ICHI_ANIM_LOC "SwordTwistLoop");
 	InitAnim("GetsugaStart",	ICHI_ANIM_LOC "GetsugaStart");
@@ -117,6 +121,7 @@ AIchigo::AIchigo()
 	InitAnim("Attack_4",        ICHI_ANIM_LOC_B "Attack4");
 	InitAnim("Attack_FW",       ICHI_ANIM_LOC_B "AttackFW");
 	InitAnim("Attack_B",        ICHI_ANIM_LOC_B "AttackB");
+	InitAnim("AttackAir",		ICHI_ANIM_LOC_B "AttackAir");
 
 	InitAnim("Getsuga",         ICHI_ANIM_LOC_B "Getsuga");
 	InitAnim("RExplosion",      ICHI_ANIM_LOC_B "RExplosion");
@@ -132,6 +137,16 @@ void AIchigo::BeginPlay()
 {
 	Super::BeginPlay();
 	ChangeForm(SHIKAI_NAME);
+}
+
+void AIchigo::Landed(const FHitResult & Hit)
+{
+	if (CheckState(EIchigoState::Ichi_Attack_Air))
+	{
+		EndState();
+	}
+
+	Super::Landed(Hit);
 }
 
 
@@ -170,7 +185,7 @@ void AIchigo::b_AttackDash(float value)
 
 			case EBaseStates::Jumping: 
 			{ 
-				break;
+				sh_Attack_Air(); break;
 			}
 
 			case EIchigoState::Ichi_Attack_1:
@@ -204,7 +219,8 @@ void AIchigo::b_AttackDash(float value)
 		{
 			switch (GetState())
 			{
-			case EBaseStates::Stand: { b_Attack_1(); break; }
+			case EBaseStates::Stand:   { b_Attack_1(); break; }
+			case EBaseStates::Jumping: { b_Attack_Air(); break; }
 			case EIchigoState::Ichi_Attack_1:
 			{
 				if (isComboTime()) { b_Attack_2();}
@@ -457,6 +473,21 @@ void AIchigo::b_AttackDash(float value)
 
 		FTimerHandle nTimer;
 		SET_TIMER(nTimer, this, &AIchigo::sh_GetsugaB, getFrameTime(6));
+	}
+
+	void AIchigo::sh_Attack_Air()
+	{
+		FState nState;
+		nState.State = EIchigoState::Ichi_Attack_Air;
+		nState.Animation = "AttackAir";
+		NewState(nState);
+
+		AddImpulse( FVector(GetUnitVelocity().X, GetUnitVelocity().Y, 200.f), getFrameTime(4));
+		SpawnHelper("sh_AttackAir", getFrameTime(4));
+		Combo(getFrameTime(12));
+
+		SetBlockingAttack(EBlockType::Forward, getFrameTime(4), BLOCK_DURATION);
+		DangerN(getFrameTime(6), EDangerType::MeleeAttack);
 	}
 
 	void AIchigo::sh_GetsugaB()
@@ -735,6 +766,21 @@ void AIchigo::b_AttackDash(float value)
 		Combo(getFrameTime(11));
 
 		SetBlockingAttack(EBlockType::Forward, getFrameTime(5), BLOCK_DURATION);
+		DangerN(getFrameTime(6), EDangerType::MeleeAttack);
+	}
+
+	void AIchigo::b_Attack_Air()
+	{
+		FState nState;
+		nState.State = EIchigoState::Ichi_Attack_Air;
+		nState.Animation = "AttackAir";
+		NewState(nState);
+
+		AddImpulse(FVector(GetUnitVelocity().X, GetUnitVelocity().Y, 200.f), getFrameTime(4));
+		SpawnHelper("b_AttackAir", getFrameTime(4));
+		Combo(getFrameTime(12));
+
+		SetBlockingAttack(EBlockType::Forward, getFrameTime(4), BLOCK_DURATION);
 		DangerN(getFrameTime(6), EDangerType::MeleeAttack);
 	}
 
