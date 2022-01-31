@@ -33,6 +33,12 @@ void AShriekerAI::AIBody()
 		return;
 	}
 
+	if (OwnerRef->IsDead())
+	{
+		StopAI();
+		return;
+	}
+
 	switch (Action)
 	{
 	case EActionType::Attack:

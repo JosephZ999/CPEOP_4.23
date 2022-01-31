@@ -175,7 +175,7 @@ void AIchigo::b_AttackDash(float value)
 
 			case EIchigoState::Ichi_Attack_1:
 			{ 
-				if (isComboTime()) { sh_Attack_2(); resetKeys(); } 
+				if (isComboTime()) { sh_Attack_2();} 
 				break; 
 			}
 			case EIchigoState::Ichi_Attack_FW:
@@ -207,17 +207,17 @@ void AIchigo::b_AttackDash(float value)
 			case EBaseStates::Stand: { b_Attack_1(); break; }
 			case EIchigoState::Ichi_Attack_1:
 			{
-				if (isComboTime()) { b_Attack_2(); resetKeys(); }
+				if (isComboTime()) { b_Attack_2();}
 				break;
 			}
 			case EIchigoState::Ichi_Attack_2:
 			{
-				if (isComboTime()) { b_Attack_3(); resetKeys(); }
+				if (isComboTime()) { b_Attack_3();}
 				break;
 			}
 			case EIchigoState::Ichi_Attack_3:
 			{
-				if (isComboTime()) { b_Attack_4(); resetKeys(); }
+				if (isComboTime()) { b_Attack_4();}
 				break;
 			}
 			} // Switch End
