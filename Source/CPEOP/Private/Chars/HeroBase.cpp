@@ -26,7 +26,6 @@
 #define ARM_LENGTH			600.f
 
 #define CAM_INTERP			3.f
-#define CAM_TARGET_DIST		350.f
 
 // Movement Settings
 #define MAX_WALK_SPEED		200.f
@@ -39,7 +38,6 @@
 // Dash Settings
 #define DASH_VELOCITY		250.f
 #define DASH_VELOCITY_Z		200.f
-#define DASH_WAIT_TIME		0.2f
 
 // Action Settings
 #define SKILL_TIMER			0.2f
@@ -153,6 +151,7 @@ void AHeroBase::EndState()
 {
 	Super::EndState();
 	resetKeys();
+	SkillDisable();
 }
 
 AMyPlayerController * AHeroBase::getController()
@@ -195,7 +194,11 @@ AMyPlayerController * AHeroBase::getController()
 		fwVector.Z = DASH_VELOCITY_Z;
 		DashVector = fwVector;
 
-		if (GetCharacterMovement()->IsMovingOnGround() && (isComboTime() || CheckState(EBaseStates::Blocking)))
+		if (
+			GetCharacterMovement()->IsMovingOnGround() && (isComboTime() 
+			|| CheckState(EBaseStates::Blocking))
+			|| CheckState(EBaseStates::JumpLand)
+			)
 		{
 			DoDash();
 		}
@@ -209,12 +212,16 @@ AMyPlayerController * AHeroBase::getController()
 	{
 		FState nState;
 		nState.State = EBaseStates::Dash;
-		nState.Animation = "JumpLand";
+		nState.Animation = "JumpStart";
+		nState.AnimationFrame = (CheckState(EBaseStates::JumpLand)) ? 1 : 0;
 		nState.Rotate = false;
+		nState.EndState = false;
 		NewState(nState);
 
-		AddImpulse(DashVector, cTime(DASH_WAIT_TIME));
-		EndStateDeferred(DASH_WAIT_TIME + 0.01f);
+		float DashTime = AnimElemTime(GetAnim("JumpStart")->GetNumFrames() - nState.AnimationFrame);
+
+		AddImpulse(DashVector, DashTime);
+		EndStateDeferred(DashTime + cTime(0.01f));
 	}
 // End
 
@@ -299,7 +306,7 @@ AMyPlayerController * AHeroBase::getController()
 		}
 		case EBaseStates::Blocking:
 		{
-			if (GetCharacterMovement()->IsMovingOnGround())
+			if (FMath::IsNearlyZero(GetUnitVelocity().Z, 50.f))
 			{
 				anim = AnimData->FindRef("Block");
 			}
@@ -393,9 +400,9 @@ AMyPlayerController * AHeroBase::getController()
 
 			ArmComp->SetWorldLocation(FMath::VInterpTo(ArmLoc, nLoc, delta, CAM_INTERP));
 
-			if (CameraTargetActor)
+			if (CameraTargetActor && !CameraTargetActor->IsDead())
 			{
-				if (FVector::Distance(GetActorLocation(), CameraTargetActor->GetActorLocation()) < CAM_TARGET_DIST)
+				if (FVector::Distance(GetActorLocation(), CameraTargetActor->GetActorLocation()) < CameraTargetDist && CameraTargetActor->GetActorLocation().Z < CameraTargetDist / 2.f)
 				{
 					CameraMode = ECameraMode::Target;
 				}
@@ -411,10 +418,16 @@ AMyPlayerController * AHeroBase::getController()
 		}
 		case ECameraMode::Target:
 		{
-			if (CameraTargetActor)
+			if (CameraTargetActor && !CameraTargetActor->IsDead())
 			{
 				const FVector myLoc = GetActorLocation();
 				const FVector targetLoc = CameraTargetActor->GetActorLocation();
+
+				if (FVector::Distance(myLoc, targetLoc) > CameraTargetDist || targetLoc.Z > CameraTargetDist / 2.f)
+				{
+					CameraMode = ECameraMode::Free;
+					return;
+				}
 
 				FVector nLoc
 				{
@@ -424,15 +437,11 @@ AMyPlayerController * AHeroBase::getController()
 				};
 
 				ArmComp->SetWorldLocation(FMath::VInterpTo(ArmComp->GetComponentLocation(), nLoc, delta, CAM_INTERP));
-
-				if (FVector::Distance(myLoc, targetLoc) > CAM_TARGET_DIST)
-				{
-					CameraMode = ECameraMode::Free;
-				}
 			}
 			else
 			{
 				CameraMode = ECameraMode::Free;
+				CameraTargetActor = nullptr;
 			}
 		}
 		} // End Switch
@@ -469,15 +478,16 @@ AMyPlayerController * AHeroBase::getController()
 		CameraMode = CameraLastMode;
 	}
 
-	void AHeroBase::SetCameraTarget(APawn * target)
+	void AHeroBase::SetCameraTarget(AUnitBase * target, float dist)
 	{
 		if (target == nullptr || target == this)
 		{
-			CameraMode = ECameraMode::Free;
+			CameraTargetActor = nullptr;
 		}
 		else
 		{
 			CameraTargetActor = target;
+			CameraTargetDist = dist;
 			CameraMode = ECameraMode::Target;
 		}
 	}
@@ -740,7 +750,6 @@ AMyPlayerController * AHeroBase::getController()
 				float minusStamina = FMath::Min(1.2f, dist / 100.f) / getHeroStatsComp()->getTeleportCost();
 				GET_STATS->AddStamina(-(minusStamina));
 				getShadow()->ShowShadow();
-				resetKeys();
 			}
 		}
 	}

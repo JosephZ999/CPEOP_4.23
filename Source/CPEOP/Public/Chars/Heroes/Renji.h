@@ -10,12 +10,6 @@
 /**
  * 
  */
-
- // Init options
-#define SHIKAI_NAME "A"
-#define ANIM_LOC "Texture/Chars/Renji/FBook/"
-#define HIT_LOC	"Blueprint/Chars/Renji/Shikai/"
-
 UENUM()
 enum class ERenjiShikai : uint8
 {

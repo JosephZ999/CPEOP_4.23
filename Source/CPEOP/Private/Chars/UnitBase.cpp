@@ -7,6 +7,8 @@
 #include "Objects/Dynamic/HitSparkBase.h"
 #include "Chars/Components/UnitStatsBase.h"
 #include "Chars/Components/ShadowComponent.h"
+#include "Chars/AI/UnitAIBase.h"
+
 #include "Sys/MyGameInstance.h"
 #include "Sys/MyFunctionLibrary.h"
 
@@ -47,12 +49,29 @@ void AUnitBase::BeginPlay()
 
 	const FVector spriteScale = GetSprite()->GetComponentScale();
 	GetSprite()->SetRelativeScale3D(FVector(spriteScale.X, spriteScale.Y, spriteScale.Z * 1.1f));
+	EndState();
 }
 
 void AUnitBase::Tick(float delta)
 {
 	Super::Tick(delta);
 	Move();
+}
+
+AUnitAIBase * AUnitBase::GetUnitAI()
+{
+	if (UnitAI)
+	{
+		return UnitAI;
+	}
+	else
+	{
+		UnitAI = Cast<AUnitAIBase>(GetController());
+		if (UnitAI) { return UnitAI; }
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Casting to AI controller failed - func. name - GetUnitAI"));
+	return nullptr;
 }
 
 // Functions
@@ -94,9 +113,15 @@ void AUnitBase::Tick(float delta)
 		return (frame / GetSprite()->GetFlipbookFramerate()) / CustomTimeDilation;
 	}
 
+	FVector & AUnitBase::GetUnitVelocity()
+	{
+		return GetCharacterMovement()->Velocity;
+	}
+
 	void AUnitBase::SetImmortality(float duration)
 	{
 		Immortal = true;
+		GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Ignore);
 		if (duration > 0.f)
 		{
 			SET_TIMER(ImmortalityTimer, this, &AUnitBase::DisableImmortality, duration);
@@ -104,11 +129,14 @@ void AUnitBase::Tick(float delta)
 		else
 		{
 			Immortal = false;
+			GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Overlap);
 		}
 	}
 	void AUnitBase::DisableImmortality()
 	{
 		Immortal = false;
+		GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Overlap);
+
 	}
 // Movement //===================================------------------------------
 	void AUnitBase::Move()
@@ -122,11 +150,14 @@ void AUnitBase::Tick(float delta)
 
 	void AUnitBase::SetMoveVector(FVector nVec)
 	{
-		MoveVector = { nVec.X, nVec.Y, 0.f };
+		MoveVector = { nVec.X, nVec.Y, nVec.Z };
 	}
 
 	void AUnitBase::SetRotation(bool right, bool moveVec)
 	{
+		if (!Controller)
+			return;
+
 		if (CheckState(EBaseStates::Fall))
 			return;
 
@@ -217,6 +248,14 @@ void AUnitBase::Tick(float delta)
 	{
 		if (State == EBaseStates::Jumping || State == EBaseStates::Stand)
 		{
+			if (!GetAnim(FName("JumpLand")) || GetUnitVelocity().Z > -150.f)
+			{
+				FState nState;
+				nState.State = EBaseStates::Stand;
+				NewState(nState);
+				return;
+			}
+
 			FState nState;
 			nState.State = EBaseStates::JumpLand;
 			nState.Animation = "JumpLand";
@@ -309,7 +348,7 @@ void AUnitBase::Tick(float delta)
 // Taking Damage //==============================------------------------------
 	void AUnitBase::ApplyDamage(class AUnitBase* damageCauser, FHitOption* damageOption, bool fromBehind)
 	{
-		if (State == EBaseStates::Fall || State == EBaseStates::Teleport || IsImmortal())
+		if (State == EBaseStates::Fall || State == EBaseStates::Teleport)
 			return;
 
 		bool block  { false };
@@ -366,20 +405,22 @@ void AUnitBase::Tick(float delta)
 		// Damage Text
 		CreateDamageText(damage, damageCauser->IsLookingRight(), crit);
 
-		AddImpulse(impulse, HIT_TIME);
-
 		// Change State
 		if (!block)
 		{
-			FState nState;
-			nState.State = EBaseStates::Hit;
-			nState.Animation = "Hit";
-			nState.EndState = false;
-			NewState(nState);
-
-			EndStateDeferred(0.4f);
-			
 			Dead = getStatsComp()->GetHealth() < 0.f;
+
+			if (damage > 1.f || IsDead())
+			{
+				FState nState;
+				nState.State = EBaseStates::Hit;
+				nState.Animation = "Hit";
+				nState.EndState = false;
+				NewState(nState);
+
+				EndStateDeferred(0.4f);
+				AddImpulse(impulse, HIT_TIME);
+			}
 			
 			if (Dead)
 			{
@@ -396,6 +437,10 @@ void AUnitBase::Tick(float delta)
 				SetRotation(impulse.X < 0.f, false);
 				AddImpulse(impulse + FVector2D(0.f, 100.f), HIT_TIME);
 			}
+		}
+		else
+		{
+			AddImpulse(impulse, HIT_TIME);
 		}
 		OnDamaged();
 	}
@@ -609,7 +654,7 @@ void AUnitBase::Tick(float delta)
 
 //---------------------------------------------// Animations
 	
-	void AUnitBase::AddAnimation(FName name, FString flipbookPath)
+	void AUnitBase::InitAnim(FName name, FString flipbookPath)
 	{
 		if(AnimData)
 		{

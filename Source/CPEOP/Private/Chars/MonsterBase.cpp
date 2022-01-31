@@ -27,7 +27,16 @@ void AMonsterBase::BeginPlay()
 
 	FTimerHandle nTimer;
 	SET_TIMER(nTimer, this, &AMonsterBase::Appearance, APPEARANCE_TIME);
+
+	// Anim
+	SET_TIMER(AnimUpdateTimer, this, &AMonsterBase::AnimUpdate, AnimUpdateRate, true);
 }
+
+bool AMonsterBase::IsOnGround()
+{
+	return GetCharacterMovement()->IsMovingOnGround();
+}
+
 
 // Animations
 

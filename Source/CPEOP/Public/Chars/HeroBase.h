@@ -145,9 +145,10 @@ private:
 public:
 	// Target Mode
 	UFUNCTION(BlueprintCallable)
-	void SetCameraTarget(APawn* target);
+	void SetCameraTarget(AUnitBase* target, float dist = 350.f);
 private:
-	APawn* CameraTargetActor;
+	AUnitBase* CameraTargetActor;
+	float CameraTargetDist;
 
 //---------------------------------------------// End
 

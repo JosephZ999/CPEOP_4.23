@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-
 #include "ShadowComponent.generated.h"
 
 
@@ -25,8 +24,13 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	class AActor* Owner;
+
 	UPROPERTY(BlueprintReadOnly)
 	class AActor* ShadowObj;
+
+	class TSubclassOf<AActor> ShadowClass;
+
 
 	UPROPERTY(EditDefaultsOnly)
 	float Scale;

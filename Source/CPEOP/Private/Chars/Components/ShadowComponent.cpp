@@ -4,8 +4,10 @@
 #include "ShadowComponent.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
-#include "Sys/MyGameInstance.h"
-#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "Kismet/GameplayStatics.h"
+#include "UObject/ConstructorHelpers.h"
+
+#define CLASS_PATH "Blueprint'/Game/Blueprint/Objects/Dynamic/Shadow.Shadow_C'"
 
 // Sets default values for this component's properties
 UShadowComponent::UShadowComponent()
@@ -16,6 +18,14 @@ UShadowComponent::UShadowComponent()
 
 	Scale = 1.f;
 	// ...
+
+	// Init shadow static class
+
+	ConstructorHelpers::FClassFinder<AActor> nObject(*FString(CLASS_PATH));
+	if (nObject.Succeeded())
+	{
+		ShadowClass = nObject.Class;
+	}
 }
 
 
@@ -24,16 +34,11 @@ void UShadowComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UMyGameInstance* GameIns = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(this));
-	class TSubclassOf<AActor> ShadowClass;
-	if (GameIns)
-	{
-		ShadowClass = GameIns->getShadowClass();
-	}
+	Owner = GetOwner();
 
 	if (ShadowClass)
 	{
-		ShadowObj = GetWorld()->SpawnActor<AActor>(ShadowClass, GetOwner()->GetTransform());
+		ShadowObj = GetWorld()->SpawnActor<AActor>(ShadowClass, Owner->GetTransform());
 		if (ShadowObj)
 		{
 			ShadowObj->SetActorScale3D(FVector(Scale));
@@ -41,7 +46,7 @@ void UShadowComponent::BeginPlay()
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Failed creating shadow - %s"), *GetOwner()->GetName());
+			UE_LOG(LogTemp, Warning, TEXT("Failed creating shadow - %s"), *Owner->GetName());
 		}
 	}
 	else
@@ -58,7 +63,7 @@ void UShadowComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 	if (ShadowObj)
 	{
-		FVector nLoc = GetOwner()->GetActorLocation();
+		FVector nLoc = Owner->GetActorLocation();
 		nLoc.Z = 0.f;
 		ShadowObj->SetActorLocation(nLoc);
 	}

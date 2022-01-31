@@ -3,39 +3,43 @@
 
 #include "Renji.h"
 
+#define R_SHIKAI_NAME "A"
+#define R_ANIM_LOC "Texture/Chars/Renji/FBook/"
+#define R_HIT_LOC	"Blueprint/Chars/Renji/Shikai/"
+
 ARenji::ARenji()
 {
 	if (getHeroStatsComp())
 	{
-		InitForm(SHIKAI_NAME, { 4, 3, 3});
+		InitForm(R_SHIKAI_NAME, { 4, 3, 3});
 	}
 
 	AnimData = &AnimList;
 
 
-	AddAnimation("Stand",       ANIM_LOC "Stand");
-	AddAnimation("Walk",        ANIM_LOC "Walk");
-	AddAnimation("JumpStart",   ANIM_LOC "Jump_Start");
-	AddAnimation("JumpUp",      ANIM_LOC "Jump_Up");
-	AddAnimation("JumpHold",    ANIM_LOC "Jump_Down");
-	AddAnimation("JumpDown",    ANIM_LOC "Jump_Down");
-	AddAnimation("JumpLand",    ANIM_LOC "Jump_Land");
+	InitAnim("Stand",       R_ANIM_LOC "Stand");
+	InitAnim("Walk",        R_ANIM_LOC "Walk");
+	InitAnim("JumpStart",   R_ANIM_LOC "Jump_Start");
+	InitAnim("JumpUp",      R_ANIM_LOC "Jump_Up");
+	InitAnim("JumpHold",    R_ANIM_LOC "Jump_Down");
+	InitAnim("JumpDown",    R_ANIM_LOC "Jump_Down");
+	InitAnim("JumpLand",    R_ANIM_LOC "Jump_Land");
 
-	AddAnimation("Hit",         ANIM_LOC "Hit_1");
-	AddAnimation("FallHold",    ANIM_LOC "Fall");
-	AddAnimation("FallUp",      ANIM_LOC "Fall_Up");
-	AddAnimation("FallDown",    ANIM_LOC "Fall_Down");
-	AddAnimation("StandUp",     ANIM_LOC "Stand_Up");
-	AddAnimation("StandUpAir",  ANIM_LOC "Stand_Up_Air");
+	InitAnim("Hit",         R_ANIM_LOC "Hit_1");
+	InitAnim("FallHold",    R_ANIM_LOC "Fall");
+	InitAnim("FallUp",      R_ANIM_LOC "Fall_Up");
+	InitAnim("FallDown",    R_ANIM_LOC "Fall_Down");
+	InitAnim("StandUp",     R_ANIM_LOC "Stand_Up");
+	InitAnim("StandUpAir",  R_ANIM_LOC "Stand_Up_Air");
 
-	AddAnimation("Block",       ANIM_LOC "Guard");
-	AddAnimation("BlockAir",    ANIM_LOC "Guard_Air");
+	InitAnim("Block",       R_ANIM_LOC "Guard");
+	InitAnim("BlockAir",    R_ANIM_LOC "Guard_Air");
 }
 
 void ARenji::BeginPlay()
 {
 	Super::BeginPlay();
-	ChangeForm(SHIKAI_NAME);
+	ChangeForm(R_SHIKAI_NAME);
 }
 
 
