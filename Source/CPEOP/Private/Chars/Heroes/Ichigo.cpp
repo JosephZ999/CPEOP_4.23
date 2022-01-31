@@ -734,7 +734,7 @@ void AIchigo::b_AttackDash(float value)
 		SpawnHelper("b_Attack_B", getFrameTime(6));
 		Combo(getFrameTime(11));
 
-		SetBlockingAttack(EBlockType::Forward, getFrameTime(7), BLOCK_DURATION);
+		SetBlockingAttack(EBlockType::Forward, getFrameTime(5), BLOCK_DURATION);
 		DangerN(getFrameTime(6), EDangerType::MeleeAttack);
 	}
 

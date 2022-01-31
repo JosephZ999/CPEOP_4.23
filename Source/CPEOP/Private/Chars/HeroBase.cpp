@@ -89,9 +89,6 @@ AHeroBase::AHeroBase()
 	GetCharacterMovement()->Mass = 30;
 	GetCharacterMovement()->MaxAcceleration = MAX_ACCELERATION;
 
-	// Combo Keys
-	resetKeys();
-
 	// Helpers
 	InitHelper("Teleport", "Blueprint/Objects/Dynamic/TeleportEff");
 	
@@ -431,8 +428,8 @@ AMyPlayerController * AHeroBase::getController()
 
 				FVector nLoc
 				{
-					FMath::Lerp(myLoc.X, targetLoc.X, 0.5f), 
-					FMath::Lerp(myLoc.Y, targetLoc.Y, 0.5f),
+					FMath::Clamp(FMath::Lerp(myLoc.X, targetLoc.X, 0.5f), CameraXClampA, CameraXClampB),
+					FMath::Clamp(FMath::Lerp(myLoc.Y, targetLoc.Y, 0.5f), CameraYClampA, CameraYClampB),
 					FMath::Lerp(myLoc.Z, targetLoc.Z, 0.5f)
 				};
 
@@ -638,6 +635,7 @@ AMyPlayerController * AHeroBase::getController()
 	
 	void AHeroBase::resetKeys()
 	{
+		PAUSE_TIMER(ComboTimer);
 		KeyIndex = 0;
 		ComboKeys.Empty();
 	}
