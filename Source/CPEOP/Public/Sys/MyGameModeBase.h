@@ -30,6 +30,9 @@ struct FGameResults
 
 	UPROPERTY(BlueprintReadWrite)
 	int32 Time;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 Kills;
 };
 
 UCLASS()

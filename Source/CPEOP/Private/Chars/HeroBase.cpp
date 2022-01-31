@@ -3,7 +3,6 @@
 
 #include "Chars/HeroBase.h"
 
-#include "sys/MyPlayerController.h"
 #include "sys/MyGameInstance.h"
 #include "PaperFlipbookComponent.h"
 #include "PaperFlipbook.h"
@@ -98,8 +97,6 @@ AHeroBase::AHeroBase()
 void AHeroBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-	PlayerController = Cast<AMyPlayerController>(GetController());
 	GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &AHeroBase::OnCompHit);
 }
 
@@ -149,20 +146,6 @@ void AHeroBase::EndState()
 	Super::EndState();
 	resetKeys();
 	SkillDisable();
-}
-
-AMyPlayerController * AHeroBase::getController()
-{
-	if (PlayerController)
-	{
-		return PlayerController;
-	}
-	else
-	{
-		PlayerController = Cast<AMyPlayerController>(GetController());
-		return PlayerController;
-	}
-	return nullptr;
 }
 
 // Movement // Sprint // Dash //
@@ -594,16 +577,14 @@ AMyPlayerController * AHeroBase::getController()
 	{
 		Skill = true;
 		SET_TIMER(skillDisTimer, this, &AHeroBase::SkillDisable, cTime(1.f));
-		if (getController())
-			getController()->HeroSkillActivated();
+		HeroSkillActivated();
 	}
 
 	void AHeroBase::SkillDisable()
 	{
 		Skill = false;
 		PAUSE_TIMER(skillDisTimer);
-		if (getController())
-			getController()->HeroSkillDeactivated();
+		HeroSkillDeactivated();
 	}
 
 	void AHeroBase::SkillCanceled()
@@ -655,7 +636,10 @@ AMyPlayerController * AHeroBase::getController()
 			return;
 
 		if (!getHeroStatsComp()->checkStamina(1.f / getHeroStatsComp()->getTeleportCost(), false))
+		{
+			NotEnoughStamina();
 			return;
+		}
 
 		if (MoveVector == FVector::ZeroVector || CheckState(EBaseStates::Fall) || CheckState(EBaseStates::Teleport) || IsDead())
 			return;

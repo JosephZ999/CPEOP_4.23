@@ -2,6 +2,7 @@
 
 
 #include "Chars/Heroes/Ichigo.h"
+#include "Sys/MyPlayerController.h"
 
 #define ICHI_ANIM_LOC		"Texture/Chars/Ichigo/FBook/"
 #define ICHI_ANIM_LOC_B		"Texture/Chars/Ichigo_Bankai/FBook/"
@@ -421,6 +422,22 @@ void AIchigo::b_AttackDash(float value)
 		SetBlockingAttack(EBlockType::Forward, getFrameTime(4), BLOCK_DURATION);
 		DangerN(getFrameTime(6), EDangerType::MeleeAttack);
 	}
+
+	void AIchigo::sh_Attack_Air()
+	{
+		FState nState;
+		nState.State = EIchigoState::Ichi_Attack_Air;
+		nState.Animation = "AttackAir";
+		NewState(nState);
+
+		AddImpulse(FVector(GetUnitVelocity().X, GetUnitVelocity().Y, 200.f), getFrameTime(4));
+		SpawnHelper("sh_AttackAir", getFrameTime(4));
+		Combo(getFrameTime(12));
+
+		SetBlockingAttack(EBlockType::Forward, getFrameTime(4), BLOCK_DURATION);
+		DangerN(getFrameTime(6), EDangerType::MeleeAttack);
+	}
+
 	void AIchigo::sh_AttackFW()
 	{
 		FState nState;
@@ -447,10 +464,20 @@ void AIchigo::b_AttackDash(float value)
 		if (!getHeroStatsComp()->CheckSkill("Getsuga"))
 			return;
 
-		if (IsSkillActive()
-			&& getHeroStatsComp()->checkStamina(-(GETSUGA_COST))
-			&& getHeroStatsComp()->checkPower(-(GETSUGA_COST)))
+		if (IsSkillActive())
 		{
+			if (!getHeroStatsComp()->checkStamina(-(GETSUGA_COST)))
+			{
+				NotEnoughStamina();
+				return;
+			}
+
+			if (!getHeroStatsComp()->checkPower(-(GETSUGA_COST)))
+			{
+				NotEnoughPower();
+				return;
+			}
+
 			GET_STATS->AddStamina(GETSUGA_COST, 0.f, true);
 			SpawnHelper("sh_GetsugaFWHelper");
 			SkillDisable();
@@ -475,20 +502,7 @@ void AIchigo::b_AttackDash(float value)
 		SET_TIMER(nTimer, this, &AIchigo::sh_GetsugaB, getFrameTime(6));
 	}
 
-	void AIchigo::sh_Attack_Air()
-	{
-		FState nState;
-		nState.State = EIchigoState::Ichi_Attack_Air;
-		nState.Animation = "AttackAir";
-		NewState(nState);
-
-		AddImpulse( FVector(GetUnitVelocity().X, GetUnitVelocity().Y, 200.f), getFrameTime(4));
-		SpawnHelper("sh_AttackAir", getFrameTime(4));
-		Combo(getFrameTime(12));
-
-		SetBlockingAttack(EBlockType::Forward, getFrameTime(4), BLOCK_DURATION);
-		DangerN(getFrameTime(6), EDangerType::MeleeAttack);
-	}
+	
 
 	void AIchigo::sh_GetsugaB()
 	{
@@ -498,10 +512,20 @@ void AIchigo::b_AttackDash(float value)
 		if (!getHeroStatsComp()->CheckSkill("Getsuga"))
 			return;
 
-		if (IsSkillActive()
-			&& getHeroStatsComp()->checkStamina(-(GETSUGA_COST))
-			&& getHeroStatsComp()->checkPower(-(GETSUGA_COST)))
+		if (IsSkillActive())
 		{
+			if (!getHeroStatsComp()->checkStamina(-(GETSUGA_COST)))
+			{
+				NotEnoughStamina();
+				return;
+			}
+
+			if (!getHeroStatsComp()->checkPower(-(GETSUGA_COST)))
+			{
+				NotEnoughPower();
+				return;
+			}
+
 			GET_STATS->AddStamina(GETSUGA_COST, 0.f, true);
 			SpawnHelper("sh_GetsugaFWHelper", 0.f, FRotator(45.f, 0.f, 0.f));
 			SkillDisable();
@@ -559,17 +583,25 @@ void AIchigo::b_AttackDash(float value)
 	//---------------------------------------------// Getsuga Tensho
 	void AIchigo::sh_GetsugaStart()
 	{
-		if (getHeroStatsComp()->checkStamina(-(GETSUGA_TENSHOU_COST))
-			&& getHeroStatsComp()->checkPower(-(GETSUGA_TENSHOU_COST)))
+		if (!getHeroStatsComp()->checkStamina(-(GETSUGA_TENSHOU_COST)))
 		{
-			FState nState;
-			nState.State = EIchigoState::Ichi_GetsugaStart;
-			nState.Animation = "GetsugaStart";
-			NewState(nState);
-
-			Combo(getFrameTime(10));
-			SkillDisable();
+			NotEnoughStamina();
+			return;
 		}
+		
+		if (!getHeroStatsComp()->checkPower(-(GETSUGA_TENSHOU_COST)))
+		{
+			NotEnoughPower();
+			return;
+		}
+		
+		FState nState;
+		nState.State = EIchigoState::Ichi_GetsugaStart;
+		nState.Animation = "GetsugaStart";
+		NewState(nState);
+
+		Combo(getFrameTime(10));
+		SkillDisable();
 	}
 
 	void AIchigo::sh_GetsugaSlash()
@@ -595,23 +627,33 @@ void AIchigo::b_AttackDash(float value)
 		if (!getHeroStatsComp()->CheckSkill("RExplosion"))
 			return;
 
-		if (getHeroStatsComp()->checkStamina(-(EXPLOSION_COST)) && getHeroStatsComp()->checkPower(-(EXPLOSION_COST)))
+		if (!getHeroStatsComp()->checkStamina(-(EXPLOSION_COST)))
 		{
-			FState nState;
-			nState.State = EIchigoState::Ichi_RExplosion;
-			nState.Animation = "RExplosion";
-			nState.Rotate = false;
-			NewState(nState);
-
-			SpawnHelper("sh_ReiatsuExplosion", getFrameTime(8), FRotator(0.f), FVector(1.5f));
-			Combo(getFrameTime(18));
-
-			DangerN(getFrameTime(5), EDangerType::MeleeAttack);
-			SetBlockingAttack(EBlockType::Both, AnimElemTime(5), AnimElemTime(15));
-
-			GET_STATS->AddStamina(EXPLOSION_COST, AnimElemTime(10), true, GetState());
-			SkillDisable();
+			NotEnoughStamina();
+			return;
 		}
+
+		if (!getHeroStatsComp()->checkPower(-(EXPLOSION_COST)))
+		{
+			NotEnoughPower();
+			return;
+		}
+
+		FState nState;
+		nState.State = EIchigoState::Ichi_RExplosion;
+		nState.Animation = "RExplosion";
+		nState.Rotate = false;
+		NewState(nState);
+
+		SpawnHelper("sh_ReiatsuExplosion", getFrameTime(8), FRotator(0.f), FVector(1.5f));
+		Combo(getFrameTime(18));
+
+		DangerN(getFrameTime(5), EDangerType::MeleeAttack);
+		SetBlockingAttack(EBlockType::Both, AnimElemTime(5), AnimElemTime(15));
+
+		GET_STATS->AddStamina(EXPLOSION_COST, AnimElemTime(10), true, GetState());
+		SkillDisable();
+	
 	}
 
 	// Ichi_Bankai
@@ -724,7 +766,10 @@ void AIchigo::b_AttackDash(float value)
 	void AIchigo::b_Attack_FW()
 	{
 		if (!GET_STATS->checkStamina(2.f / getHeroStatsComp()->getTeleportCost(), false))
+		{
+			NotEnoughStamina();
 			return;
+		}
 
 		FState nState;
 		nState.State = EIchigoState::Ichi_Attack_FW;
@@ -792,8 +837,17 @@ void AIchigo::b_AttackDash(float value)
 		if (!getHeroStatsComp()->CheckSkill("Getsuga"))
 			return;
 
-		if (!(getHeroStatsComp()->checkStamina(-(GETSUGA_COST)) && getHeroStatsComp()->checkPower(-(GETSUGA_COST))))
+		if (!getHeroStatsComp()->checkStamina(-(GETSUGA_COST)))
+		{
+			NotEnoughStamina();
 			return;
+		}
+
+		if (!getHeroStatsComp()->checkPower(-(GETSUGA_COST)))
+		{
+			NotEnoughPower();
+			return;
+		}
 
 		FState nState;
 		nState.State = EIchigoState::Ichi_GetsugaFW;
@@ -817,8 +871,17 @@ void AIchigo::b_AttackDash(float value)
 		if (!getHeroStatsComp()->CheckSkill("RExplosion"))
 			return;
 
-		if (!(getHeroStatsComp()->checkStamina(-(EXPLOSION_COST)) && getHeroStatsComp()->checkPower(-(EXPLOSION_COST))))
+		if (!getHeroStatsComp()->checkStamina(-(EXPLOSION_COST)))
+		{
+			NotEnoughStamina();
 			return;
+		}
+
+		if (!getHeroStatsComp()->checkPower(-(EXPLOSION_COST)))
+		{
+			NotEnoughPower();
+			return;
+		}
 
 		FState nState;
 		nState.State = EIchigoState::Ichi_RExplosion;

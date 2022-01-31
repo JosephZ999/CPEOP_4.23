@@ -49,12 +49,8 @@ private:
 	UPROPERTY(Category = Components, VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
 	class UHeroStats* HeroStatsComp;
 
-	UPROPERTY(Category = Components, VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
-	class AMyPlayerController* PlayerController;
 
 public:
-	AMyPlayerController* getController();
-
 	FORCEINLINE virtual class UUnitStatsBase* getStatsComp() const { return HeroStatsComp; }
 	FORCEINLINE class UHeroStats* getHeroStatsComp()         const { return HeroStatsComp; }
 
@@ -64,6 +60,11 @@ protected:
 	virtual void EndState()			override;
 public:
 	virtual void Tick(float delta)	override;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void NotEnoughPower();
+	UFUNCTION(BlueprintImplementableEvent)
+	void NotEnoughStamina();
 
 //---------------------------------------------// Timeline
 protected:
@@ -174,6 +175,12 @@ public:
 	FTimerHandle PowChargeLoopTimer;
 
 	void SkillEnable();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void HeroSkillActivated();
+	UFUNCTION(BlueprintImplementableEvent)
+	void HeroSkillDeactivated();
+
 	void SkillDisable();
 	void SkillCanceled();
 	bool IsSkillActive()const { return Skill; }

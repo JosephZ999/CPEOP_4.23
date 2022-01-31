@@ -410,7 +410,7 @@ AUnitAIBase * AUnitBase::GetUnitAI()
 		{
 			Dead = getStatsComp()->GetHealth() < 0.f;
 
-			if (damage > 1.f || IsDead())
+			if (damage > getStatsComp()->GetMaxHealth() / 10.f || IsDead())
 			{
 				FState nState;
 				nState.State = EBaseStates::Hit;
