@@ -4,9 +4,9 @@
 #include "TimerManager.h"
 #include "PaperFlipbook.h"
 
-#define ANIM_LOC	"Texture/Chars/Ogichi/FBook/"
-#define ANIM_LOC_2	"Texture/Chars/Ogichi_Bankai/Anim/"
-#define HIT_LOC		"Blueprint/Chars/Ogichi/Shikai/"
+#define OGI_ANIM_LOC	"Texture/Chars/Ogichi/FBook/"
+#define OGI_ANIM_LOC_2	"Texture/Chars/Ogichi_Bankai/Anim/"
+#define OGI_HIT_LOC		"Blueprint/Chars/Ogichi/Shikai/"
 
 // Attack Options
 #define BASE_VELOCITY	(MoveVector + GetActorForwardVector()) * 150
@@ -25,76 +25,76 @@ AOgichi::AOgichi()
 	}
 
 	// Hit Boxes
-	InitHelper("sh_Attack_1",			HIT_LOC "sh_Attack_1");
-	InitHelper("sh_Attack_2",			HIT_LOC "sh_Attack_2");
-	InitHelper("sh_AttackBack",			HIT_LOC "sh_AttackBack");
-	InitHelper("sh_AttackForward",		HIT_LOC "sh_AttackForward");
-	InitHelper("sh_SwordTwist",			HIT_LOC "sh_SwordTwist");
-	InitHelper("sh_SwordThrow",			HIT_LOC "sh_SwordThrow");
+	InitHelper("sh_Attack_1",			OGI_HIT_LOC "sh_Attack_1");
+	InitHelper("sh_Attack_2",			OGI_HIT_LOC "sh_Attack_2");
+	InitHelper("sh_AttackBack",			OGI_HIT_LOC "sh_AttackBack");
+	InitHelper("sh_AttackForward",		OGI_HIT_LOC "sh_AttackForward");
+	InitHelper("sh_SwordTwist",			OGI_HIT_LOC "sh_SwordTwist");
+	InitHelper("sh_SwordThrow",			OGI_HIT_LOC "sh_SwordThrow");
 
-	InitHelper("sh_GetsugaHelper",		HIT_LOC "sh_GetsugaHelper");
-	InitHelper("sh_GetsugaFWHelper",	HIT_LOC "sh_GetsugaFWHelper");
+	InitHelper("sh_GetsugaHelper",		OGI_HIT_LOC "sh_GetsugaHelper");
+	InitHelper("sh_GetsugaFWHelper",	OGI_HIT_LOC "sh_GetsugaFWHelper");
 
 // Animations //
 	// Ichi_Shikai
 	AnimData = &ShikaiAnim;
-	InitAnim("Stand",			ANIM_LOC "Stand");
-	InitAnim("Walk",			ANIM_LOC "Walk");
-	InitAnim("JumpStart",		ANIM_LOC "JumpStart");
-	InitAnim("JumpUp",			ANIM_LOC "JumpUp");
-	InitAnim("JumpHold",		ANIM_LOC "JumpHold");
-	InitAnim("JumpDown",		ANIM_LOC "JumpDown");
-	InitAnim("JumpLand",		ANIM_LOC "JumpLand");
+	InitAnim("Stand",			OGI_ANIM_LOC "Stand");
+	InitAnim("Walk",			OGI_ANIM_LOC "Walk");
+	InitAnim("JumpStart",		OGI_ANIM_LOC "JumpStart");
+	InitAnim("JumpUp",			OGI_ANIM_LOC "JumpUp");
+	InitAnim("JumpHold",		OGI_ANIM_LOC "JumpHold");
+	InitAnim("JumpDown",		OGI_ANIM_LOC "JumpDown");
+	InitAnim("JumpLand",		OGI_ANIM_LOC "JumpLand");
 
-	InitAnim("Hit",				ANIM_LOC "Hit1");
-	InitAnim("FallHold",		ANIM_LOC "FallHold");
-	InitAnim("FallUp",			ANIM_LOC "FallUp");
-	InitAnim("FallDown",		ANIM_LOC "FallDown");
-	InitAnim("StandUp",			ANIM_LOC "StandUp");
-	InitAnim("StandUpAir",		ANIM_LOC "StandUpAir");
+	InitAnim("Hit",				OGI_ANIM_LOC "Hit1");
+	InitAnim("FallHold",		OGI_ANIM_LOC "FallHold");
+	InitAnim("FallUp",			OGI_ANIM_LOC "FallUp");
+	InitAnim("FallDown",		OGI_ANIM_LOC "FallDown");
+	InitAnim("StandUp",			OGI_ANIM_LOC "StandUp");
+	InitAnim("StandUpAir",		OGI_ANIM_LOC "StandUpAir");
 
-	InitAnim("Block",			ANIM_LOC "Block");
-	InitAnim("BlockAir",		ANIM_LOC "BlockAir");
+	InitAnim("Block",			OGI_ANIM_LOC "Block");
+	InitAnim("BlockAir",		OGI_ANIM_LOC "BlockAir");
 
-	InitAnim("PowChargeStart",	ANIM_LOC "PowChStart");
-	InitAnim("PowChargeLoop",	ANIM_LOC "PowChLoop");
-	InitAnim("PowChargeEnd",	ANIM_LOC "PowChEnd");
+	InitAnim("PowChargeStart",	OGI_ANIM_LOC "PowChStart");
+	InitAnim("PowChargeLoop",	OGI_ANIM_LOC "PowChLoop");
+	InitAnim("PowChargeEnd",	OGI_ANIM_LOC "PowChEnd");
 
-	InitAnim("Attack_1",		ANIM_LOC "Attack1");
-	InitAnim("Attack_2",		ANIM_LOC "Attack2");
-	InitAnim("AttackFW",		ANIM_LOC "AttackForward");
-	InitAnim("AttackB",			ANIM_LOC "AttackBack");
-	InitAnim("AttackB2",		ANIM_LOC "AttackBack2");
-	InitAnim("SwordTwist",		ANIM_LOC "SwordTwist");
-	InitAnim("SwordTwistLoop",	ANIM_LOC "SwordTwistLoop");
-	InitAnim("SwordThrow",		ANIM_LOC "SwordThrow");
+	InitAnim("Attack_1",		OGI_ANIM_LOC "Attack1");
+	InitAnim("Attack_2",		OGI_ANIM_LOC "Attack2");
+	InitAnim("AttackFW",		OGI_ANIM_LOC "AttackForward");
+	InitAnim("AttackB",			OGI_ANIM_LOC "AttackBack");
+	InitAnim("AttackB2",		OGI_ANIM_LOC "AttackBack2");
+	InitAnim("SwordTwist",		OGI_ANIM_LOC "SwordTwist");
+	InitAnim("SwordTwistLoop",	OGI_ANIM_LOC "SwordTwistLoop");
+	InitAnim("SwordThrow",		OGI_ANIM_LOC "SwordThrow");
 
-	InitAnim("Getsuga",			ANIM_LOC "Getsuga");
-	InitAnim("Bankai",			ANIM_LOC_2 "Bankai");
+	InitAnim("Getsuga",			OGI_ANIM_LOC "Getsuga");
+	InitAnim("Bankai",			OGI_ANIM_LOC_2 "Bankai");
 
 	AnimData = &BankaiAnim;
 
-	InitAnim("Stand",			ANIM_LOC_2 "Stand");
-	InitAnim("Walk",			ANIM_LOC_2 "Run");
-	InitAnim("JumpStart",		ANIM_LOC_2 "JumpStart");
-	InitAnim("JumpUp",			ANIM_LOC_2 "JumpUp");
-	InitAnim("JumpHold",		ANIM_LOC_2 "JumpHold");
-	InitAnim("JumpDown",		ANIM_LOC_2 "JumpDown");
-	InitAnim("JumpLand",		ANIM_LOC_2 "JumpLand");
+	InitAnim("Stand",			OGI_ANIM_LOC_2 "Stand");
+	InitAnim("Walk",			OGI_ANIM_LOC_2 "Run");
+	InitAnim("JumpStart",		OGI_ANIM_LOC_2 "JumpStart");
+	InitAnim("JumpUp",			OGI_ANIM_LOC_2 "JumpUp");
+	InitAnim("JumpHold",		OGI_ANIM_LOC_2 "JumpHold");
+	InitAnim("JumpDown",		OGI_ANIM_LOC_2 "JumpDown");
+	InitAnim("JumpLand",		OGI_ANIM_LOC_2 "JumpLand");
 
-	InitAnim("Hit",				ANIM_LOC_2 "Hit");
-	InitAnim("FallHold",		ANIM_LOC_2 "FallHold");
-	InitAnim("FallUp",			ANIM_LOC_2 "FallUp");
-	InitAnim("FallDown",		ANIM_LOC_2 "FallDown");
-	InitAnim("StandUp",			ANIM_LOC_2 "StandUp");
-	InitAnim("StandUpAir",		ANIM_LOC_2 "StandUpAir");
+	InitAnim("Hit",				OGI_ANIM_LOC_2 "Hit");
+	InitAnim("FallHold",		OGI_ANIM_LOC_2 "FallHold");
+	InitAnim("FallUp",			OGI_ANIM_LOC_2 "FallUp");
+	InitAnim("FallDown",		OGI_ANIM_LOC_2 "FallDown");
+	InitAnim("StandUp",			OGI_ANIM_LOC_2 "StandUp");
+	InitAnim("StandUpAir",		OGI_ANIM_LOC_2 "StandUpAir");
 
-	InitAnim("Block",			ANIM_LOC_2 "Block");
-	InitAnim("BlockAir",		ANIM_LOC_2 "Block");
+	InitAnim("Block",			OGI_ANIM_LOC_2 "Block");
+	InitAnim("BlockAir",		OGI_ANIM_LOC_2 "Block");
 
-	InitAnim("PowChargeStart",	ANIM_LOC_2 "ChargeStart");
-	InitAnim("PowChargeLoop",	ANIM_LOC_2 "ChargeLoop");
-	InitAnim("PowChargeEnd",	ANIM_LOC_2 "ChargeEnd");
+	InitAnim("PowChargeStart",	OGI_ANIM_LOC_2 "ChargeStart");
+	InitAnim("PowChargeLoop",	OGI_ANIM_LOC_2 "ChargeLoop");
+	InitAnim("PowChargeEnd",	OGI_ANIM_LOC_2 "ChargeEnd");
 
 	AnimData = &ShikaiAnim;
 

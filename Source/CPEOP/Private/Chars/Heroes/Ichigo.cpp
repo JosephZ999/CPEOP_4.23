@@ -3,10 +3,10 @@
 
 #include "Chars/Heroes/Ichigo.h"
 
-#define ANIM_LOC		"Texture/Chars/Ichigo/FBook/"
-#define ANIM_LOC_B		"Texture/Chars/Ichigo_Bankai/FBook/"
-#define HIT_LOC			"Blueprint/Chars/Ichigo/Shikai/"
-#define HIT_LOC_B		"Blueprint/Chars/Ichigo/Bankai/"
+#define ICHI_ANIM_LOC		"Texture/Chars/Ichigo/FBook/"
+#define ICHI_ANIM_LOC_B		"Texture/Chars/Ichigo_Bankai/FBook/"
+#define ICHI_HIT_LOC		"Blueprint/Chars/Ichigo/Shikai/"
+#define ICHI_HIT_LOC_B		"Blueprint/Chars/Ichigo/Bankai/"
 
 /* Attack Options */
 #define BASE_VELOCITY	(MoveVector + GetActorForwardVector()) * 150
@@ -34,94 +34,94 @@ AIchigo::AIchigo()
 	}
 
 	// Hit Boxes
-	InitHelper("sh_Attack_1",			HIT_LOC "sh_Attack_1");
-	InitHelper("sh_Attack_2",			HIT_LOC "sh_Attack_2");
-	InitHelper("sh_AttackBack",			HIT_LOC "sh_AttackBack");
-	InitHelper("sh_AttackForward",		HIT_LOC "sh_AttackForward");
-	InitHelper("sh_GetsugaHelper",		HIT_LOC "sh_GetsugaHelper");
-	InitHelper("sh_GetsugaFWHelper",	HIT_LOC "sh_GetsugaFWHelper");
-	InitHelper("sh_ReiatsuExplosion",	HIT_LOC "sh_ReiatsuExplosion");
-	InitHelper("sh_SwordTwist",			HIT_LOC "sh_SwordTwist");
-	InitHelper("BankaiEff",				HIT_LOC "BankaiEff");
+	InitHelper("sh_Attack_1",			ICHI_HIT_LOC "sh_Attack_1");
+	InitHelper("sh_Attack_2",			ICHI_HIT_LOC "sh_Attack_2");
+	InitHelper("sh_AttackBack",			ICHI_HIT_LOC "sh_AttackBack");
+	InitHelper("sh_AttackForward",		ICHI_HIT_LOC "sh_AttackForward");
+	InitHelper("sh_GetsugaHelper",		ICHI_HIT_LOC "sh_GetsugaHelper");
+	InitHelper("sh_GetsugaFWHelper",	ICHI_HIT_LOC "sh_GetsugaFWHelper");
+	InitHelper("sh_ReiatsuExplosion",	ICHI_HIT_LOC "sh_ReiatsuExplosion");
+	InitHelper("sh_SwordTwist",			ICHI_HIT_LOC "sh_SwordTwist");
+	InitHelper("BankaiEff",				ICHI_HIT_LOC "BankaiEff");
 
-	InitHelper("b_Attack_1",			HIT_LOC_B "b_Attack_1");
-	InitHelper("b_Attack_2",			HIT_LOC_B "b_Attack_2");
-	InitHelper("b_Attack_3",			HIT_LOC_B "b_Attack_3");
-	InitHelper("b_Attack_4",			HIT_LOC_B "b_Attack_4");
+	InitHelper("b_Attack_1",			ICHI_HIT_LOC_B "b_Attack_1");
+	InitHelper("b_Attack_2",			ICHI_HIT_LOC_B "b_Attack_2");
+	InitHelper("b_Attack_3",			ICHI_HIT_LOC_B "b_Attack_3");
+	InitHelper("b_Attack_4",			ICHI_HIT_LOC_B "b_Attack_4");
 
-	InitHelper("b_Attack_FW",			HIT_LOC_B "b_Attack_FW");
-	InitHelper("b_Attack_B",			HIT_LOC_B "b_Attack_B");
+	InitHelper("b_Attack_FW",			ICHI_HIT_LOC_B "b_Attack_FW");
+	InitHelper("b_Attack_B",			ICHI_HIT_LOC_B "b_Attack_B");
 
-	InitHelper("b_GetsugaEff",			HIT_LOC_B "GetsugaEff");
-	InitHelper("b_Getsuga",				HIT_LOC_B "GetsugaHelper");
-	InitHelper("b_RExplosion",			HIT_LOC_B "b_RExplosion");
+	InitHelper("b_GetsugaEff",			ICHI_HIT_LOC_B "GetsugaEff");
+	InitHelper("b_Getsuga",				ICHI_HIT_LOC_B "GetsugaHelper");
+	InitHelper("b_RExplosion",			ICHI_HIT_LOC_B "b_RExplosion");
 
 // Animations //
 	// Ichi_Shikai
 	AnimData = &ShikaiAnim;
-	InitAnim("Stand",			ANIM_LOC "Stand"		);
-	InitAnim("Walk",			ANIM_LOC "Run"			);
-	InitAnim("JumpStart",		ANIM_LOC "JumpStart"	);
-	InitAnim("JumpUp",			ANIM_LOC "JumpUp"		);
-	InitAnim("JumpHold",		ANIM_LOC "JumpHold"		);
-	InitAnim("JumpDown",		ANIM_LOC "JumpDown"		);
-	InitAnim("JumpLand",		ANIM_LOC "JumpLand"		);
-	InitAnim("Hit",				ANIM_LOC "hit"			);
-	InitAnim("FallHold",		ANIM_LOC "FallHold"		);
-	InitAnim("FallUp",			ANIM_LOC "FallUp"		);
-	InitAnim("FallDown",		ANIM_LOC "FallDown"		);
-	InitAnim("StandUp",			ANIM_LOC "StandUp"		);
-	InitAnim("StandUpAir",		ANIM_LOC "StandUpAir"	);
-	InitAnim("Block",			ANIM_LOC "Guard"		);
-	InitAnim("BlockAir",		ANIM_LOC "GuardAir"		);
-	InitAnim("PowChargeStart",	ANIM_LOC "PowChStart"	);
-	InitAnim("PowChargeLoop",	ANIM_LOC "PowChLoop"	);
-	InitAnim("PowChargeEnd",	ANIM_LOC "PowChEnd"		);
+	InitAnim("Stand",			ICHI_ANIM_LOC "Stand"		);
+	InitAnim("Walk",			ICHI_ANIM_LOC "Run"			);
+	InitAnim("JumpStart",		ICHI_ANIM_LOC "JumpStart"	);
+	InitAnim("JumpUp",			ICHI_ANIM_LOC "JumpUp"		);
+	InitAnim("JumpHold",		ICHI_ANIM_LOC "JumpHold"		);
+	InitAnim("JumpDown",		ICHI_ANIM_LOC "JumpDown"		);
+	InitAnim("JumpLand",		ICHI_ANIM_LOC "JumpLand"		);
+	InitAnim("Hit",				ICHI_ANIM_LOC "hit"			);
+	InitAnim("FallHold",		ICHI_ANIM_LOC "FallHold"		);
+	InitAnim("FallUp",			ICHI_ANIM_LOC "FallUp"		);
+	InitAnim("FallDown",		ICHI_ANIM_LOC "FallDown"		);
+	InitAnim("StandUp",			ICHI_ANIM_LOC "StandUp"		);
+	InitAnim("StandUpAir",		ICHI_ANIM_LOC "StandUpAir"	);
+	InitAnim("Block",			ICHI_ANIM_LOC "Guard"		);
+	InitAnim("BlockAir",		ICHI_ANIM_LOC "GuardAir"		);
+	InitAnim("PowChargeStart",	ICHI_ANIM_LOC "PowChStart"	);
+	InitAnim("PowChargeLoop",	ICHI_ANIM_LOC "PowChLoop"	);
+	InitAnim("PowChargeEnd",	ICHI_ANIM_LOC "PowChEnd"		);
 
-	InitAnim("Attack_1",		ANIM_LOC "Attack1");
-	InitAnim("Attack_2",		ANIM_LOC "Attack2");
-	InitAnim("AttackFW",		ANIM_LOC "AttackForward");
-	InitAnim("AttackB",			ANIM_LOC "AttackBack");
-	InitAnim("SwordTwist",		ANIM_LOC "SwordTwist");
-	InitAnim("SwordTwistLoop",	ANIM_LOC "SwordTwistLoop");
-	InitAnim("GetsugaStart",	ANIM_LOC "GetsugaStart");
-	InitAnim("GetsugaFW",		ANIM_LOC "GetsugaFW");
-	InitAnim("RExplosion",		ANIM_LOC "RExplosion");
+	InitAnim("Attack_1",		ICHI_ANIM_LOC "Attack1");
+	InitAnim("Attack_2",		ICHI_ANIM_LOC "Attack2");
+	InitAnim("AttackFW",		ICHI_ANIM_LOC "AttackForward");
+	InitAnim("AttackB",			ICHI_ANIM_LOC "AttackBack");
+	InitAnim("SwordTwist",		ICHI_ANIM_LOC "SwordTwist");
+	InitAnim("SwordTwistLoop",	ICHI_ANIM_LOC "SwordTwistLoop");
+	InitAnim("GetsugaStart",	ICHI_ANIM_LOC "GetsugaStart");
+	InitAnim("GetsugaFW",		ICHI_ANIM_LOC "GetsugaFW");
+	InitAnim("RExplosion",		ICHI_ANIM_LOC "RExplosion");
 
-	InitAnim("Bankai",			ANIM_LOC "Bankai");
-	InitAnim("FastBankai",		ANIM_LOC "BankaiFast");
+	InitAnim("Bankai",			ICHI_ANIM_LOC "Bankai");
+	InitAnim("FastBankai",		ICHI_ANIM_LOC "BankaiFast");
 
 	AnimData = &BankaiAnim;
-	InitAnim("Stand",           ANIM_LOC_B "Stand"	);
-	InitAnim("Walk",            ANIM_LOC_B "Run"		);
-	InitAnim("JumpStart",       ANIM_LOC_B "JumpStart");
-	InitAnim("JumpUp",          ANIM_LOC_B "JumpUp"	);
-	InitAnim("JumpHold",        ANIM_LOC_B "JumpHold"	);
-	InitAnim("JumpDown",        ANIM_LOC_B "JumpDown"	);
-	InitAnim("JumpLand",        ANIM_LOC_B "JumpLand"	);
-	InitAnim("Hit",             ANIM_LOC_B "Hit");
-	InitAnim("FallHold",        ANIM_LOC_B "FallHold");
-	InitAnim("FallUp",          ANIM_LOC_B "FallUp");
-	InitAnim("FallDown",        ANIM_LOC_B "FallDown");
-	InitAnim("StandUp",         ANIM_LOC_B "StandUp");
-	InitAnim("StandUpAir",      ANIM_LOC_B "StandUpAir");
-	InitAnim("Block",           ANIM_LOC_B "Guard");
-	InitAnim("BlockAir",        ANIM_LOC_B "Guard");
-	InitAnim("PowChargeStart",  ANIM_LOC_B "ChargeStart");
-	InitAnim("PowChargeLoop",   ANIM_LOC_B "ChargeLoop");
-	InitAnim("PowChargeEnd",    ANIM_LOC_B "ChargeEnd");
+	InitAnim("Stand",           ICHI_ANIM_LOC_B "Stand"	);
+	InitAnim("Walk",            ICHI_ANIM_LOC_B "Run"		);
+	InitAnim("JumpStart",       ICHI_ANIM_LOC_B "JumpStart");
+	InitAnim("JumpUp",          ICHI_ANIM_LOC_B "JumpUp"	);
+	InitAnim("JumpHold",        ICHI_ANIM_LOC_B "JumpHold"	);
+	InitAnim("JumpDown",        ICHI_ANIM_LOC_B "JumpDown"	);
+	InitAnim("JumpLand",        ICHI_ANIM_LOC_B "JumpLand"	);
+	InitAnim("Hit",             ICHI_ANIM_LOC_B "Hit");
+	InitAnim("FallHold",        ICHI_ANIM_LOC_B "FallHold");
+	InitAnim("FallUp",          ICHI_ANIM_LOC_B "FallUp");
+	InitAnim("FallDown",        ICHI_ANIM_LOC_B "FallDown");
+	InitAnim("StandUp",         ICHI_ANIM_LOC_B "StandUp");
+	InitAnim("StandUpAir",      ICHI_ANIM_LOC_B "StandUpAir");
+	InitAnim("Block",           ICHI_ANIM_LOC_B "Guard");
+	InitAnim("BlockAir",        ICHI_ANIM_LOC_B "Guard");
+	InitAnim("PowChargeStart",  ICHI_ANIM_LOC_B "ChargeStart");
+	InitAnim("PowChargeLoop",   ICHI_ANIM_LOC_B "ChargeLoop");
+	InitAnim("PowChargeEnd",    ICHI_ANIM_LOC_B "ChargeEnd");
 
-	InitAnim("Attack_1",        ANIM_LOC_B "Attack1");
-	InitAnim("Attack_2",        ANIM_LOC_B "Attack2");
-	InitAnim("Attack_3",        ANIM_LOC_B "Attack3");
-	InitAnim("Attack_4",        ANIM_LOC_B "Attack4");
-	InitAnim("Attack_FW",       ANIM_LOC_B "AttackFW");
-	InitAnim("Attack_B",        ANIM_LOC_B "AttackB");
+	InitAnim("Attack_1",        ICHI_ANIM_LOC_B "Attack1");
+	InitAnim("Attack_2",        ICHI_ANIM_LOC_B "Attack2");
+	InitAnim("Attack_3",        ICHI_ANIM_LOC_B "Attack3");
+	InitAnim("Attack_4",        ICHI_ANIM_LOC_B "Attack4");
+	InitAnim("Attack_FW",       ICHI_ANIM_LOC_B "AttackFW");
+	InitAnim("Attack_B",        ICHI_ANIM_LOC_B "AttackB");
 
-	InitAnim("Getsuga",         ANIM_LOC_B "Getsuga");
-	InitAnim("RExplosion",      ANIM_LOC_B "RExplosion");
+	InitAnim("Getsuga",         ICHI_ANIM_LOC_B "Getsuga");
+	InitAnim("RExplosion",      ICHI_ANIM_LOC_B "RExplosion");
 
-	InitAnim("Shikai",          ANIM_LOC_B "Shikai");
+	InitAnim("Shikai",          ICHI_ANIM_LOC_B "Shikai");
 
 	AnimData = &ShikaiAnim;
 
@@ -600,8 +600,8 @@ void AIchigo::b_AttackDash(float value)
 
 			SpawnHelper("BankaiEff", getFrameTime(6));
 			SpawnHelper("sh_ReiatsuExplosion", getFrameTime(10), FRotator(0.f), FVector(2.f));
-			SetImmortality(AnimElemTime(17));
-			Combo(getFrameTime(17));
+			SetImmortality(AnimElemTime(18));
+			Combo(getFrameTime(18));
 		}
 		else
 		{

@@ -306,7 +306,7 @@ AMyPlayerController * AHeroBase::getController()
 		}
 		case EBaseStates::Blocking:
 		{
-			if (GetCharacterMovement()->IsMovingOnGround())
+			if (FMath::IsNearlyZero(GetUnitVelocity().Z, 50.f))
 			{
 				anim = AnimData->FindRef("Block");
 			}

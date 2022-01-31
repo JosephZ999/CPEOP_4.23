@@ -33,7 +33,6 @@ public:
 	void BP_Summon();
 
 	uint8 SummonsNum;
-	TArray<class AShriekerSummon*> SummonArr;
 
 	UFUNCTION(BlueprintCallable)
 	void SetSummonsNum(uint8 Num);

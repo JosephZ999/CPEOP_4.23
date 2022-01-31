@@ -102,10 +102,7 @@ AShriekerSummon * AShrieker::SpawnSummon(TSubclassOf<class AShriekerSummon> Clas
 		if (nSummon)
 		{
 			UGameplayStatics::FinishSpawningActor(nSummon, nTransform);
-			nSummon->getStats()->Init(this->getStats()->GetLevel());
-			nSummon->SetTeam(GetTeam());
 			--SummonsNum;
-			SummonArr.Add(nSummon);
 			return nSummon;
 		}
 	}
