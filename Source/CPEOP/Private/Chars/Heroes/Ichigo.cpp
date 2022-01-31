@@ -413,7 +413,7 @@ void AIchigo::b_AttackDash(float value)
 		NewState(nState);
 
 		AddImpulse		(SP_VELOCITY, getFrameTime(1));
-		SpawnHelper		("sh_AttackForward", getFrameTime(5), FRotator(20.f, 0.f, 0.f));
+		SpawnHelper		("sh_AttackForward", getFrameTime(5));
 		Combo(getFrameTime(12));
 
 		SetBlockingAttack(EBlockType::Forward, getFrameTime(5), BLOCK_DURATION);
@@ -449,7 +449,7 @@ void AIchigo::b_AttackDash(float value)
 		NewState(nState);
 
 		AddImpulse		(SP_VELOCITY, getFrameTime(4));
-		SpawnHelper		("sh_AttackBack", getFrameTime(6), FRotator(20.f, 0.f, 0.f));
+		SpawnHelper		("sh_AttackBack", getFrameTime(6));
 		Combo(getFrameTime(14));
 
 		SetBlockingAttack(EBlockType::Forward, getFrameTime(6), BLOCK_DURATION);
