@@ -348,7 +348,7 @@ AUnitAIBase * AUnitBase::GetUnitAI()
 // Taking Damage //==============================------------------------------
 	void AUnitBase::ApplyDamage(class AUnitBase* damageCauser, FHitOption* damageOption, bool fromBehind)
 	{
-		if (State == EBaseStates::Fall || State == EBaseStates::Teleport)
+		if (State == EBaseStates::Fall || State == EBaseStates::Teleport || (!GameInsRef))
 			return;
 
 		bool block  { false };
@@ -508,7 +508,6 @@ AUnitAIBase * AUnitBase::GetUnitAI()
 				nState.State = EBaseStates::StandUp;
 				nState.Animation = "StandUpAir";
 				NewState(nState);
-				//GetSprite()->PlayFromStart();
 			}
 		}
 	}

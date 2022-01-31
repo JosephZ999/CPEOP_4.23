@@ -20,6 +20,14 @@ AMonsterBase::AMonsterBase()
 
 void AMonsterBase::BeginPlay()
 {
+	FHitOption a;
+	a.damage = 3.f;
+	a.sparkScale = { 1.f, 1.f };
+	a.impulse = { 100.f, 50.f };
+	a.sparkIndex = 3;
+	
+	ApplyDamage(this, &a, false );
+
 	Super::BeginPlay();
 	GetSprite()->SetVisibility(false);
 	getShadow()->HideShadow();
