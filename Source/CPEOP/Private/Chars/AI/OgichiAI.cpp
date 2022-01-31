@@ -13,6 +13,12 @@
 
 #define TP_CHANCE 0.3f
 
+AOgichiAI::AOgichiAI()
+{
+	SearchStepRadius = 50.f;
+	SearchSteps = 15;
+}
+
 void AOgichiAI::tpReload(float time)
 {
 	canTeleport = false;
@@ -35,7 +41,7 @@ void AOgichiAI::AIBody()
 	{
 		OgichiRef = Cast<AOgichi>(GetPawn());
 		FTimerHandle IntroTimer;
-		SET_TIMER(IntroTimer, this, &AOgichiAI::BreakIntro, 1.f);
+		SET_TIMER(IntroTimer, this, &AOgichiAI::BreakIntro, 1.5f);
 		return;
 	}
 
@@ -55,6 +61,12 @@ void AOgichiAI::AIBody()
 
 	if (Intro)
 	{
+		if (!OgichiRef->getHeroStatsComp()->CheckSkill("Bankai"))
+		{
+			Intro = false;
+			return;
+		}
+
 		if (EnemyInitialLocation.Equals(getEnemy()->GetActorLocation(), 10.f))
 		{
 			if (getEnemy()->IsImmortal())
@@ -194,7 +206,8 @@ void AOgichiAI::AIBody()
 
 	case EOgichiState::Ogi_Attack_2:
 	{
-		if (!OgichiRef->isComboTime()) { return; }
+		if (!OgichiRef->isComboTime())
+			return;
 
 		if (getDistanceY() > MAX_DIST_Y)
 			return;

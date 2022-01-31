@@ -123,7 +123,7 @@ void AOgichi::Attack()
 			GET_STATS->AddStamina(0.07);
 			break; 
 		}
-		case EOgichiState::Ogi_Attack_1: { if (isComboTime()) { sh_Attack_2(); resetKeys(); } break; }
+		case EOgichiState::Ogi_Attack_1: { if (isComboTime()) { sh_Attack_2(); } break; }
 		
 		} // End Switch
 
@@ -151,7 +151,7 @@ void AOgichi::AttackBack()
 			else { sh_AttackB2(); }
 			break;
 		}
-		case EOgichiState::Ogi_Attack_2: { if (isComboTime()) { sh_SwordTwist(); resetKeys(); } break; }
+		case EOgichiState::Ogi_Attack_2: { if (isComboTime()) { sh_SwordTwist(); } break; }
 		case EBaseStates::PowChargeLoop: { sh_SwordTwist(); break; }
 
 		} // End Switch
@@ -177,7 +177,7 @@ void AOgichi::AttackForward()
 			else					{ sh_SwordThrow(); }
 			break;
 		}
-		case EOgichiState::Ogi_Attack_2: { if (isComboTime()) { sh_AttackFW(); resetKeys(); } break; }
+		case EOgichiState::Ogi_Attack_2: { if (isComboTime()) { sh_AttackFW(); } break; }
 		case EBaseStates::PowChargeLoop: { sh_Getsuga(); break; }
 		} // End Switch
 	}

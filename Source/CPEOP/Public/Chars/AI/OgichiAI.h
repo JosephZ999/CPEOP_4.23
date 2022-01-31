@@ -13,6 +13,7 @@ class CPEOP_API AOgichiAI : public AUnitAIBase
 	GENERATED_BODY()
 
 private:
+	AOgichiAI();
 	class AOgichi* OgichiRef;
 
 
