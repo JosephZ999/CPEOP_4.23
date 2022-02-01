@@ -691,6 +691,8 @@ void AIchigo::b_AttackDash(float value)
 		}
 
 		Bankai();
+		IsUsedBankai = true;
+
 		GET_STATS->SetExpMultiplier(0.5f);
 		GET_STATS->AddStamina(2.f);
 		if (!GET_STATS->checkPower(-(BANKAI_COST)))

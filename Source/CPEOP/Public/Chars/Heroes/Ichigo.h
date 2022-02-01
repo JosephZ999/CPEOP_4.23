@@ -110,6 +110,9 @@ public:
 
 	void b_Shikai();
 
+	UPROPERTY(BlueprintReadOnly)
+	bool IsUsedBankai{ false };
+
 	// Ogi_Bankai Dash Attack (FW)
 protected:
 	UFUNCTION()
