@@ -19,6 +19,7 @@
 /*
 	Getsuga
 	SwordTwist
+	SwordThrow
 	RExplosion
 
 	Bankai
