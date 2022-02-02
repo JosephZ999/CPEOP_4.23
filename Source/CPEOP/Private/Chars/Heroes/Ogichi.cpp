@@ -368,6 +368,7 @@ void AOgichi::ComboI()
 {
 	Super::ComboI();
 
+
 	FName form = getHeroStatsComp()->FormName;
 
 	if (form == SHIKAI_NAME)		{ ShikaiComboI(); }

@@ -46,6 +46,7 @@ AIchigo::AIchigo()
 	InitHelper("sh_GetsugaFWHelper",	ICHI_HIT_LOC "sh_GetsugaFWHelper");
 	InitHelper("sh_ReiatsuExplosion",	ICHI_HIT_LOC "sh_ReiatsuExplosion");
 	InitHelper("sh_SwordTwist",			ICHI_HIT_LOC "sh_SwordTwist");
+	InitHelper("sh_SwordThrow",			ICHI_HIT_LOC "sh_SwordThrow");
 	InitHelper("BankaiEff",				ICHI_HIT_LOC "BankaiEff");
 
 	InitHelper("b_Attack_1",			ICHI_HIT_LOC_B "b_Attack_1");
@@ -67,20 +68,20 @@ AIchigo::AIchigo()
 	InitAnim("Walk",			ICHI_ANIM_LOC "Run"			);
 	InitAnim("JumpStart",		ICHI_ANIM_LOC "JumpStart"	);
 	InitAnim("JumpUp",			ICHI_ANIM_LOC "JumpUp"		);
-	InitAnim("JumpHold",		ICHI_ANIM_LOC "JumpHold"		);
-	InitAnim("JumpDown",		ICHI_ANIM_LOC "JumpDown"		);
-	InitAnim("JumpLand",		ICHI_ANIM_LOC "JumpLand"		);
+	InitAnim("JumpHold",		ICHI_ANIM_LOC "JumpHold"	);
+	InitAnim("JumpDown",		ICHI_ANIM_LOC "JumpDown"	);
+	InitAnim("JumpLand",		ICHI_ANIM_LOC "JumpLand"	);
 	InitAnim("Hit",				ICHI_ANIM_LOC "hit"			);
-	InitAnim("FallHold",		ICHI_ANIM_LOC "FallHold"		);
+	InitAnim("FallHold",		ICHI_ANIM_LOC "FallHold"	);
 	InitAnim("FallUp",			ICHI_ANIM_LOC "FallUp"		);
-	InitAnim("FallDown",		ICHI_ANIM_LOC "FallDown"		);
+	InitAnim("FallDown",		ICHI_ANIM_LOC "FallDown"	);
 	InitAnim("StandUp",			ICHI_ANIM_LOC "StandUp"		);
 	InitAnim("StandUpAir",		ICHI_ANIM_LOC "StandUpAir"	);
 	InitAnim("Block",			ICHI_ANIM_LOC "Guard"		);
-	InitAnim("BlockAir",		ICHI_ANIM_LOC "GuardAir"		);
+	InitAnim("BlockAir",		ICHI_ANIM_LOC "GuardAir"	);
 	InitAnim("PowChargeStart",	ICHI_ANIM_LOC "PowChStart"	);
 	InitAnim("PowChargeLoop",	ICHI_ANIM_LOC "PowChLoop"	);
-	InitAnim("PowChargeEnd",	ICHI_ANIM_LOC "PowChEnd"		);
+	InitAnim("PowChargeEnd",	ICHI_ANIM_LOC "PowChEnd"	);
 
 	InitAnim("Attack_1",		ICHI_ANIM_LOC "Attack1");
 	InitAnim("Attack_2",		ICHI_ANIM_LOC "Attack2");
@@ -90,6 +91,7 @@ AIchigo::AIchigo()
 
 	InitAnim("SwordTwist",		ICHI_ANIM_LOC "SwordTwist");
 	InitAnim("SwordTwistLoop",	ICHI_ANIM_LOC "SwordTwistLoop");
+	InitAnim("SwordThrow",		ICHI_ANIM_LOC "SwordThrow");
 	InitAnim("GetsugaStart",	ICHI_ANIM_LOC "GetsugaStart");
 	InitAnim("GetsugaFW",		ICHI_ANIM_LOC "GetsugaFW");
 	InitAnim("RExplosion",		ICHI_ANIM_LOC "RExplosion");
@@ -302,7 +304,7 @@ void AIchigo::b_AttackDash(float value)
 			{
 				if (isComboTime())
 				{
-					b_Attack_B(); resetKeys();
+					b_Attack_B();
 				}
 				break;
 			}
@@ -310,7 +312,7 @@ void AIchigo::b_AttackDash(float value)
 			{
 				if (isComboTime())
 				{
-					b_Attack_B(); resetKeys();
+					b_Attack_B();
 				}
 				break;
 			}
@@ -344,8 +346,20 @@ void AIchigo::b_AttackDash(float value)
 				break;
 			}
 			case EBaseStates::Jumping: { break; }
-			case EIchigoState::Ichi_Attack_2: { if (isComboTime()) { sh_AttackFW(); resetKeys(); } break; }
+			case EIchigoState::Ichi_Attack_2: { if (isComboTime()) { sh_AttackFW(); } break; }
 			case EBaseStates::PowChargeLoop: { sh_GetsugaStart(); break; }
+			case EIchigoState::Ichi_SwordTwistLoop:
+			{
+				if (IsSkillActive())
+				{
+
+				}
+				else
+				{
+					sh_SwordThrow();
+				}
+				break;
+			}
 			} // End Switch
 		}
 
@@ -361,13 +375,13 @@ void AIchigo::b_AttackDash(float value)
 				}
 				else
 				{
-					b_Attack_FW(); resetKeys();
+					b_Attack_FW();
 				}
 				break;
 			}
 			case EBaseStates::Jumping: { break; }
-			case EIchigoState::Ichi_Attack_2: { if (isComboTime()) { b_Attack_FW(); resetKeys(); } break; }
-			case EIchigoState::Ichi_Attack_3: { if (isComboTime()) { b_Attack_FW(); resetKeys(); } break; }
+			case EIchigoState::Ichi_Attack_2: { if (isComboTime()) { b_Attack_FW(); } break; }
+			case EIchigoState::Ichi_Attack_3: { if (isComboTime()) { b_Attack_FW(); } break; }
 			
 			case EBaseStates::PowChargeLoop: 
 			{ 
@@ -587,6 +601,33 @@ void AIchigo::b_AttackDash(float value)
 			nState.AnimationFrame = 11;
 			NewState(nState);
 		}
+	}
+
+	void AIchigo::sh_SwordThrow()
+	{
+		if (!getHeroStatsComp()->CheckSkill("SwordThrow"))
+			return;
+
+		resetKeys();
+
+		FState nState;
+		nState.State = EIchigoState::Ichi_SwordThrow;
+		nState.Animation = "SwordThrow";
+		NewState(nState);
+		Combo(getFrameTime(16));
+
+		// Stamina
+		GET_STATS->AddStamina(
+			-1.f / getHeroStatsComp()->getTeleportCost(),
+			getFrameTime(5),
+			false,
+			EIchigoState::Ichi_SwordThrow
+		);
+
+		AddImpulse(MoveVector * 300, getFrameTime(2));
+		SpawnHelper("sh_SwordThrow", getFrameTime(5));
+
+		SetBlockingAttack(EBlockType::Forward, getFrameTime(5), BLOCK_DURATION);
 	}
 
 	//---------------------------------------------// Getsuga Tensho
@@ -975,6 +1016,25 @@ void AIchigo::b_AttackDash(float value)
 			break;
 		}
 		case EIchigoState::Ichi_Attack_FW:
+		{
+			if (key == EComboKey::CK_Dash)
+			{
+				DoDash();
+			}
+			break;
+		}
+
+		case EIchigoState::Ichi_SwordTwistLoop:
+		{
+			switch (key)
+			{
+			case EComboKey::CK_AForward:  { sh_SwordThrow();	break; }
+			case EComboKey::CK_ABackward: { sh_AttackB();		break; }
+			}
+			break;
+		}
+
+		case EIchigoState::Ichi_SwordThrow:
 		{
 			if (key == EComboKey::CK_Dash)
 			{

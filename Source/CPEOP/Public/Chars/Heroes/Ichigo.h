@@ -31,6 +31,8 @@ enum EIchigoState
 	Ichi_SwordTwist,
 	Ichi_SwordTwistLoop,
 	Ichi_SwordTwistEnd,
+	Ichi_SwordThrow,
+
 	Ichi_GetsugaStart,
 	Ichi_GetsugaFW,
 
@@ -88,6 +90,7 @@ public:
 	void sh_SwordTwistLoop();
 	void sh_SwordTwistEnd();
 	FTimerHandle sh_STwistEndTimer;
+	void sh_SwordThrow();
 
 
 	void sh_GetsugaStart();
