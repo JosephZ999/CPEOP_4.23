@@ -191,7 +191,7 @@ void AIchigo::b_AttackDash(float value)
 
 			case EIchigoState::Ichi_Attack_1:
 			{ 
-				if (isComboTime()) { sh_Attack_2();} 
+				if (isComboTime()) { sh_Attack_2(); } 
 				break; 
 			}
 			case EIchigoState::Ichi_Attack_FW:
@@ -224,17 +224,17 @@ void AIchigo::b_AttackDash(float value)
 			case EBaseStates::Jumping: { b_Attack_Air(); break; }
 			case EIchigoState::Ichi_Attack_1:
 			{
-				if (isComboTime()) { b_Attack_2();}
+				if (isComboTime()) { b_Attack_2(); }
 				break;
 			}
 			case EIchigoState::Ichi_Attack_2:
 			{
-				if (isComboTime()) { b_Attack_3();}
+				if (isComboTime()) { b_Attack_3(); }
 				break;
 			}
 			case EIchigoState::Ichi_Attack_3:
 			{
-				if (isComboTime()) { b_Attack_4();}
+				if (isComboTime()) { b_Attack_4(); }
 				break;
 			}
 			} // Switch End
@@ -253,7 +253,7 @@ void AIchigo::b_AttackDash(float value)
 			{
 				if (IsSkillActive())
 				{
-					sh_SwordTwist();
+					sh_SwordTwist(); SkillDisable();
 				}
 				else
 				{
@@ -262,11 +262,19 @@ void AIchigo::b_AttackDash(float value)
 				break;
 			}
 			case EBaseStates::Jumping: { break; }
-			case EIchigoState::Ichi_Attack_2: { if (isComboTime()) { sh_AttackB(); resetKeys(); } break; }
+			case EIchigoState::Ichi_Attack_2: { if (isComboTime()) { sh_AttackB(); } break; }
 			case EBaseStates::PowChargeLoop: { sh_SwordTwist(); break; }
 			case EIchigoState::Ichi_SwordTwistLoop:
 			{
-				sh_RExplosion(); break;
+				if (IsSkillActive())
+				{
+					sh_RExplosion(); SkillDisable();
+				}
+				else
+				{
+					sh_AttackB();
+				}
+				break;
 			}
 
 			} // End Switch
