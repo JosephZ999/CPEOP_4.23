@@ -382,11 +382,6 @@ void AHeroBase::EndState()
 
 			if (CameraTargetActor)
 			{
-				if (CameraTargetActor->IsDead())
-				{
-					CameraTargetActor = nullptr;
-				}
-
 				if (FVector::Distance(GetActorLocation(), CameraTargetActor->GetActorLocation()) < CameraTargetDist && CameraTargetActor->GetActorLocation().Z < CameraTargetDist / 2.f)
 				{
 					CameraMode = ECameraMode::Target;
@@ -405,12 +400,6 @@ void AHeroBase::EndState()
 		{
 			if (CameraTargetActor)
 			{
-				if (CameraTargetActor->IsDead())
-				{
-					CameraMode = ECameraMode::Free;
-					CameraTargetActor = nullptr;
-				}
-				
 				const FVector myLoc = GetActorLocation();
 				const FVector targetLoc = CameraTargetActor->GetActorLocation();
 
