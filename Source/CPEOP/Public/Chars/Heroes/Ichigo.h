@@ -120,6 +120,8 @@ public:
 	void b_Attack_Air();
 
 	void b_Getsuga();
+	void b_GetsugaFW();
+	void b_GetsugaB();
 	void b_RExplosion();
 
 	void b_Shikai();

@@ -398,7 +398,7 @@ void AHeroBase::EndState()
 		}
 		case ECameraMode::Target:
 		{
-			if (CameraTargetActor)
+			if (IsValid(CameraTargetActor))
 			{
 				const FVector myLoc = GetActorLocation();
 				const FVector targetLoc = CameraTargetActor->GetActorLocation();

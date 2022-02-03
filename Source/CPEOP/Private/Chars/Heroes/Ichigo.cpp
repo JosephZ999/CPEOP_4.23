@@ -132,7 +132,9 @@ AIchigo::AIchigo()
 	InitAnim("Attack_B",        ICHI_ANIM_LOC_B "AttackB");
 	InitAnim("AttackAir",		ICHI_ANIM_LOC_B "AttackAir");
 
+	InitAnim("GetsugaReady",    ICHI_ANIM_LOC_B "GetsugaReady");
 	InitAnim("Getsuga",         ICHI_ANIM_LOC_B "Getsuga");
+	InitAnim("GetsugaB",        ICHI_ANIM_LOC_B "GetsugaB");
 	InitAnim("RExplosion",      ICHI_ANIM_LOC_B "RExplosion");
 
 	InitAnim("Shikai",          ICHI_ANIM_LOC_B "Shikai");
@@ -982,20 +984,40 @@ void AIchigo::b_AttackDash(float value)
 		}
 
 		FState nState;
+		nState.State = EIchigoState::Ichi_GetsugaStart;
+		nState.Animation = "GetsugaReady";
+		NewState(nState);
+
+		SpawnHelper("b_GetsugaEff", getFrameTime(2));
+		GET_STATS->AddStamina(GETSUGA_COST, AnimElemTime(9), true, EIchigoState::Ichi_GetsugaFW);
+
+		SetBlockingAttack(EBlockType::Both, 0.f, getFrameTime(10));
+		Combo(getFrameTime(6));
+		SkillDisable();
+	}
+
+	void AIchigo::b_GetsugaFW()
+	{
+		FState nState;
 		nState.State = EIchigoState::Ichi_GetsugaFW;
 		nState.Animation = "Getsuga";
 		NewState(nState);
 
+		SpawnHelper("b_Getsuga", getFrameTime(3));
 		AddImpulse(MoveVector * 300.f, 0.f);
+		Combo(getFrameTime(8));
+	}
 
-		SpawnHelper("b_GetsugaEff", getFrameTime(2));
-		SpawnHelper("b_Getsuga", getFrameTime(9));
+	void AIchigo::b_GetsugaB()
+	{
+		FState nState;
+		nState.State = EIchigoState::Ichi_GetsugaFW;
+		nState.Animation = "GetsugaB";
+		NewState(nState);
 
-		GET_STATS->AddStamina(GETSUGA_COST, AnimElemTime(9), true, EIchigoState::Ichi_GetsugaFW);
-
-		SetBlockingAttack(EBlockType::Both, 0.f, getFrameTime(10));
-		Combo(getFrameTime(15));
-		SkillDisable();
+		SpawnHelper("b_Getsuga", getFrameTime(3), FRotator(45.f, 0.f, 0.f));
+		AddImpulse(MoveVector * 300.f, 0.f);
+		Combo(getFrameTime(8));
 	}
 
 	void AIchigo::b_RExplosion()
@@ -1205,6 +1227,26 @@ void AIchigo::b_AttackDash(float value)
 			else
 			{
 				b_Attack_FW_End();
+			}
+			break;
+		}
+		case EIchigoState::Ichi_GetsugaStart:
+		{
+			if (key == EComboKey::CK_ABackward)
+			{
+				b_GetsugaB();
+			}
+			else
+			{
+				b_GetsugaFW();
+			}
+			break;
+		}
+		case EIchigoState::Ichi_GetsugaFW:
+		{
+			if (key == EComboKey::CK_Dash)
+			{
+				DoDash();
 			}
 			break;
 		}
