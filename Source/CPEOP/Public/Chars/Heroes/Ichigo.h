@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Chars/HeroBase.h"
+#include "Chars/Components/AfterImageComponent.h"
+
 #include "Ichigo.generated.h"
 
 #define SHIKAI_NAME "Shikai"
@@ -27,6 +29,9 @@ enum EIchigoState
 	Ichi_Attack_FW,
 	Ichi_Attack_B,
 	Ichi_Attack_Air,
+
+	Ichi_Attack_FW_Slash,
+	Ichi_Attack_FW_End,
 
 	Ichi_SwordTwist,
 	Ichi_SwordTwistLoop,
@@ -52,6 +57,9 @@ public:
 	AIchigo();
 
 private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
+	class UAfterImageComponent* AfterImage;
+
 	// Animations
 	TMap<FName, class UPaperFlipbook*> ShikaiAnim;
 	TMap<FName, class UPaperFlipbook*> BankaiAnim;
@@ -104,6 +112,9 @@ public:
 	void b_Attack_3();
 	void b_Attack_4();
 	void b_Attack_FW();
+	void b_Attack_FW_Slash();
+	FVector b_SlashLocation;
+	void b_Attack_FW_End();
 	void b_Attack_B();
 
 	void b_Attack_Air();

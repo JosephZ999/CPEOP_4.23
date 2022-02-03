@@ -14,6 +14,8 @@ void AHollowAI_1::InitParams(EHollowType type, float minDistX, float maxDistX, f
 
 void AHollowAI_1::AIBody()
 {
+	Super::AIBody();
+
 	if (!OwnerRef)
 	{
 		OwnerRef = Cast<AMonsterBase>(GetPawn());
@@ -25,10 +27,12 @@ void AHollowAI_1::AIBody()
 	{
 		if (!SearchEnemy(OwnerRef->GetTeam()))
 		{
+			OwnerRef->SetMoveVector(FVector::ZeroVector);
 			Wait(1.f);
 			return;
 		}
 	}
+
 
 	if (OwnerRef->IsDead())
 	{

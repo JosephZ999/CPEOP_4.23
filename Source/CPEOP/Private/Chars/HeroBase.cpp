@@ -144,7 +144,7 @@ void AHeroBase::StopTimeline()
 void AHeroBase::EndState()
 {
 	Super::EndState();
-	resetKeys();
+	ResetKeys();
 	SkillDisable();
 }
 
@@ -614,7 +614,7 @@ void AHeroBase::EndState()
 		ComboKeys.Add(key);
 	}
 	
-	void AHeroBase::resetKeys()
+	void AHeroBase::ResetKeys()
 	{
 		PAUSE_TIMER(ComboTimer);
 		KeyIndex = 0;

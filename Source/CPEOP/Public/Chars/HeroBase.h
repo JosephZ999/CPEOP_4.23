@@ -147,6 +147,9 @@ public:
 	// Target Mode
 	UFUNCTION(BlueprintCallable)
 	void SetCameraTarget(AUnitBase* target, float dist = 350.f);
+
+	UFUNCTION()
+	const FVector& GetCameraViewPosition() const { return CameraView; }
 private:
 	AUnitBase* CameraTargetActor;
 	float CameraTargetDist;
@@ -205,7 +208,7 @@ public:
 	void addKey(EComboKey key);
 
 	UFUNCTION(BlueprintCallable, Category = "Actions Combo")
-	void resetKeys();
+	void ResetKeys();
 protected:
 	EComboKey getNextKey();
 //---------------------------------------------// End

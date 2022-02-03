@@ -348,7 +348,7 @@ AUnitAIBase * AUnitBase::GetUnitAI()
 // Taking Damage //==============================------------------------------
 	void AUnitBase::ApplyDamage(class AUnitBase* damageCauser, FHitOption* damageOption, bool fromBehind)
 	{
-		if (State == EBaseStates::Fall || State == EBaseStates::Teleport || (!GameInsRef))
+		if (State == EBaseStates::Fall || State == EBaseStates::Teleport || (!GameInsRef) || Dead)
 			return;
 
 		bool block  { false };
@@ -599,7 +599,21 @@ AUnitAIBase * AUnitBase::GetUnitAI()
 		}
 		else
 		{
-			Control = true;
+			if (state.Animation == "Hide")
+			{
+				Control = false;
+				GetSprite()->SetFlipbook(nullptr);
+
+				if (state.EndState)
+				{
+					EndStateDeferred(getFrameTime(nAnim->GetNumFrames() - state.AnimationFrame));
+				}
+				else { PAUSE_TIMER(EndStateTimer); }
+			}
+			else
+			{
+				Control = true;
+			}
 		}
 	}
 

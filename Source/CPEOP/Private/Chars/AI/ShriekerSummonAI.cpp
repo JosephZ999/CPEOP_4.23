@@ -12,6 +12,8 @@ AShriekerSummonAI::AShriekerSummonAI()
 
 void AShriekerSummonAI::AIBody()
 {
+	Super::AIBody();
+
 	if (!OwnerRef)
 	{
 		OwnerRef = Cast<AShriekerSummon>(GetPawn());
@@ -25,6 +27,7 @@ void AShriekerSummonAI::AIBody()
 	{
 		if (!SearchEnemy(OwnerRef->GetTeam()))
 		{
+			OwnerRef->SetMoveVector(FVector::ZeroVector);
 			Wait(1.f);
 			return;
 		}

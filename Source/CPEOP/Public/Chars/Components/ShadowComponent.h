@@ -38,7 +38,11 @@ public:
 	void SetupOwnerforShadow();
 	FTimerHandle nTimer;
 
+	UFUNCTION()
 	void ShowShadow();
+	UFUNCTION()
 	void HideShadow();
+
+	UFUNCTION(BlueprintCallable)
 	void DestroyShadow();
 };

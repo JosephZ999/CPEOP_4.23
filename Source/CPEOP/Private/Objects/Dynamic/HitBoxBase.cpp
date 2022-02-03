@@ -29,6 +29,8 @@ AHitBoxBase::AHitBoxBase()
 	
 	ImpulseType = EImpulseType::OwnerLocation;
 
+	RandEnemy = false;
+	AttackDelay = 0.05f;
 }
 
 // Called when the game starts or when spawned
@@ -62,32 +64,58 @@ void AHitBoxBase::Init(AUnitBase* ownerChar, float damage, float crit)
 void AHitBoxBase::OnBeginOverlap(AActor * OverlappedActor, AActor * OtherActor)
 {
 	AUnitBase* HitUnit = Cast<AUnitBase>(OtherActor);
-	if (HitUnit && !HitUnit->CheckTeam(OwnerCharacter->GetTeam()) && !HitUnit->IsFalling() && !HitUnit->CheckState(EBaseStates::Teleport))
+	if (RandEnemy && HitUnit)
+	{
+		if (!HitUnit->CheckTeam(OwnerCharacter->GetTeam()))
+		{
+			EnemiesInRange.Add(HitUnit);
+			SET_TIMER(AttackTimer, this, &AHitBoxBase::AttackRandUnit, AttackDelay);
+		}
+	}
+	else
+	{
+		Attack(HitUnit);
+	}
+}
+
+void AHitBoxBase::AttackRandUnit()
+{
+	AUnitBase* nEnemy = EnemiesInRange[FMath::RandRange(0, EnemiesInRange.Num() - 1)];
+	if (nEnemy)
+	{
+		Attack(nEnemy);
+		SetActorEnableCollision(false);
+	}
+}
+
+void AHitBoxBase::Attack(AUnitBase* Enemy)
+{
+	if (Enemy && !Enemy->CheckTeam(OwnerCharacter->GetTeam()) && !Enemy->IsFalling() && !Enemy->CheckState(EBaseStates::Teleport))
 	{
 		++HitCount;
-		OnHit(HitCount, HitUnit);
+		OnHit(HitCount, Enemy);
 
 		bool fBehind{ false };
 
 		switch (ImpulseType)
 		{
-		case EImpulseType::Rotation: 
+		case EImpulseType::Rotation:
 		{
-			fBehind =	(FMath::IsNearlyZero(GetActorRotation().Yaw) && HitUnit->IsLookingRight()) 
-				||		(!FMath::IsNearlyZero(GetActorRotation().Yaw) && !HitUnit->IsLookingRight());
+			fBehind = (FMath::IsNearlyZero(GetActorRotation().Yaw) && Enemy->IsLookingRight())
+				|| (!FMath::IsNearlyZero(GetActorRotation().Yaw) && !Enemy->IsLookingRight());
 			break;
 		}
 		// case EImpulseType::Location: break;
 		case EImpulseType::OwnerLocation:
 		{
-			fBehind =	(HitUnit->GetActorLocation().X > OwnerCharacter->GetActorLocation().X && HitUnit->IsLookingRight()) 
-					||	(HitUnit->GetActorLocation().X < OwnerCharacter->GetActorLocation().X && !HitUnit->IsLookingRight());
+			fBehind = (Enemy->GetActorLocation().X > OwnerCharacter->GetActorLocation().X && Enemy->IsLookingRight())
+				|| (Enemy->GetActorLocation().X < OwnerCharacter->GetActorLocation().X && !Enemy->IsLookingRight());
 			break;
 		}
 
 		}
 
-		HitUnit->ApplyDamage(OwnerCharacter, &Options, fBehind);
+		Enemy->ApplyDamage(OwnerCharacter, &Options, fBehind);
 	}
 }
 

@@ -2,7 +2,7 @@
 
 
 #include "Chars/Heroes/Ichigo.h"
-#include "Sys/MyPlayerController.h"
+#include "Chars/Components/ShadowComponent.h"
 
 #define ICHI_ANIM_LOC		"Texture/Chars/Ichigo/FBook/"
 #define ICHI_ANIM_LOC_B		"Texture/Chars/Ichigo_Bankai/FBook/"
@@ -29,6 +29,8 @@
 
 AIchigo::AIchigo()
 {
+	AfterImage = CreateDefaultSubobject<UAfterImageComponent>(TEXT("AfterImageComp"));
+
 	if (getHeroStatsComp())
 	{
 		InitForm(SHIKAI_NAME, { 4, 3, 3 }); // 10
@@ -54,6 +56,9 @@ AIchigo::AIchigo()
 	InitHelper("b_Attack_3",			ICHI_HIT_LOC_B "b_Attack_3");
 	InitHelper("b_Attack_4",			ICHI_HIT_LOC_B "b_Attack_4");
 	InitHelper("b_Attack_FW",			ICHI_HIT_LOC_B "b_Attack_FW");
+	InitHelper("b_Attack_FW_Slash",		ICHI_HIT_LOC_B "b_Attack_FW_Slash");
+
+
 	InitHelper("b_Attack_B",			ICHI_HIT_LOC_B "b_Attack_B");
 	InitHelper("b_AttackAir",			ICHI_HIT_LOC_B "b_AttackAir");
 
@@ -240,6 +245,7 @@ void AIchigo::b_AttackDash(float value)
 				if (isComboTime()) { b_Attack_4(); }
 				break;
 			}
+
 			} // Switch End
 		}
 	}
@@ -430,6 +436,8 @@ void AIchigo::b_AttackDash(float value)
 		SetBlockingAttack(EBlockType::Forward, getFrameTime(4), BLOCK_DURATION);
 		DangerN(getFrameTime(6), EDangerType::MeleeAttack);
 
+
+
 	}
 	void AIchigo::sh_Attack_2()
 	{
@@ -608,7 +616,7 @@ void AIchigo::b_AttackDash(float value)
 		if (!getHeroStatsComp()->CheckSkill("SwordThrow"))
 			return;
 
-		resetKeys();
+		ResetKeys();
 
 		FState nState;
 		nState.State = EIchigoState::Ichi_SwordThrow;
@@ -849,6 +857,78 @@ void AIchigo::b_AttackDash(float value)
 
 		DashStartLoc = GetActorLocation();
 		PlayTimeline(this, b_AttackDashCurve, "b_AttackDash", false);
+	}
+
+	void AIchigo::b_Attack_FW_Slash()
+	{
+		if (!GET_STATS->checkStamina(2.f / getHeroStatsComp()->getTeleportCost(), false))
+		{
+			NotEnoughStamina();
+			if (CheckState(EIchigoState::Ichi_Attack_FW_Slash))
+			{
+				b_Attack_FW_End();
+			}
+			return;
+		}
+
+		if (CheckState(EIchigoState::Ichi_Attack_FW))
+		{
+			b_SlashLocation = GetActorLocation();
+		}
+
+		FState nState;
+		nState.Animation = "Hide";
+		nState.EndState = false;
+		nState.Rotate = false;
+		nState.State = EIchigoState::Ichi_Attack_FW_Slash;
+		NewState(nState);
+
+		// Stamina
+		GET_STATS->AddStamina(-2.f / getHeroStatsComp()->getTeleportCost());
+
+		// Camera Behaviour
+		SetCameraViewA(GetCameraViewPosition(), 0.5f);
+
+		getShadow()->HideShadow();
+	
+
+		SpawnHelper("b_Attack_FW_Slash", 0.1f);
+		SpawnHelper("b_Attack_FW_Slash", 0.15f);
+		SpawnHelper("b_Attack_FW_Slash", 0.2f);
+		SpawnHelper("b_Attack_FW_Slash", 0.25f);
+		SpawnHelper("Teleport", 0.f, GetActorRotation());
+
+		SetActorLocation(
+			b_SlashLocation + FVector(120.f * ((IsLookingRight()) ? -1 : 1.f), 0.f, 0.f), true
+		);
+
+		// After Image
+		for (int i = 0; i < 3; i++)
+		{
+			FVector nLoc(GetActorLocation());
+			FAfterImageStruct nImg("Run", nLoc, true, 0);
+			nImg.SetDistance(FMath::RandRange(80.f, 150.f), FRotator(0.f, FMath::RandRange(0.f, 360.f), 0.f));
+			nImg.Rotation = (nImg.Location.X < nLoc.X) ? true : false;
+			AfterImage->Create(nImg, i * 0.1f);
+		}
+
+		FAfterImageStruct nImg("Stand", GetActorLocation(), IsLookingRight(), 0);
+		AfterImage->Create(nImg, 0.f);
+
+		SetImmortality(0.35f);
+		Combo(0.35f);
+	}
+
+	void AIchigo::b_Attack_FW_End()
+	{
+		getShadow()->ShowShadow();
+
+		SetActorLocation(
+			b_SlashLocation + FVector(200.f * ((IsLookingRight()) ? -1 : 1.f), 0.f, 0.f), true
+		);
+		SpawnHelper("Teleport", 0.f, GetActorRotation());
+
+		EndStateDeferred(0.1f);
 	}
 
 	void AIchigo::b_Attack_B()
@@ -1106,11 +1186,28 @@ void AIchigo::b_AttackDash(float value)
 		}
 		case EIchigoState::Ichi_Attack_FW:
 		{
-			if (key == EComboKey::CK_Dash)
+			if (key == EComboKey::CK_Attack)
+			{
+				b_Attack_FW_Slash();
+			}
+			else if (key == EComboKey::CK_Dash)
 			{
 				DoDash();
 			}
 			break;
 		}
+		case EIchigoState::Ichi_Attack_FW_Slash:
+		{
+			if (key == EComboKey::CK_Attack)
+			{
+				b_Attack_FW_Slash();
+			}
+			else
+			{
+				b_Attack_FW_End();
+			}
+			break;
+		}
+
 		} // Switch End
 	}

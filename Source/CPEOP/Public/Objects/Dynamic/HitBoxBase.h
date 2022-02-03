@@ -55,6 +55,22 @@ private:
 	UPROPERTY(BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
 	class AUnitBase* OwnerCharacter;
 
+	// Range Attack
+	UPROPERTY(EditDefaultsOnly, Category = "RandAttack")
+	bool RandEnemy; // Range Attacks
+
+	TArray<AUnitBase*> EnemiesInRange;
+	FTimerHandle AttackTimer;
+
+	UPROPERTY(EditDefaultsOnly, Category = "RandAttack")
+	float AttackDelay;
+
+	UFUNCTION()
+	void AttackRandUnit();
+
+	UFUNCTION()
+	void Attack(AUnitBase* Enemy);
+
 public:
 	virtual void Init(AUnitBase* owner, float damage, float crit) override;
 	

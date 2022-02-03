@@ -75,6 +75,11 @@ void AUnitAIBase::StartAI(float timeDelay)
 	GetWorldTimerManager().SetTimer(AITick, this, &AUnitAIBase::AIBody, 0.05f, true, timeDelay);
 }
 
+void AUnitAIBase::AIBody()
+{
+
+}
+
 void AUnitAIBase::StopAI()
 {
 	GetWorldTimerManager().PauseTimer(AITick);

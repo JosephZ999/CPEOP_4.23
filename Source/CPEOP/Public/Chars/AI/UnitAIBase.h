@@ -87,5 +87,5 @@ public:
 
 protected:
 	FTimerHandle AITick;
-	virtual void AIBody() {}
+	virtual void AIBody();
 };
