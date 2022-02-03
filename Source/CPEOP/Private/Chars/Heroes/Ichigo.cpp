@@ -988,6 +988,7 @@ void AIchigo::b_AttackDash(float value)
 		nState.Animation = "GetsugaReady";
 		NewState(nState);
 
+		AddImpulse(MoveVector * 300.f, 0.f);
 		SpawnHelper("b_GetsugaEff", getFrameTime(2));
 		GET_STATS->AddStamina(GETSUGA_COST, AnimElemTime(9), true, EIchigoState::Ichi_GetsugaFW);
 
@@ -1003,8 +1004,7 @@ void AIchigo::b_AttackDash(float value)
 		nState.Animation = "Getsuga";
 		NewState(nState);
 
-		SpawnHelper("b_Getsuga", getFrameTime(3));
-		AddImpulse(MoveVector * 300.f, 0.f);
+		SpawnHelper("b_Getsuga", getFrameTime(2));
 		Combo(getFrameTime(8));
 	}
 
@@ -1015,8 +1015,7 @@ void AIchigo::b_AttackDash(float value)
 		nState.Animation = "GetsugaB";
 		NewState(nState);
 
-		SpawnHelper("b_Getsuga", getFrameTime(3), FRotator(45.f, 0.f, 0.f));
-		AddImpulse(MoveVector * 300.f, 0.f);
+		SpawnHelper("b_Getsuga", getFrameTime(2), FRotator(45.f, 0.f, 0.f));
 		Combo(getFrameTime(8));
 	}
 
