@@ -26,13 +26,13 @@ struct FGameResults
 	FText Title;
 
 	UPROPERTY(BlueprintReadWrite)
-	TEnumAsByte<EGameResultType> Result;
+	TEnumAsByte<EGameResultType> Result { EGameResultType::Win };
 
 	UPROPERTY(BlueprintReadWrite)
-	int32 Time;
+	int32 Time { 0 };
 
 	UPROPERTY(BlueprintReadWrite)
-	int32 Kills;
+	int32 Kills { 0 };
 };
 
 UCLASS()
