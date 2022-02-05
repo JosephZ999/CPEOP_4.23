@@ -42,4 +42,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetEnabled(bool value);
 
+	UFUNCTION(BlueprintCallable)
+	void SetMoveVector(FVector FWVector);
+
 };

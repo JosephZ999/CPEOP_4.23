@@ -43,6 +43,12 @@ void UHelperMovement::SetEnabled(bool value)
 	}
 }
 
+void UHelperMovement::SetMoveVector(FVector FWVector)
+{
+	MoveVector = FWVector;
+	UpdatedVector = Owner->GetActorRotation().RotateVector(MoveVector);
+}
+
 
 // Called every frame
 void UHelperMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

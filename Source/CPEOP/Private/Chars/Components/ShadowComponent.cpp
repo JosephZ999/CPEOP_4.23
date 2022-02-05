@@ -26,8 +26,14 @@ UShadowComponent::UShadowComponent()
 	{
 		ShadowClass = nObject.Class;
 	}
+	IsBeingDestroyed();
 }
 
+void UShadowComponent::OnComponentDestroyed(bool bDestroyingHierarchy)
+{
+	Super::OnComponentDestroyed(bDestroyingHierarchy);
+	DestroyShadow();
+}
 
 // Called when the game starts
 void UShadowComponent::BeginPlay()

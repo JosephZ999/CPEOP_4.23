@@ -15,6 +15,7 @@ class CPEOP_API UShadowComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UShadowComponent();
+	virtual void OnComponentDestroyed(bool bDestroyingHierarchy) override;
 
 protected:
 	// Called when the game starts

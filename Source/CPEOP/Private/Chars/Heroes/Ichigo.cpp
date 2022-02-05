@@ -46,6 +46,7 @@ AIchigo::AIchigo()
 
 	InitHelper("sh_GetsugaHelper",		ICHI_HIT_LOC "sh_GetsugaHelper");
 	InitHelper("sh_GetsugaFWHelper",	ICHI_HIT_LOC "sh_GetsugaFWHelper");
+	InitHelper("sh_GetsugaExplosion",	ICHI_HIT_LOC "sh_GetsugaExplosion");
 	InitHelper("sh_ReiatsuExplosion",	ICHI_HIT_LOC "sh_ReiatsuExplosion");
 	InitHelper("sh_SwordTwist",			ICHI_HIT_LOC "sh_SwordTwist");
 	InitHelper("sh_SwordThrow",			ICHI_HIT_LOC "sh_SwordThrow");
@@ -499,17 +500,18 @@ void AIchigo::b_AttackDash(float value)
 
 		if (IsSkillActive())
 		{
+			bool Return{ false };
 			if (!getHeroStatsComp()->checkStamina(-(GETSUGA_COST)))
 			{
 				NotEnoughStamina();
-				return;
+				Return = true;
 			}
-
 			if (!getHeroStatsComp()->checkPower(-(GETSUGA_COST)))
 			{
 				NotEnoughPower();
-				return;
+				Return = true;
 			}
+			if (Return) { return; }
 
 			GET_STATS->AddStamina(GETSUGA_COST, 0.f, true);
 			SpawnHelper("sh_GetsugaFWHelper");
@@ -547,17 +549,18 @@ void AIchigo::b_AttackDash(float value)
 
 		if (IsSkillActive())
 		{
+			bool Return{ false };
 			if (!getHeroStatsComp()->checkStamina(-(GETSUGA_COST)))
 			{
 				NotEnoughStamina();
-				return;
+				Return = true;
 			}
-
 			if (!getHeroStatsComp()->checkPower(-(GETSUGA_COST)))
 			{
 				NotEnoughPower();
-				return;
+				Return = true;
 			}
+			if (Return) { return; }
 
 			GET_STATS->AddStamina(GETSUGA_COST, 0.f, true);
 			SpawnHelper("sh_GetsugaFWHelper", 0.f, FRotator(45.f, 0.f, 0.f));
@@ -643,15 +646,20 @@ void AIchigo::b_AttackDash(float value)
 	//---------------------------------------------// Getsuga Tensho
 	void AIchigo::sh_GetsugaStart()
 	{
+		bool Return{ false };
 		if (!getHeroStatsComp()->checkStamina(-(GETSUGA_TENSHOU_COST)))
 		{
 			NotEnoughStamina();
-			return;
+			Return = true;
 		}
 		
 		if (!getHeroStatsComp()->checkPower(-(GETSUGA_TENSHOU_COST)))
 		{
 			NotEnoughPower();
+			Return = true;
+		}
+		if (Return)
+		{
 			return;
 		}
 		
@@ -659,6 +667,11 @@ void AIchigo::b_AttackDash(float value)
 		nState.State = EIchigoState::Ichi_GetsugaStart;
 		nState.Animation = "GetsugaStart";
 		NewState(nState);
+
+		SpawnHelper("sh_GetsugaExplosion", getFrameTime(2));
+		SpawnHelper("sh_GetsugaExplosion", getFrameTime(5));
+		SpawnHelper("sh_GetsugaExplosion", getFrameTime(8));
+		SetImmortality(getFrameTime(15));
 
 		Combo(getFrameTime(10));
 		SkillDisable();
@@ -671,13 +684,10 @@ void AIchigo::b_AttackDash(float value)
 		nState.Animation = "GetsugaFW";
 		NewState(nState);
 
-		SpawnHelper		("sh_GetsugaHelper", getFrameTime(3));
+		SpawnHelper("sh_GetsugaHelper", getFrameTime(3));
 		GET_STATS->AddStamina(GETSUGA_TENSHOU_COST, getFrameTime(2), true, GetState());
 
-		SetBlockingAttack
-			(EBlockType::Both, getFrameTime(0), BLOCK_DURATION);
-		DangerN
-			(getFrameTime(5), EDangerType::MeleeAttack);
+		DangerN(getFrameTime(5), EDangerType::MeleeAttack);
 	}
 
 
@@ -687,17 +697,18 @@ void AIchigo::b_AttackDash(float value)
 		if (!getHeroStatsComp()->CheckSkill("RExplosion"))
 			return;
 
+		bool Return{ false };
 		if (!getHeroStatsComp()->checkStamina(-(EXPLOSION_COST)))
 		{
 			NotEnoughStamina();
-			return;
+			Return = true;
 		}
-
 		if (!getHeroStatsComp()->checkPower(-(EXPLOSION_COST)))
 		{
 			NotEnoughPower();
-			return;
+			Return = true;
 		}
+		if (Return) { return; }
 
 		FState nState;
 		nState.State = EIchigoState::Ichi_RExplosion;
@@ -863,7 +874,7 @@ void AIchigo::b_AttackDash(float value)
 
 	void AIchigo::b_Attack_FW_Slash()
 	{
-		if (!GET_STATS->checkStamina(2.f / getHeroStatsComp()->getTeleportCost(), false))
+		if (!GET_STATS->checkStamina(1.f / getHeroStatsComp()->getTeleportCost(), false))
 		{
 			NotEnoughStamina();
 			if (CheckState(EIchigoState::Ichi_Attack_FW_Slash))
@@ -876,6 +887,8 @@ void AIchigo::b_AttackDash(float value)
 		if (CheckState(EIchigoState::Ichi_Attack_FW))
 		{
 			b_SlashLocation = GetActorLocation();
+			FAfterImageStruct nImg("Stand", GetActorLocation(), IsLookingRight(), 0);
+			AfterImage->Create(nImg, 0.f);
 		}
 
 		FState nState;
@@ -886,39 +899,36 @@ void AIchigo::b_AttackDash(float value)
 		NewState(nState);
 
 		// Stamina
-		GET_STATS->AddStamina(-2.f / getHeroStatsComp()->getTeleportCost());
+		GET_STATS->AddStamina(-1.f / getHeroStatsComp()->getTeleportCost());
 
 		// Camera Behaviour
-		SetCameraViewA(GetCameraViewPosition(), 0.5f);
+		SetCameraViewA(GetCameraViewPosition(), 0.2f);
 
 		getShadow()->HideShadow();
 	
 
+		SpawnHelper("b_Attack_FW_Slash", 0.05f);
 		SpawnHelper("b_Attack_FW_Slash", 0.1f);
-		SpawnHelper("b_Attack_FW_Slash", 0.15f);
-		SpawnHelper("b_Attack_FW_Slash", 0.2f);
-		SpawnHelper("b_Attack_FW_Slash", 0.25f);
-		SpawnHelper("Teleport", 0.f, GetActorRotation());
 
 		SetActorLocation(
 			b_SlashLocation + FVector(120.f * ((IsLookingRight()) ? -1 : 1.f), 0.f, 0.f), true
 		);
 
 		// After Image
-		for (int i = 0; i < 3; i++)
+		for (int i = 1; i <= 2; i++)
 		{
+			bool OnRight = (i % 2 == 0);
 			FVector nLoc(GetActorLocation());
+			nLoc.X += (OnRight) ? FMath::RandRange(100.f, 150.f) : FMath::RandRange(-100.f, -150.f);
+			nLoc.Y += FMath::RandRange(-75.f, 75.f);
+
 			FAfterImageStruct nImg("Run", nLoc, true, 0);
-			nImg.SetDistance(FMath::RandRange(80.f, 150.f), FRotator(0.f, FMath::RandRange(0.f, 360.f), 0.f));
-			nImg.Rotation = (nImg.Location.X < nLoc.X) ? true : false;
-			AfterImage->Create(nImg, i * 0.1f);
+			nImg.Rotation = (!OnRight);
+			AfterImage->Create(nImg, i * 0.04f);
 		}
 
-		FAfterImageStruct nImg("Stand", GetActorLocation(), IsLookingRight(), 0);
-		AfterImage->Create(nImg, 0.f);
-
-		SetImmortality(0.35f);
-		Combo(0.35f);
+		SetImmortality(0.1f);
+		Combo(0.1f);
 	}
 
 	void AIchigo::b_Attack_FW_End()
@@ -971,17 +981,18 @@ void AIchigo::b_AttackDash(float value)
 		if (!getHeroStatsComp()->CheckSkill("Getsuga"))
 			return;
 
+		bool Return{ false };
 		if (!getHeroStatsComp()->checkStamina(-(GETSUGA_COST)))
 		{
 			NotEnoughStamina();
-			return;
+			Return = true;
 		}
-
 		if (!getHeroStatsComp()->checkPower(-(GETSUGA_COST)))
 		{
 			NotEnoughPower();
-			return;
+			Return = true;
 		}
+		if (Return) { return; }
 
 		FState nState;
 		nState.State = EIchigoState::Ichi_GetsugaStart;
@@ -1002,6 +1013,7 @@ void AIchigo::b_AttackDash(float value)
 		FState nState;
 		nState.State = EIchigoState::Ichi_GetsugaFW;
 		nState.Animation = "Getsuga";
+		nState.Rotate = false;
 		NewState(nState);
 
 		SpawnHelper("b_Getsuga", getFrameTime(2));
@@ -1013,6 +1025,7 @@ void AIchigo::b_AttackDash(float value)
 		FState nState;
 		nState.State = EIchigoState::Ichi_GetsugaFW;
 		nState.Animation = "GetsugaB";
+		nState.Rotate = false;
 		NewState(nState);
 
 		SpawnHelper("b_Getsuga", getFrameTime(2), FRotator(45.f, 0.f, 0.f));
@@ -1024,17 +1037,18 @@ void AIchigo::b_AttackDash(float value)
 		if (!getHeroStatsComp()->CheckSkill("RExplosion"))
 			return;
 
+		bool Return{ false };
 		if (!getHeroStatsComp()->checkStamina(-(EXPLOSION_COST)))
 		{
 			NotEnoughStamina();
-			return;
+			Return = true;
 		}
-
 		if (!getHeroStatsComp()->checkPower(-(EXPLOSION_COST)))
 		{
 			NotEnoughPower();
-			return;
+			Return = true;
 		}
+		if (Return) { return; }
 
 		FState nState;
 		nState.State = EIchigoState::Ichi_RExplosion;
@@ -1124,7 +1138,15 @@ void AIchigo::b_AttackDash(float value)
 			}
 			break;
 		}
-
+		case EIchigoState::Ichi_SwordTwist:
+		{
+			switch (key)
+			{
+			case EComboKey::CK_AForward: { sh_SwordThrow();	break; }
+			case EComboKey::CK_ABackward: { sh_AttackB();		break; }
+			}
+			break;
+		}
 		case EIchigoState::Ichi_SwordTwistLoop:
 		{
 			switch (key)
