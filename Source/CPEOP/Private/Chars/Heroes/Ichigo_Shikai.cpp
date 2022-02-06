@@ -16,8 +16,6 @@ void AIchigo::sh_Attack_1()
 	SetBlockingAttack(EBlockType::Forward, getFrameTime(4), BLOCK_DURATION);
 	DangerN(getFrameTime(6), EDangerType::MeleeAttack);
 
-
-
 }
 void AIchigo::sh_Attack_2()
 {
