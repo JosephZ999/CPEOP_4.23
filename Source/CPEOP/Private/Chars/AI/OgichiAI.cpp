@@ -72,7 +72,7 @@ void AOgichiAI::AIBody()
 			if (getEnemy()->IsImmortal())
 			{
 				OgichiRef->SkillEnable();
-				OgichiRef->Btn_Bankai();
+				OgichiRef->AttackDown();
 				Intro = false;
 				Wait(3.f);
 			}

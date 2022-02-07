@@ -163,7 +163,7 @@ public:
 	virtual void AttackHold();
 	virtual void AttackBack();
 	virtual void AttackForward();
-	virtual void Btn_Bankai() {}
+	virtual void AttackDown() {}
 	void Block();
 	void BlockStop();
 	FTimerHandle BlockTimer;

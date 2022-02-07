@@ -77,22 +77,31 @@ public:
 	virtual void Attack()			override;
 	virtual void AttackBack()		override;
 	virtual void AttackForward()	override;
-	virtual void Btn_Bankai()       override;
+	virtual void AttackDown()       override;
 	virtual void ComboI()			override;
+
+	FORCEINLINE void sh_InputA();
+	FORCEINLINE void sh_InputB();
+	FORCEINLINE void sh_InputFW();
+	FORCEINLINE void sh_InputD();
+
+	FORCEINLINE void b_InputA();
+	FORCEINLINE void b_InputB();
+	FORCEINLINE void b_InputFW();
+	FORCEINLINE void b_InputD();
 
 	FORCEINLINE void ShikaiComboI();
 	FORCEINLINE void BankaiComboI();
 
-	// Actions
+
 	void Shikai() { ChangeForm(SHIKAI_NAME);	AnimData = &ShikaiAnim; }
 	void Bankai() {	ChangeForm(BANKAI_NAME);	AnimData = &BankaiAnim;	}
 
-	// Ichi_Shikai Actions
+	// Shikai
 	void sh_Attack_1();
 	void sh_Attack_2();
-	void sh_AttackFW();
-	void sh_AttackB();
-
+	void sh_Attack_FW();
+	void sh_Attack_B();
 	void sh_Attack_Air();
 
 	void sh_GetsugaFW();
@@ -105,13 +114,12 @@ public:
 	FTimerHandle sh_STwistEndTimer;
 	void sh_SwordThrow();
 
-
 	void sh_GetsugaStart();
 	void sh_GetsugaSlash();
 
 	void sh_Bankai();
 
-	// Ogi_Bankai Actions
+	// Bankai
 	void b_Attack_1();
 	void b_Attack_2();
 	void b_Attack_3();
@@ -121,7 +129,6 @@ public:
 	FVector b_SlashLocation;
 	void b_Attack_FW_End();
 	void b_Attack_B();
-
 	void b_Attack_Air();
 
 	void b_Getsuga();
@@ -133,11 +140,11 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	bool IsUsedBankai{ false };
-
-	// Ogi_Bankai Dash Attack (FW)
+	
+	// Timeline Movement // Dash
 protected:
 	UFUNCTION()
-	void b_AttackDash(float value);
+	void b_AttackDash(float value); // Timeline
 private:
 	UCurveFloat* b_AttackDashCurve;
 	FVector DashStartLoc;

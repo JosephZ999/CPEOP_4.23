@@ -93,7 +93,7 @@ void AMyPlayerController::BtnAction(EInputActionType action, bool btnReleased)
 		if (btnReleased)
 		{
 			PlayerCharacter->BlockStop();
-			PlayerCharacter->Btn_Bankai();
+			PlayerCharacter->AttackDown();
 			PlayerCharacter->addKey(EComboKey::CK_Block);
 		}
 		break;

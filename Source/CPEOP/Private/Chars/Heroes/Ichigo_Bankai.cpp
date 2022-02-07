@@ -1,7 +1,132 @@
 #include "Chars/Heroes/Ichigo.h"
 #include "Chars/Components/ShadowComponent.h"
 
-// ---------------------------> Bankai Actions
+//----------------------------------------------/ Input
+
+void AIchigo::b_InputA()
+{
+	switch (GetState())
+	{
+	case EBaseStates::Stand:			{ b_Attack_1(); break; }
+	case EBaseStates::Jumping:			{ b_Attack_Air(); break; }
+	case EIchigoState::Ichi_Attack_1:
+	{
+		if (isComboTime()) 
+		{ 
+			b_Attack_2(); 
+		}
+		break;
+	}
+	case EIchigoState::Ichi_Attack_2:
+	{
+		if (isComboTime()) 
+		{
+			b_Attack_3(); 
+		}
+		break;
+	}
+	case EIchigoState::Ichi_Attack_3:
+	{
+		if (isComboTime()) 
+		{ 
+			b_Attack_4(); 
+		}
+		break;
+	}
+	} // Switch End
+}
+
+void AIchigo::b_InputB()
+{
+	switch (GetState())
+	{
+	case EBaseStates::Stand:
+	{
+		if (IsSkillActive())
+		{
+			b_RExplosion();
+		}
+		else
+		{
+			b_Attack_B();
+		}
+		break;
+	}
+	case EIchigoState::Ichi_Attack_2:
+	{
+		if (isComboTime())
+		{
+			b_Attack_B();
+		}
+		break;
+	}
+	case EIchigoState::Ichi_Attack_3:
+	{
+		if (isComboTime())
+		{
+			b_Attack_B();
+		}
+		break;
+	}
+	case EBaseStates::PowChargeLoop: { b_RExplosion(); break; }
+	} // Switch End
+}
+
+void AIchigo::b_InputFW()
+{
+	switch (GetState())
+	{
+	case EBaseStates::Stand:
+	{
+		if (IsSkillActive())
+		{
+			b_Getsuga();
+		}
+		else
+		{
+			b_Attack_FW();
+		}
+		break;
+	}
+	case EIchigoState::Ichi_Attack_2: 
+	{ 
+		if (isComboTime()) 
+		{ 
+			b_Attack_FW(); 
+		} 
+		break; 
+	}
+	case EIchigoState::Ichi_Attack_3: 
+	{
+		if (isComboTime()) 
+		{ 
+			b_Attack_FW(); 
+		} 
+		break; 
+	}
+	case EBaseStates::PowChargeLoop: { b_Getsuga(); break; }
+	} // End Switch
+}
+
+void AIchigo::b_InputD()
+{
+	switch (GetState())
+	{
+	case EBaseStates::Stand: 
+	{ 
+		if (IsSkillActive()) 
+		{ 
+			b_Shikai(); 
+		} 
+		break; 
+	}
+	case EBaseStates::PowChargeLoop: { b_Shikai(); break; }
+	} // End Switch
+}
+
+// End Input /----------------------------------/
+
+//----------------------------------------------/ Action
 
 void AIchigo::b_Attack_1()
 {
@@ -76,14 +201,10 @@ void AIchigo::b_Attack_FW()
 	nState.Animation = "Attack_FW";
 	NewState(nState);
 
-	// Helpers
 	SpawnHelper("b_Attack_FW", getFrameTime(5));
 	SpawnHelper("Teleport", getFrameTime(3), GetActorRotation());
-
-	// Camera Behaviour
 	SetCameraViewA(GetCameraLocation(), getFrameTime(12));
 
-	// Stamina
 	GET_STATS->AddStamina(
 		-2.f / getHeroStatsComp()->getTeleportCost(),
 		getFrameTime(4),
@@ -97,6 +218,24 @@ void AIchigo::b_Attack_FW()
 
 	DashStartLoc = GetActorLocation();
 	PlayTimeline(this, b_AttackDashCurve, "b_AttackDash", false);
+}
+
+void AIchigo::b_AttackDash(float value)
+{
+	FVector TargetLocation = DashStartLoc;
+	if (IsLookingRight())
+	{
+		TargetLocation.X = FMath::Lerp(TargetLocation.X, TargetLocation.X + 200.f, value);
+	}
+	else
+	{
+		TargetLocation.X = FMath::Lerp(TargetLocation.X, TargetLocation.X - 200.f, value);
+	}
+	SetActorLocation(TargetLocation, true);
+	if (!CheckState(EIchigoState::Ichi_Attack_FW))
+	{
+		StopTimeline();
+	}
 }
 
 void AIchigo::b_Attack_FW_Slash()
@@ -125,12 +264,8 @@ void AIchigo::b_Attack_FW_Slash()
 	nState.State = EIchigoState::Ichi_Attack_FW_Slash;
 	NewState(nState);
 
-	// Stamina
 	GET_STATS->AddStamina(-1.f / getHeroStatsComp()->getTeleportCost());
-
-	// Camera Behaviour
 	SetCameraViewA(GetCameraViewPosition(), 0.2f);
-
 	getShadow()->HideShadow();
 
 
@@ -141,7 +276,6 @@ void AIchigo::b_Attack_FW_Slash()
 		b_SlashLocation + FVector(120.f * ((IsLookingRight()) ? -1 : 1.f), 0.f, 0.f), true
 	);
 
-	// After Image
 	for (int i = 1; i <= 2; i++)
 	{
 		bool OnRight = (i % 2 == 0);
@@ -199,8 +333,6 @@ void AIchigo::b_Attack_Air()
 	SetBlockingAttack(EBlockType::Forward, getFrameTime(4), BLOCK_DURATION);
 	DangerN(getFrameTime(6), EDangerType::MeleeAttack);
 }
-
-// Ichi_Bankai Skills
 
 void AIchigo::b_Getsuga()
 {
@@ -307,3 +439,98 @@ void AIchigo::b_Shikai()
 	GET_STATS->SetExpMultiplier(1.f);
 	SkillDisable();
 }
+
+// End Action /---------------------------------/
+
+//----------------------------------------------/ Combo
+
+void AIchigo::BankaiComboI()
+{
+	EComboKey key = getNextKey();
+
+	switch (GetState())
+	{
+	case EIchigoState::Ichi_Attack_1:
+	{
+		switch (key)
+		{
+		case EComboKey::CK_Attack:			{ b_Attack_2(); break; }
+		case EComboKey::CK_Dash:			{ DoDash();     break; }
+		}
+		break;
+	}
+	case EIchigoState::Ichi_Attack_2:
+	{
+		switch (key)
+		{
+		case EComboKey::CK_Attack:			{ b_Attack_3();  break; }
+		case EComboKey::CK_ABackward:		{ b_Attack_B();  break; }
+		case EComboKey::CK_AForward:		{ b_Attack_FW(); break; }
+		case EComboKey::CK_Dash:			{ DoDash();      break; }
+		}
+		break;
+	}
+	case EIchigoState::Ichi_Attack_3:
+	{
+		switch (key)
+		{
+		case EComboKey::CK_Dash:			{ DoDash();      break; }
+		}
+		break;
+	}
+	case EIchigoState::Ichi_Attack_4:
+	{
+		switch (key)
+		{
+		case EComboKey::CK_Dash:			{ DoDash();      break; }
+		}
+		break;
+	}
+
+	case EIchigoState::Ichi_Attack_B:
+	{
+		switch (key)
+		{
+		case EComboKey::CK_Dash:			{ DoDash();      break; }
+		}
+		break;
+	}
+	case EIchigoState::Ichi_Attack_FW:
+	{
+		switch (key)
+		{
+		case EComboKey::CK_Attack:			{ b_Attack_FW_Slash();	break; }
+		case EComboKey::CK_Dash:			{ DoDash();				break; }
+		}
+		break;
+	}
+	case EIchigoState::Ichi_Attack_FW_Slash:
+	{
+		switch (key)
+		{
+		case EComboKey::CK_Attack:			{ b_Attack_FW_Slash();	break; }
+		default:							{ b_Attack_FW_End();	break; }
+		}
+		break;
+	}
+	case EIchigoState::Ichi_GetsugaStart:
+	{
+		switch (key)
+		{
+		case EComboKey::CK_ABackward:		{ b_GetsugaB();		break; }
+		default:							{ b_GetsugaFW();	break; }
+		}
+		break;
+	}
+	case EIchigoState::Ichi_GetsugaFW:
+	{
+		switch (key)
+		{
+		case EComboKey::CK_Dash:			{ DoDash();			break; }
+		}
+		break;
+	}
+	} // Switch End
+}
+
+// End Combo /----------------------------------/

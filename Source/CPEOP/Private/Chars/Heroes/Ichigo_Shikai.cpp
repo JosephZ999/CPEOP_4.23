@@ -1,6 +1,134 @@
 #include "Chars/Heroes/Ichigo.h"
+#include "Chars/Components/ShadowComponent.h"
 
-// ---------------------------> Shikai Actions
+//----------------------------------------------/ Input
+
+void AIchigo::sh_InputA()
+{
+	switch (GetState())
+	{
+	case EBaseStates::Stand:			{ sh_Attack_1(); break; }
+	case EBaseStates::Jumping:			{ sh_Attack_Air(); break; }
+	case EIchigoState::Ichi_Attack_1:
+	{
+		if (isComboTime()) 
+		{ 
+			sh_Attack_2(); 
+		}
+		break;
+	}
+	case EIchigoState::Ichi_Attack_FW:	{ SkillEnable();	break; }
+	case EIchigoState::Ichi_Attack_B:	{ SkillEnable(); break; }
+	case EIchigoState::Ichi_SwordTwistLoop:
+	{
+		SET_TIMER(sh_STwistEndTimer, this, &AIchigo::sh_SwordTwistEnd, cTime(1.f));
+		GET_STATS->AddStamina(0.07);
+		break;
+	}
+	} // End Switch
+}
+
+void AIchigo::sh_InputB()
+{
+	switch (GetState())
+	{
+	case EBaseStates::Stand:
+	{
+		if (IsSkillActive())
+		{
+			sh_SwordTwist(); 
+			SkillDisable();
+		}
+		else
+		{
+			sh_Attack_B();
+		}
+		break;
+	}
+	case EIchigoState::Ichi_Attack_2: 
+	{ 
+		if (isComboTime()) 
+		{ 
+			sh_Attack_B(); 
+		}
+		break; 
+	}
+	case EBaseStates::PowChargeLoop:		{ sh_SwordTwist(); break; }
+	case EIchigoState::Ichi_SwordTwistLoop:
+	{
+		if (IsSkillActive())
+		{
+			sh_RExplosion(); 
+			SkillDisable();
+		}
+		else
+		{
+			sh_Attack_B();
+		}
+		break;
+	}
+	} // End Switch
+}
+
+void AIchigo::sh_InputFW()
+{
+	switch (GetState())
+	{
+	case EBaseStates::Stand:
+	{
+		if (IsSkillActive())
+		{
+			sh_GetsugaStart();
+		}
+		else
+		{
+			sh_Attack_FW();
+		}
+		break;
+	}
+	case EIchigoState::Ichi_Attack_2: 
+	{ 
+		if (isComboTime()) 
+		{ 
+			sh_Attack_FW(); 
+		} 
+		break; 
+	}
+	case EBaseStates::PowChargeLoop:		{ sh_GetsugaStart(); break; }
+	case EIchigoState::Ichi_SwordTwistLoop:
+	{
+		if (IsSkillActive())
+		{
+
+		}
+		else
+		{
+			sh_SwordThrow();
+		}
+		break;
+	}
+	} // End Switch
+}
+
+void AIchigo::sh_InputD()
+{
+	switch (GetState())
+	{
+	case EBaseStates::Stand: 
+	{ 
+		if (IsSkillActive()) 
+		{ 
+			sh_Bankai(); 
+		} 
+		break; 
+	}
+	case EBaseStates::PowChargeLoop: { sh_Bankai(); break; }
+	}
+}
+
+// End Input /----------------------------------/
+
+//----------------------------------------------/ Action
 
 void AIchigo::sh_Attack_1()
 {
@@ -17,6 +145,7 @@ void AIchigo::sh_Attack_1()
 	DangerN(getFrameTime(6), EDangerType::MeleeAttack);
 
 }
+
 void AIchigo::sh_Attack_2()
 {
 	FState nState;
@@ -47,7 +176,7 @@ void AIchigo::sh_Attack_Air()
 	DangerN(getFrameTime(6), EDangerType::MeleeAttack);
 }
 
-void AIchigo::sh_AttackFW()
+void AIchigo::sh_Attack_FW()
 {
 	FState nState;
 	nState.State = EIchigoState::Ichi_Attack_FW;
@@ -94,7 +223,7 @@ void AIchigo::sh_GetsugaFW()
 	}
 }
 
-void AIchigo::sh_AttackB()
+void AIchigo::sh_Attack_B()
 {
 	FState nState;
 	nState.State = EIchigoState::Ichi_Attack_B;
@@ -111,8 +240,6 @@ void AIchigo::sh_AttackB()
 	FTimerHandle nTimer;
 	SET_TIMER(nTimer, this, &AIchigo::sh_GetsugaB, getFrameTime(6));
 }
-
-
 
 void AIchigo::sh_GetsugaB()
 {
@@ -143,7 +270,6 @@ void AIchigo::sh_GetsugaB()
 	}
 }
 
-//---------------------------------------------// Sword Twist
 void AIchigo::sh_SwordTwist()
 {
 	if (!getHeroStatsComp()->CheckSkill("SwordTwist"))
@@ -218,7 +344,6 @@ void AIchigo::sh_SwordThrow()
 	SetBlockingAttack(EBlockType::Forward, getFrameTime(5), BLOCK_DURATION);
 }
 
-//---------------------------------------------// Getsuga Tensho
 void AIchigo::sh_GetsugaStart()
 {
 	bool Return{ false };
@@ -265,8 +390,6 @@ void AIchigo::sh_GetsugaSlash()
 	DangerN(getFrameTime(5), EDangerType::MeleeAttack);
 }
 
-
-//---------------------------------------------// Reiatsu Explosion
 void AIchigo::sh_RExplosion()
 {
 	if (!getHeroStatsComp()->CheckSkill("RExplosion"))
@@ -301,8 +424,6 @@ void AIchigo::sh_RExplosion()
 	SkillDisable();
 
 }
-
-// Ichi_Bankai
 
 void AIchigo::sh_Bankai()
 {
@@ -349,3 +470,81 @@ void AIchigo::sh_Bankai()
 	GET_STATS->AddPower(-3.f);
 	SkillDisable();
 }
+
+// End Action /---------------------------------/
+
+//----------------------------------------------/ Combo
+
+void AIchigo::ShikaiComboI()
+{
+	EComboKey key = getNextKey();
+
+	switch (GetState())
+	{
+	case EIchigoState::Ichi_Attack_1:
+	{
+		switch (key)
+		{
+		case EComboKey::CK_Attack:			{ sh_Attack_2(); break; }
+		case EComboKey::CK_Dash:			{ DoDash();		 break; }
+		}
+		break;
+	}
+	case EIchigoState::Ichi_Attack_2:
+	{
+		switch (key)
+		{
+		case EComboKey::CK_AForward:		{ sh_Attack_FW(); break; }
+		case EComboKey::CK_ABackward:		{ sh_Attack_B(); break; }
+		case EComboKey::CK_Dash:			{ DoDash(); break; }
+		}
+		break;
+	}
+
+	case EIchigoState::Ichi_Attack_B:
+	{
+		switch (key)
+		{
+		case EComboKey::CK_Dash:			{ DoDash(); break; }
+		}
+		break;
+	}
+	case EIchigoState::Ichi_Attack_FW:
+	{
+		switch (key)
+		{
+		case EComboKey::CK_Dash:			{ DoDash(); break; }
+		}
+		break;
+	}
+	case EIchigoState::Ichi_SwordTwist:
+	{
+		switch (key)
+		{
+		case EComboKey::CK_AForward:		{ sh_SwordThrow(); break; }
+		case EComboKey::CK_ABackward:		{ sh_Attack_B(); break; }
+		}
+		break;
+	}
+	case EIchigoState::Ichi_SwordTwistLoop:
+	{
+		switch (key)
+		{
+		case EComboKey::CK_AForward:		{ sh_SwordThrow(); break; }
+		case EComboKey::CK_ABackward:		{ sh_Attack_B(); break; }
+		}
+		break;
+	}
+	case EIchigoState::Ichi_SwordThrow:
+	{
+		switch (key)
+		{
+		case EComboKey::CK_Dash:			{ DoDash(); break; }
+		}
+		break;
+	}
+	case EIchigoState::Ichi_GetsugaStart:	{ sh_GetsugaSlash(); break; }
+	} // End Switch
+}
+
+// End Combo /----------------------------------/

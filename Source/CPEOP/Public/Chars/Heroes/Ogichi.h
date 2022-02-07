@@ -55,7 +55,7 @@ public:
 	virtual void AttackBack()		override;
 	virtual void AttackForward()	override;
 	virtual void ComboI()			override;
-	virtual void Btn_Bankai()		override;
+	virtual void AttackDown()		override;
 
 	FORCEINLINE void ShikaiComboI();
 	FORCEINLINE void BankaiComboI();

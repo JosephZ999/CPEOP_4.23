@@ -183,7 +183,7 @@ void AOgichi::AttackForward()
 	}
 }
 
-void AOgichi::Btn_Bankai()
+void AOgichi::AttackDown()
 {
 	if (getHeroStatsComp()->FormName == SHIKAI_NAME)
 	{
