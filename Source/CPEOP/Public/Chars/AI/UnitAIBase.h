@@ -71,23 +71,22 @@ public:
 	float SearchStepRadius;
 	uint8 SearchSteps;
 
-	UFUNCTION(BlueprintCallable, Category = AI)
-	void StartAI(float timeDelay);
-
-	UFUNCTION(BlueprintCallable, Category = AI)
-	void StopAI();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AI Interface")
+	void SetAIEnabled(bool Enable);
 
 	UFUNCTION(BlueprintCallable, Category = AI)
 	void Wait(float time);
 
-	UFUNCTION(BlueprintCallable, Category = AI)
-	void SetEnemy(AUnitBase* Unit);
+	void ResumeAI();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AI Interface")
+	void SetEnemy(AUnitBase* ObjectRef);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = AI)
 	AUnitBase* GetEnemy() const { return Enemy; }
 
 protected:
 	FTimerHandle AITick;
-	virtual void AIBody();
+	virtual void AIBody() {}
 
 };

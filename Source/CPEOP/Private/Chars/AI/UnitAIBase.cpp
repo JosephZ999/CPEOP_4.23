@@ -70,24 +70,32 @@ void AUnitAIBase::BeginPlay()
 	Super::BeginPlay();
 }
 
-void AUnitAIBase::StartAI(float timeDelay)
+void AUnitAIBase::SetAIEnabled_Implementation(bool Enable)
 {
-	GetWorldTimerManager().SetTimer(AITick, this, &AUnitAIBase::AIBody, 0.05f, true, timeDelay);
+	if (Enable)
+	{
+		GetWorldTimerManager().SetTimer(AITick, this, &AUnitAIBase::AIBody, 0.05f, true);
+	}
+	else
+	{
+		GetWorldTimerManager().PauseTimer(AITick);
+	}
 }
 
-void AUnitAIBase::AIBody()
+void AUnitAIBase::SetEnemy_Implementation(AUnitBase * ObjectRef)
 {
-
+	Enemy = ObjectRef;
 }
 
-void AUnitAIBase::StopAI()
+void AUnitAIBase::Wait(float time)
 {
 	GetWorldTimerManager().PauseTimer(AITick);
+	GetWorldTimerManager().SetTimer(AITick, this, &AUnitAIBase::ResumeAI, FMath::Max(time, 0.1f));
 }
 
-void AUnitAIBase::SetEnemy(AUnitBase * Unit)
+void AUnitAIBase::ResumeAI()
 {
-	Enemy = Unit;
+	GetWorldTimerManager().SetTimer(AITick, this, &AUnitAIBase::AIBody, 0.05f, true);
 }
 
 bool AUnitAIBase::SearchEnemy(uint8 team)
@@ -116,8 +124,3 @@ bool AUnitAIBase::SearchEnemy(uint8 team)
 	return false;
 }
 
-void AUnitAIBase::Wait(float time)
-{
-	GetWorldTimerManager().PauseTimer(AITick);
-	StartAI(time);
-}

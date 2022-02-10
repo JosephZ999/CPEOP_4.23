@@ -10,6 +10,7 @@
 
 //class USceneComponent;
 //class UBoxComponent;
+//enum EDangerPriority;
 
 UCLASS()
 class CPEOP_API ADangerBox : public AActor
@@ -27,6 +28,10 @@ private:
 	UPROPERTY(Category = Component, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UBoxComponent* Box;
 
+	enum EDangerPriority _Priority;
+	uint8 _Team;
+	float _LifeTime;
+
 public:	
 	// Sets default values for this actor's properties
 	ADangerBox();
@@ -34,4 +39,7 @@ public:
 	UFUNCTION()
 	void BeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
 
+	UFUNCTION()
+	void Init(uint8 Team, float LifeTime, enum EDangerPriority Priority);
 };
+

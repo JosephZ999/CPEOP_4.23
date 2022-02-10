@@ -4,7 +4,6 @@
 #include "DangerBox.h"
 #include "Sys/Interfaces/AIEvents.h"
 
-
 FName ADangerBox::RootCompName(TEXT("RootComp"));
 FName ADangerBox::BoxCompName(TEXT("CollisionBox"));
 
@@ -29,6 +28,7 @@ ADangerBox::ADangerBox()
 		Box->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 		Box->SetupAttachment(SceneRoot);
 		Box->SetRelativeLocation(FVector(32.f, 0.f, 0.f));
+		Box->bHiddenInGame = false;
 	}
 	OnActorBeginOverlap.AddDynamic(this, &ADangerBox::BeginOverlap);
 }
@@ -49,5 +49,10 @@ void ADangerBox::BeginOverlap(AActor * OverlappedActor, AActor * OtherActor)
 	nDanger.Position.Y = FMath::Abs((ALocY - BLocY) / MaxLocY);
 	nDanger.Size = { MaxLocX, MaxLocY };
 
-	IAIEvents::Execute_OnDangerDetected(OtherActor, nDanger);
+	IAIEvents::Execute_OnDangerDetected(OtherActor, nDanger, _Priority);
+}
+
+void ADangerBox::Init(uint8 Team, float LifeTime, EDangerPriority Priority)
+{
+	_Team = Team; _LifeTime = LifeTime; _Priority = Priority;
 }

@@ -38,7 +38,7 @@ void AShriekerAI::AIBody()
 
 	if (OwnerRef->IsDead())
 	{
-		StopAI();
+		SetAIEnabled(false);
 		return;
 	}
 

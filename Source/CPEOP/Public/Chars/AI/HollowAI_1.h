@@ -30,8 +30,8 @@ private:
 	float AttackVelScale;
 
 public:
-	UFUNCTION(BlueprintCallable)
-	void InitParams(EHollowType type, float minDistX, float maxDistX, float attackVel);
+	UFUNCTION(BlueprintNativeEvent, Category = "AI Interface")
+	void SetAIOptions(const FAIOptions& Options);
 
 private:
 	virtual void AIBody() override;

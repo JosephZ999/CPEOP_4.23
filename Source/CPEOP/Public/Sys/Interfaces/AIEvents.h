@@ -6,6 +6,12 @@
 #include "UObject/Interface.h"
 #include "AIEvents.generated.h"
 
+UENUM(BlueprintType)
+enum class EDangerPriority : uint8
+{
+	Normal,
+};
+
 USTRUCT(BlueprintType)
 struct FDangerArg
 {
@@ -17,6 +23,21 @@ struct FDangerArg
 	{}
 	FVector2D Size;
 	FVector2D Position; // 0.5 - Actor in center of danger region
+};
+
+USTRUCT(BlueprintType)
+struct FAIOptions
+{
+	GENERATED_BODY()
+
+	FAIOptions() {}
+
+	UPROPERTY(BlueprintReadWrite)
+	float MinDist;
+	UPROPERTY(BlueprintReadWrite)
+	float MaxDist;
+	UPROPERTY(BlueprintReadWrite)
+	float AttackVel;
 };
 
 // This class does not need to be modified.
@@ -35,8 +56,17 @@ class CPEOP_API IAIEvents
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AI Interface")
+	void SetAIEnabled(bool Enable);
+
 	UFUNCTION(BlueprintNativeEvent, Category = "AI Interface")
-	void OnDangerDetected(FDangerArg& Arg1);
+	void OnDangerDetected(FDangerArg& Arg1, EDangerPriority Arg2);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AI Interface")
+	void SetEnemy(class AUnitBase* ObjectRef);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AI Interface")
+	void SetAIOptions(const FAIOptions& Options);
 
 	/*
 	

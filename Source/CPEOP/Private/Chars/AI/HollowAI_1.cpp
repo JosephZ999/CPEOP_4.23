@@ -4,12 +4,12 @@
 #include "Chars/AI/HollowAI_1.h"
 #include "Chars/MonsterBase.h"
 
-void AHollowAI_1::InitParams(EHollowType type, float minDistX, float maxDistX, float attackVel)
+void AHollowAI_1::SetAIOptions_Implementation(const FAIOptions & Options)
 {
-	HType = type;
-	MinDistX = minDistX;
-	MaxDistX = maxDistX;
-	AttackVelScale = attackVel;
+	MinDistX = Options.MinDist;
+	MaxDistX = Options.MaxDist,
+	AttackVelScale = Options.AttackVel;
+	HType = (MinDistX < 100.f) ? EHollowType::Melee : EHollowType::Ranged;
 }
 
 void AHollowAI_1::AIBody()
@@ -32,7 +32,6 @@ void AHollowAI_1::AIBody()
 			return;
 		}
 	}
-
 
 	if (OwnerRef->IsDead())
 	{

@@ -5,9 +5,9 @@
 
 #include "Objects/Dynamic/Helper.h"
 #include "Objects/Dynamic/HitSparkBase.h"
+#include "Objects/Dynamic/DangerBox.h"
 #include "Chars/Components/UnitStatsBase.h"
 #include "Chars/Components/ShadowComponent.h"
-#include "Chars/AI/UnitAIBase.h"
 
 #include "Sys/MyGameInstance.h"
 #include "Sys/MyFunctionLibrary.h"
@@ -58,28 +58,47 @@ void AUnitBase::Tick(float delta)
 	Move();
 }
 
-// AI
-AUnitAIBase * AUnitBase::GetUnitAI()
-{
-	if (UnitAI)
-	{
-		return UnitAI;
-	}
-	else
-	{
-		UnitAI = Cast<AUnitAIBase>(GetController());
-		if (UnitAI) { return UnitAI; }
-	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Casting to AI controller failed - func. name - GetUnitAI"));
+// AI
+
+void AUnitBase::SetAIEnabled_Implementation(bool Enable)
+{
+	if (GetController() && GetController()->GetClass()->ImplementsInterface(UAIEvents::StaticClass()))
+	{
+		IAIEvents::Execute_SetAIEnabled(GetController(), Enable);
+	}
+}
+
+
+void AUnitBase::SetEnemy_Implementation(AUnitBase * ObjectRef)
+{
+	if (GetController() && GetController()->GetClass()->ImplementsInterface(UAIEvents::StaticClass()))
+	{
+		IAIEvents::Execute_SetEnemy(GetController(), ObjectRef);
+	}
+}
+
+ADangerBox * AUnitBase::CreateADangerBox(AUnitBase* OwnerUnit, EDangerPriority Priority, FVector Location, FVector Scale, float LifeTime)
+{
+	if (!IsValid(OwnerUnit))
+		return nullptr;
+
+	FTransform nT(OwnerUnit->GetActorRotation(), Location, Scale);
+	ADangerBox* box = OwnerUnit->GetWorld()->SpawnActorDeferred<ADangerBox>(ADangerBox::StaticClass(), nT);
+	if (box)
+	{
+		box->Init(OwnerUnit->GetTeam(), LifeTime, Priority);
+		box->FinishSpawning(nT);
+		return box;
+	}
 	return nullptr;
 }
 
-void AUnitBase::OnDangerDetected_Implementation(FDangerArg& Arg1)
+void AUnitBase::OnDangerDetected_Implementation(FDangerArg& Arg1, EDangerPriority Arg2)
 {
 	if (IsValid(GetController()) && GetController()->GetClass()->ImplementsInterface(UAIEvents::StaticClass()))
 	{
-		IAIEvents::Execute_OnDangerDetected(GetController(), Arg1);
+		IAIEvents::Execute_OnDangerDetected(GetController(), Arg1, Arg2);
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("UnitBase OnDangerDetected Arg: Pos X - %f, Pos Y - %f"), Arg1.Position.X, Arg1.Position.Y);

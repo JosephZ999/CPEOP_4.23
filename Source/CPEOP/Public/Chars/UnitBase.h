@@ -16,6 +16,7 @@
  */
 class UPaperFlipbook;
 class AHitBoxBase;
+class ADangerBox;
 
 USTRUCT()
 struct FState // Used in AUnitBase::NewState() function parameter;
@@ -140,38 +141,38 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
 	class UShadowComponent* ShadowComp;
 
-	class AUnitAIBase* UnitAI;
-
 protected:
 	bool CanFall{ true };
 
 	//--------------------------// AI
 public:
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = AI)
-	void StartAI();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AI Interface")
+	void SetAIEnabled(bool Enable);
 
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = AI)
-	void StopAI();
 
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = AI)
-	class AUnitAIBase* GetUnitAI();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AI Interface")
+	void SetEnemy(class AUnitBase* ObjectRef);
 
 	UFUNCTION(BlueprintNativeEvent, Category = "AI Interface")
-	void OnDangerDetected(FDangerArg& Arg1);
+	void OnDangerDetected(FDangerArg& Arg1, enum EDangerPriority Arg2);
+
+	UFUNCTION(BlueprintCallable, Category = "UnitBase", Meta = (Keywords = "CDB"))
+	static ADangerBox* CreateADangerBox(AUnitBase* OwnerUnit, enum EDangerPriority Priority, FVector Location, FVector Scale, float LifeTime);
 
 	// Getters and Setters //
 public:
 	UFUNCTION(BlueprintCallable)
-	bool	CheckState(uint8 nState) const { return State == nState; }
+	bool CheckState(uint8 nState) const { return State == nState; }
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE uint8 GetState() { return State; }
 
 	uint8& GetStateRef() { return State; }
 
-	bool	CheckTeam(uint8 nTeam) { return Team == nTeam; }
+	bool CheckTeam(uint8 nTeam) { return Team == nTeam; }
 
-	void	SetTeam(uint8 nTeam) { Team = nTeam; }
+	void SetTeam(uint8 nTeam) { Team = nTeam; }
 
 	FORCEINLINE const uint8& GetTeam() { return Team; }
 

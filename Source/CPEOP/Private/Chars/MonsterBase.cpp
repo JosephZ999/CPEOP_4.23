@@ -64,7 +64,7 @@ void AMonsterBase::Appearance()
 	GetSprite()->SetVisibility(true);
 	getShadow()->ShowShadow();
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Overlap);
-	StartAI();
+	SetAIEnabled(true);
 }
 
 void AMonsterBase::OnDamaged()
