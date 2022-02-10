@@ -33,12 +33,6 @@ void AHollowAI_1::AIBody()
 		}
 	}
 
-	if (OwnerRef->IsDead())
-	{
-		OwnerRef->SetMoveVector(FVector(0.f));
-		return;
-	}
-
 	switch (HType)
 	{
 	case EHollowType::Melee:    { AITypeDef();      break; }

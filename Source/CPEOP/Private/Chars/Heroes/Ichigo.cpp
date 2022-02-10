@@ -26,7 +26,7 @@ AIchigo::AIchigo()
 	if (getHeroStatsComp())
 	{
 		InitForm(SHIKAI_NAME, { 4, 3, 3 }); // 10
-		InitForm(BANKAI_NAME, { 5, 8, 4 });
+		InitForm(BANKAI_NAME, { 6, 10, 5 });
 	}
 
 	// Helpers

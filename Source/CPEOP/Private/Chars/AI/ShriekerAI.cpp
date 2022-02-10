@@ -29,7 +29,7 @@ void AShriekerAI::AIBody()
 		return;
 	}
 
-	if (!SearchEnemy(OwnerRef->GetTeam()))
+	if (!IsValid(GetEnemy()) && !SearchEnemy(OwnerRef->GetTeam()))
 	{
 		OwnerRef->SetMoveVector(FVector::ZeroVector);
 		Wait(1.f);

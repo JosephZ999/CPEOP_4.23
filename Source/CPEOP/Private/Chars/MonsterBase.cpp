@@ -76,6 +76,8 @@ void AMonsterBase::OnDamaged()
 		GetCharacterMovement()->GravityScale *= 0.75f;
 		
 		SpawnHelper("DeathEffect", 0.f, FRotator(), FVector(DeathEffScale));
+		SetMoveVector(FVector::ZeroVector);
+		SetAIEnabled(false);
 		FTimerHandle nTimer;
 		SET_TIMER(nTimer, this, &AMonsterBase::Death, DEATH_TIME);
 	}

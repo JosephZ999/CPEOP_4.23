@@ -36,7 +36,7 @@
 
 // Dash Settings
 #define DASH_VELOCITY		250.f
-#define DASH_VELOCITY_Z		200.f
+#define DASH_VELOCITY_Z		300.f
 
 // Action Settings
 #define SKILL_TIMER			0.2f
@@ -87,6 +87,7 @@ AHeroBase::AHeroBase()
 	GetCharacterMovement()->GravityScale = GRAVITY_SCALE;
 	GetCharacterMovement()->Mass = 30;
 	GetCharacterMovement()->MaxAcceleration = MAX_ACCELERATION;
+	GetCharacterMovement()->JumpZVelocity = 500.f;
 
 	// Helpers
 	InitHelper("Teleport", "Blueprint/Objects/Dynamic/TeleportEff");
@@ -724,8 +725,8 @@ void AHeroBase::EndState()
 			SetActorLocation(GetActorLocation() + tp_Vector * speed, true);
 			if (tp_DistPassed >= tp_MaxDist)
 			{
-				GetCharacterMovement()->Velocity = tp_Vector * 200.f;
 				EndState();
+				GetCharacterMovement()->Velocity = tp_Vector * 300.f;
 
 				// Minus stamina
 				float dist = FVector::Dist(tp_initialLocation, GetActorLocation());

@@ -168,7 +168,7 @@ void AIchigo::sh_Attack_Air()
 	nState.Animation = "AttackAir";
 	NewState(nState);
 
-	AddImpulse(FVector(GetUnitVelocity().X, GetUnitVelocity().Y, 200.f), getFrameTime(4));
+	AddImpulse(FVector(GetUnitVelocity().X, GetUnitVelocity().Y, 200.f), getFrameTime(3));
 	SpawnHelper("sh_AttackAir", getFrameTime(4));
 	Combo(getFrameTime(12));
 

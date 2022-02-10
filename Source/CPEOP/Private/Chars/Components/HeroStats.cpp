@@ -48,7 +48,7 @@ void UHeroStats::Init()
 	Strength	= form.strength + SavedStats.strength;
 	Agility		= form.agility	+ SavedStats.agility;
 	Spirit		= form.spirit	+ SavedStats.spirit;
-	
+
 	if (!MaxExp)
 	{
 		MaxExp	= Level * 100;

@@ -20,6 +20,7 @@ AShriekerSummon::AShriekerSummon()
 void AShriekerSummon::EndState()
 {
 	Super::EndState();
+	AnimUpdate();
 }
 
 void AShriekerSummon::AnimUpdate()
