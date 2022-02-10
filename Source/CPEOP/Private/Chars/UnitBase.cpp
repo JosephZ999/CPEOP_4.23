@@ -58,6 +58,7 @@ void AUnitBase::Tick(float delta)
 	Move();
 }
 
+// AI
 AUnitAIBase * AUnitBase::GetUnitAI()
 {
 	if (UnitAI)
@@ -72,6 +73,16 @@ AUnitAIBase * AUnitBase::GetUnitAI()
 
 	UE_LOG(LogTemp, Warning, TEXT("Casting to AI controller failed - func. name - GetUnitAI"));
 	return nullptr;
+}
+
+void AUnitBase::OnDangerDetected_Implementation(FDangerArg& Arg1)
+{
+	if (IsValid(GetController()) && GetController()->GetClass()->ImplementsInterface(UAIEvents::StaticClass()))
+	{
+		IAIEvents::Execute_OnDangerDetected(GetController(), Arg1);
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("UnitBase OnDangerDetected Arg: Pos X - %f, Pos Y - %f"), Arg1.Position.X, Arg1.Position.Y);
 }
 
 // Functions

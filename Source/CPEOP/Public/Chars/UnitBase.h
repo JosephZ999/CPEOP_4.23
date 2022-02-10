@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PaperCharacter.h"
-
+#include "Sys/Interfaces/AIEvents.h"
 #include "TimerManager.h"
 #include "UnitBase.generated.h"
 
@@ -112,7 +112,7 @@ UENUM()
 enum class EDangerType : uint8 { None, MeleeAttack, DistanceAttack, };
 
 UCLASS()
-class CPEOP_API AUnitBase : public APaperCharacter
+class CPEOP_API AUnitBase : public APaperCharacter, public IAIEvents
 {
 	GENERATED_BODY()
 
@@ -156,11 +156,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = AI)
 	class AUnitAIBase* GetUnitAI();
 
-private:
-
-
-
-
+	UFUNCTION(BlueprintNativeEvent, Category = "AI Interface")
+	void OnDangerDetected(FDangerArg& Arg1);
 
 	// Getters and Setters //
 public:

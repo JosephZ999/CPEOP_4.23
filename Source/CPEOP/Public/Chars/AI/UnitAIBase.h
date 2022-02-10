@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "Sys/Interfaces/AIEvents.h"
 #include "UnitAIBase.generated.h"
 
 /**
@@ -11,7 +12,7 @@
  */
 
 UCLASS()
-class CPEOP_API AUnitAIBase : public AAIController
+class CPEOP_API AUnitAIBase : public AAIController, public IAIEvents
 {
 	GENERATED_BODY()
 
@@ -88,4 +89,5 @@ public:
 protected:
 	FTimerHandle AITick;
 	virtual void AIBody();
+
 };
