@@ -4,7 +4,6 @@
 #include "ShadowComponent.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
-#include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
 
 #define CLASS_PATH "Blueprint'/Game/Blueprint/Objects/Dynamic/Shadow.Shadow_C'"

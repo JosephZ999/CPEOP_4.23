@@ -120,8 +120,6 @@ class CPEOP_API AUnitBase : public APaperCharacter, public IAIEvents
 public:
 	AUnitBase();
 
-	class UMyGameInstance* GameInsRef;
-
 protected:	virtual void BeginPlay();
 public:		virtual void Tick(float delta);
 

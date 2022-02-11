@@ -25,8 +25,6 @@ void AMonsterBase::BeginPlay()
 	a.sparkScale = { 1.f, 1.f };
 	a.impulse = { 100.f, 50.f };
 	a.sparkIndex = 3;
-	
-	ApplyDamage(this, &a, false );
 
 	Super::BeginPlay();
 	GetSprite()->SetVisibility(false);
@@ -45,9 +43,7 @@ bool AMonsterBase::IsOnGround()
 	return GetCharacterMovement()->IsMovingOnGround();
 }
 
-
 // Animations
-
 void AMonsterBase::AddAnimation(FName index, UPaperFlipbook* elem)
 {
 	AnimList.Add(index, elem);

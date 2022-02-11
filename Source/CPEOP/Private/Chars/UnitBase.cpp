@@ -8,16 +8,14 @@
 #include "Objects/Dynamic/DangerBox.h"
 #include "Chars/Components/UnitStatsBase.h"
 #include "Chars/Components/ShadowComponent.h"
-
-#include "Sys/MyGameInstance.h"
 #include "Sys/MyFunctionLibrary.h"
+#include "sys/Interfaces/GameIns.h"
 
 #include "GameFramework/Controller.h"
 #include "PaperFlipbookComponent.h"
 #include "PaperFlipbook.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
 #include "UObject/ConstructorHelpers.h"
 
 // Settings
@@ -44,8 +42,6 @@ AUnitBase::AUnitBase()
 void AUnitBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	GameInsRef = Cast<UMyGameInstance>(GetGameInstance());
 
 	const FVector spriteScale = GetSprite()->GetComponentScale();
 	GetSprite()->SetRelativeScale3D(FVector(spriteScale.X, spriteScale.Y, spriteScale.Z * 1.1f));
@@ -369,7 +365,7 @@ void AUnitBase::OnDangerDetected_Implementation(FDangerArg& Arg1, EDangerPriorit
 // Taking Damage //==============================------------------------------
 	void AUnitBase::ApplyDamage(class AUnitBase* damageCauser, FHitOption* damageOption, bool fromBehind)
 	{
-		if (State == EBaseStates::Fall || State == EBaseStates::Teleport || (!GameInsRef) || Dead)
+		if (State == EBaseStates::Fall || State == EBaseStates::Teleport || Dead)
 			return;
 
 		bool block  { false };
@@ -441,12 +437,13 @@ void AUnitBase::OnDangerDetected_Implementation(FDangerArg& Arg1, EDangerPriorit
 
 				DisableBlocking();
 				EndStateDeferred(0.4f);
+				AddImpulse(impulse, HIT_TIME);
 			}
-			AddImpulse(impulse, HIT_TIME);
+			
 			
 			if (Dead)
 			{
-				GameInsRef->UnitKilled(damageCauser, this);
+				IGameIns::Execute_OnUnitKilled(GetGameInstance(), damageCauser, this);
 			}
 
 			// Falling
@@ -538,6 +535,10 @@ void AUnitBase::OnDangerDetected_Implementation(FDangerArg& Arg1, EDangerPriorit
 	}
 	void AUnitBase::CreateSpark(uint8 index, FVector2D scale, float rotation)
 	{
+		UPaperFlipbook* nAnimation = IGameIns::Execute_GetSparkAnimation(GetGameInstance(), index);
+		if (!nAnimation)
+			return;
+
 		// Spawn Location
 		FVector nLocation = GetActorLocation();
 		nLocation.X += FMath::FRandRange(-15.f, 15.f);
@@ -556,7 +557,7 @@ void AUnitBase::OnDangerDetected_Implementation(FDangerArg& Arg1, EDangerPriorit
 		if (nSpark)
 		{
 			// Init animation and rotation
-			nSpark->Init(GameInsRef->getSpark(index), rotation);
+			nSpark->Init(nAnimation, rotation);
 			
 			// Finish Spawning
 			nSpark->FinishSpawning(nTransform);
@@ -568,12 +569,17 @@ void AUnitBase::OnDangerDetected_Implementation(FDangerArg& Arg1, EDangerPriorit
 	}
 	void AUnitBase::CreateDamageText(float damage, bool moveRight, bool crit)
 	{
+		TSubclassOf<AHelper> nClass = IGameIns::Execute_GetDamageTextClass(GetGameInstance());
+		
+		if (!nClass)
+			return;
+
 		if (FMath::IsNearlyEqual(damage, 0.f))
 		{
 			crit = false;
 		}
 
-		if (!GameInsRef->canCreateDamageText(crit))
+		if (!IGameIns::Execute_CanCreateDamageText(GetGameInstance(), crit))
 			return;
 
 		// Location
@@ -585,7 +591,7 @@ void AUnitBase::OnDangerDetected_Implementation(FDangerArg& Arg1, EDangerPriorit
 		};
 
 		// Spawning
-		AHelper* nText = GetWorld()->SpawnActorDeferred<AHelper>(GameInsRef->getDamageTextClass(), nTransform);
+		AHelper* nText = GetWorld()->SpawnActorDeferred<AHelper>(nClass, nTransform);
 		if (nText)
 		{
 			nText->Init(damage, crit, moveRight);

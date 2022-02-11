@@ -4,29 +4,30 @@
 #include "Sys/MyGameInstance.h"
 #include "Paper2D/Classes/PaperFlipbook.h"
 
+// Interface Functions
 
-	UPaperFlipbook* UMyGameInstance::getSpark(uint8 index) const
+UPaperFlipbook * UMyGameInstance::GetSparkAnimation_Implementation(uint8 index)
+{
+	if (Data_Sparks.Num() > index)
 	{
-		if (Data_Sparks.Num() > index)
-		{
-			return Data_Sparks[index];
-		}
-		return nullptr;
+		return Data_Sparks[index];
 	}
+	return nullptr;
+}
 
-	TSubclassOf<class ADmgTextBase> UMyGameInstance::getDamageTextClass() const
-	{
-		return DamageText;
-	}
+TSubclassOf<class AHelper> UMyGameInstance::GetDamageTextClass_Implementation()
+{
+	return DamageText;
+}
 
-	bool UMyGameInstance::canCreateDamageText(bool crited) const
+bool UMyGameInstance::CanCreateDamageText_Implementation(bool Crited)
+{
+	if (Crited && ShowCritDamageText)
 	{
-		if (crited && ShowCritDamageText)
-		{
-			return true;
-		}
-		else
-		{
-			return FMath::RandRange(1, 100) <= DamageTextRate;
-		}
+		return true;
 	}
+	else
+	{
+		return FMath::RandRange(1, 100) <= DamageTextRate;
+	}
+}

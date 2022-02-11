@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Sys/Interfaces/GameIns.h"
 #include "Engine/GameInstance.h"
 #include "Objects/Dynamic/DmgTextBase.h"
 
@@ -12,7 +13,7 @@
  * 
  */
 UCLASS()
-class CPEOP_API UMyGameInstance : public UGameInstance
+class CPEOP_API UMyGameInstance : public UGameInstance, public IGameIns
 {
 	GENERATED_BODY()
 
@@ -30,18 +31,15 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game Settings", Meta = (AllowPrivateAccess = "true"))
 	bool ShowCritDamageText;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Game Settings", Meta = (AllowPrivateAccess = "true"))
-	class TSubclassOf<AActor> ShadowClass;
-
 public:
-	UFUNCTION()
-	class UPaperFlipbook* getSpark(uint8 index) const;
-	TSubclassOf<class ADmgTextBase> getDamageTextClass() const;
-	bool canCreateDamageText(bool crited)const;
-	TSubclassOf<AActor> getShadowClass() const { return ShadowClass; }
+	// Interface function
+	UFUNCTION(BlueprintNativeEvent, Category = "GameIns Events")
+	class UPaperFlipbook* GetSparkAnimation(uint8 index);
 
-	//==========================================/ Hero Events
-	UFUNCTION(BlueprintImplementableEvent, Category = "Units Calls")
-	void UnitKilled(class AUnitBase* killerUnit, class AUnitBase* killedUnit);
+	UFUNCTION(BlueprintNativeEvent, Category = "GameIns Events")
+	TSubclassOf<class AHelper> GetDamageTextClass();
+
+	UFUNCTION(BlueprintNativeEvent, Category = "GameIns Events")
+	bool CanCreateDamageText(bool Crited);
 
 };
