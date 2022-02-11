@@ -448,9 +448,10 @@ void AUnitBase::OnDangerDetected_Implementation(FDangerArg& Arg1, EDangerPriorit
 				nState.EndState = false;
 				NewState(nState);
 
+				DisableBlocking();
 				EndStateDeferred(0.4f);
-				AddImpulse(impulse, HIT_TIME);
 			}
+			AddImpulse(impulse, HIT_TIME);
 			
 			if (Dead)
 			{
@@ -514,6 +515,8 @@ void AUnitBase::OnDangerDetected_Implementation(FDangerArg& Arg1, EDangerPriorit
 	}
 	void AUnitBase::DisableBlocking()
 	{
+		PAUSE_TIMER(blockTimer);
+		PAUSE_TIMER(blockEndTimer);
 		BlockAttackType = EBlockType::None;
 	}
 
