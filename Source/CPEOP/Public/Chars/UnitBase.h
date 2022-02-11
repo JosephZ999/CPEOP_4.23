@@ -225,17 +225,18 @@ protected:
 
 public:
 	/* Impulse */
-	void AddImpulse(FVector2D impulse, float time = 0.f);
-	void AddImpulse(FVector impulse, float time = 0.f);
+	void AddImpulse(FVector impulse, float time = 0.f, bool overrideXY = true, bool overrideZ = true);
 private:
 	void ImpulseDeferred();
 	FTimerHandle ImpulseTimer;
 	FVector ImpulseVector;
+	bool ImpulseOverrideXY;
+	bool ImpulseOverrideZ;
 public:
 	UFUNCTION(BlueprintCallable)
-		void SetMoveVector(FVector nVec = FVector::ZeroVector);
+	void SetMoveVector(FVector nVec = FVector::ZeroVector);
 	UFUNCTION(BlueprintCallable)
-		const FVector& GetMoveVector() const { return MoveVector; }
+	const FVector& GetMoveVector() const { return MoveVector; }
 
 	void SetRotation(bool right, bool moveVec = true);
 

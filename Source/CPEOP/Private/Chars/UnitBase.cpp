@@ -12,13 +12,13 @@
 #include "Sys/MyGameInstance.h"
 #include "Sys/MyFunctionLibrary.h"
 
+#include "GameFramework/Controller.h"
 #include "PaperFlipbookComponent.h"
 #include "PaperFlipbook.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "UObject/ConstructorHelpers.h"
-#include "Kismet/GameplayStatics.h"
 
 // Settings
 #define HIT_TIME 0.2f
@@ -208,24 +208,15 @@ void AUnitBase::OnDangerDetected_Implementation(FDangerArg& Arg1, EDangerPriorit
 		}
 	}
 
-	void AUnitBase::AddImpulse(FVector2D impulse, float time)
-	{
-		ImpulseVector = { impulse.X + FMath::FRandRange(-20, 20), FMath::FRandRange(-5, 5), impulse.Y };
-		if (time > 0.f)
-		{
-			SET_TIMER(ImpulseTimer, this, &AUnitBase::ImpulseDeferred, time);
-		}
-		else
-		{
-			ImpulseDeferred();
-		}
-	}
-
-	void AUnitBase::AddImpulse(FVector impulse, float time)
+	void AUnitBase::AddImpulse(FVector impulse, float time, bool overrideXY, bool overrideZ)
 	{
 		ImpulseVector = impulse;
+		ImpulseOverrideXY = overrideXY;
+		ImpulseOverrideZ = overrideZ;
+
 		if (time > 0.f)
 		{
+			PAUSE_TIMER(ImpulseTimer);
 			SET_TIMER(ImpulseTimer, this, &AUnitBase::ImpulseDeferred, time);
 		}
 		else
@@ -236,7 +227,7 @@ void AUnitBase::OnDangerDetected_Implementation(FDangerArg& Arg1, EDangerPriorit
 
 	void AUnitBase::ImpulseDeferred()
 	{
-		LaunchCharacter(ImpulseVector, true, true);
+		LaunchCharacter(ImpulseVector, ImpulseOverrideXY, ImpulseOverrideZ);
 	}
 
 	void AUnitBase::EventJump()
@@ -363,7 +354,7 @@ void AUnitBase::OnDangerDetected_Implementation(FDangerArg& Arg1, EDangerPriorit
 			nHelper->InitialLocation.Y += 1.f;
 			nHelper->CustomTimeDilation = this->CustomTimeDilation;
 
-			UGameplayStatics::FinishSpawningActor(nHelper, FTransform(info.rotation, nHelper->InitialLocation + GetActorLocation(), info.scale));
+			nHelper->FinishSpawning(FTransform(info.rotation, nHelper->InitialLocation + GetActorLocation(), info.scale));
 			
 			// Attaching
 			if (nHelper->bAttachToParent)
@@ -384,7 +375,7 @@ void AUnitBase::OnDangerDetected_Implementation(FDangerArg& Arg1, EDangerPriorit
 		bool block  { false };
 		bool crit   { false };
 	
-		FVector2D impulse = damageOption->impulse;
+		FVector impulse(damageOption->impulse.X, 0.f, damageOption->impulse.Y);
 		impulse.X = ((fromBehind && !IsLookingRight()) || (!fromBehind && IsLookingRight())) ? impulse.X * -1.f : impulse.X;
 
 		if (IsBlocking())
@@ -466,7 +457,8 @@ void AUnitBase::OnDangerDetected_Implementation(FDangerArg& Arg1, EDangerPriorit
 					FallDeferred(HIT_TIME);
 				}
 				SetRotation(impulse.X < 0.f, false);
-				AddImpulse(impulse + FVector2D(0.f, 100.f), HIT_TIME);
+				impulse.Z += 100.f;
+				AddImpulse(impulse, HIT_TIME);
 			}
 		}
 		else
@@ -567,7 +559,7 @@ void AUnitBase::OnDangerDetected_Implementation(FDangerArg& Arg1, EDangerPriorit
 			nSpark->Init(GameInsRef->getSpark(index), rotation);
 			
 			// Finish Spawning
-			UGameplayStatics::FinishSpawningActor(nSpark, nTransform);
+			nSpark->FinishSpawning(nTransform);
 
 			// Attach to this actor
 			//nSpark->AttachToActor(this,	FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, EAttachmentRule::KeepWorld, true));
@@ -597,7 +589,7 @@ void AUnitBase::OnDangerDetected_Implementation(FDangerArg& Arg1, EDangerPriorit
 		if (nText)
 		{
 			nText->Init(damage, crit, moveRight);
-			UGameplayStatics::FinishSpawningActor(nText, nTransform);
+			nText->FinishSpawning(nTransform);
 		}
 		else
 		{

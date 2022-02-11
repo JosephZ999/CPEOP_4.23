@@ -21,7 +21,7 @@ AOgichi::AOgichi()
 	if (getHeroStatsComp())
 	{
 		InitForm(SHIKAI_NAME, { 4, 4, 7 }); // 15
-		InitForm(BANKAI_NAME, { 5, 9, 8 });
+		InitForm(BANKAI_NAME, { 6, 11, 9 });
 	}
 
 	// Hit Boxes
@@ -64,7 +64,6 @@ AOgichi::AOgichi()
 	InitAnim("Attack_2",		OGI_ANIM_LOC "Attack2");
 	InitAnim("AttackFW",		OGI_ANIM_LOC "AttackForward");
 	InitAnim("AttackB",			OGI_ANIM_LOC "AttackBack");
-	InitAnim("AttackB2",		OGI_ANIM_LOC "AttackBack2");
 	InitAnim("SwordTwist",		OGI_ANIM_LOC "SwordTwist");
 	InitAnim("SwordTwistLoop",	OGI_ANIM_LOC "SwordTwistLoop");
 	InitAnim("SwordThrow",		OGI_ANIM_LOC "SwordThrow");
@@ -148,7 +147,7 @@ void AOgichi::AttackBack()
 		case EOgichiState::Ogi_SwordTwistLoop:
 		{
 			if (IsSkillActive()) { }
-			else { sh_AttackB2(); }
+			else { sh_AttackB(); }
 			break;
 		}
 		case EOgichiState::Ogi_Attack_2: { if (isComboTime()) { sh_SwordTwist(); } break; }
@@ -217,7 +216,8 @@ void AOgichi::sh_Attack_2()
 	nState.Animation = "Attack_2";
 	NewState(nState);
 
-	AddImpulse		(BASE_VELOCITY, getFrameTime(1));
+	FVector impulse = BASE_VELOCITY;
+	AddImpulse		(impulse, getFrameTime(1));
 	SpawnHelper		("sh_Attack_2", getFrameTime(4));
 	Combo			(getFrameTime(9));
 
@@ -255,18 +255,6 @@ void AOgichi::sh_AttackB()
 	SpawnHelper		("sh_AttackBack", getFrameTime(6), FRotator(20.f, 0.f, 0.f));
 
 	SetBlockingAttack(EBlockType::Forward, getFrameTime(6), BLOCK_DURATION);
-}
-void AOgichi::sh_AttackB2()
-{
-	FState nState;
-	nState.State = EOgichiState::Ogi_AttackB;
-	nState.Animation = "AttackB2";
-	NewState(nState);
-
-	AddImpulse		(SP_VELOCITY, getFrameTime(7));
-	SpawnHelper		("sh_AttackBack", getFrameTime(9), FRotator(20.f, 0.f, 0.f));
-
-	SetBlockingAttack(EBlockType::Forward, getFrameTime(9), BLOCK_DURATION);
 }
 
 //---------------------------------------------// Sword Twist

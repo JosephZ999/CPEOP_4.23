@@ -69,7 +69,6 @@ public:
 	void sh_Attack_2();
 	void sh_AttackFW();
 	void sh_AttackB();
-	void sh_AttackB2();
 
 	void sh_SwordTwist();
 	void sh_SwordTwistLoop();
