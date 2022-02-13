@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/TimelineComponent.h"
 #include "Chars/Components/HeroStats.h"
+#include "sys/Interfaces/HeroInput.h"
 #include "Chars/UnitBase.h"
 #include "HeroBase.generated.h"
 
@@ -21,7 +22,7 @@ enum class ECameraMode : uint8 { Free, Action, Target, };
 enum EComboKey { CK_None, CK_Attack, CK_AForward, CK_ABackward, CK_Jump, CK_Block, CK_Dash };
 
 UCLASS()
-class CPEOP_API AHeroBase : public AUnitBase
+class CPEOP_API AHeroBase : public AUnitBase, public IHeroInput
 {
 	GENERATED_BODY()
 
@@ -215,7 +216,6 @@ protected:
 
 //---------------------------------------------// Teleport
 public:
-	UFUNCTION(BlueprintCallable)
 	void Teleport();
 	void Teleport(FVector nLocation);
 
@@ -232,5 +232,21 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ChangeForm(FName formName);
 	void InitForm(FName formName, FVector stats);
+//---------------------------------------------// End
+
+//---------------------------------------------// Hero Inputs
+public:
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Hero Commands")
+	void BtnSetMovement(FVector Value);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Hero Commands")
+	void BtnAction(EInputActionType action, bool btnReleased);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Hero Commands")
+	void BtnDash(FVector forwardVector, bool Released);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Hero Comnnads")
+	void BtnTeleport();
+
 //---------------------------------------------// End
 };

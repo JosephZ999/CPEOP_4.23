@@ -146,7 +146,7 @@ void UHeroStats::LevelUp()
 	AMyPlayerController* controller = Cast<AMyPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
 	if (controller)
 	{
-		controller->CharLevelUp(this);
+		controller->CharLevelUp();
 	}
 	else UE_LOG(LogTemp, Fatal, TEXT("Couldn't find PlayerController"));
 }

@@ -748,3 +748,146 @@ void AHeroBase::EndState()
 		getHeroStatsComp()->AddForms(formName, stats);
 	}
 // End
+
+//---------------------------------------------// Hero Inputs
+	void AHeroBase::BtnSetMovement_Implementation(FVector Value)
+	{
+		SetMoveVector(Value);
+	}
+	
+	void AHeroBase::BtnAction_Implementation(EInputActionType action, bool btnReleased)
+	{
+		switch (action)
+		{
+		case EInputActionType::A_Center:
+		{
+			if (btnReleased)
+			{
+				Attack();
+				addKey(EComboKey::CK_Attack);
+			}
+			else
+			{
+				AttackHold();
+			}
+			break;
+		}
+		case EInputActionType::A_Up:
+		{
+			if (btnReleased)
+			{
+				EventJump();
+				addKey(EComboKey::CK_Jump);
+			}
+			break;
+		}
+		case EInputActionType::A_Down:
+		{
+			if (btnReleased)
+			{
+				BlockStop();
+				AttackDown();
+				addKey(EComboKey::CK_Block);
+			}
+			break;
+		}
+		case EInputActionType::A_Forward:
+		{
+			if (btnReleased)
+			{
+				if (IsLookingRight())
+				{
+					AttackForward();
+					addKey(EComboKey::CK_AForward);
+				}
+				else
+				{
+					AttackBack();
+					addKey(EComboKey::CK_ABackward);
+				}
+			}
+			break;
+		}
+		case EInputActionType::A_Backward:
+		{
+			if (btnReleased)
+			{
+				if (IsLookingRight())
+				{
+					AttackBack();
+					addKey(EComboKey::CK_ABackward);
+				}
+				else
+				{
+					AttackForward();
+					addKey(EComboKey::CK_AForward);
+				}
+			}
+			break;
+		}
+
+		case EInputActionType::A_BlockStart:
+		{
+			if (!IsSkillActive())
+			{
+				Block();
+				SkillCanceled();
+			}
+			break;
+		}
+		case EInputActionType::A_BlockEnd: { BlockStop();	break; }
+		} // End switch
+
+		if (btnReleased)
+		{
+			PowChargeEnd();
+			SkillCanceled();
+		}
+	}
+
+	void AHeroBase::BtnDash_Implementation(FVector forwardVector, bool Released)
+	{
+		if (Released)
+		{
+			// Stop Sprinting
+			if (isSprinting())
+			{
+				StopSprinting();
+				return;
+			}
+
+			// Set Dash Forward Vector
+			if (BtnDashVector.IsNearlyZero())
+			{
+				BtnDashVector = forwardVector;
+				SET_TIMER(BtnDashTimer, this, &AHeroBase::BtnDashReset, cTime(0.3));
+				return;
+			}
+
+			if (FVector::PointsAreNear(BtnDashVector, forwardVector, 0.25f))
+			{
+				if (!CheckState(EBaseStates::Stand))
+				{
+					Dash(BtnDashVector);
+				}
+			}
+			else
+			{
+				BtnDashVector = forwardVector;
+				SET_TIMER(BtnDashTimer, this, &AHeroBase::BtnDashReset, cTime(0.3));
+			}
+		}	// Released End
+		else
+		{
+			if (CheckState(EBaseStates::Stand) && FVector::PointsAreNear(BtnDashVector, forwardVector, 0.25f))
+			{
+				// PlayerCharacter->Sprint(BtnDashVector);
+			}
+		}
+	}
+
+	void AHeroBase::BtnTeleport_Implementation()
+	{
+		Teleport();
+	}
+// End
