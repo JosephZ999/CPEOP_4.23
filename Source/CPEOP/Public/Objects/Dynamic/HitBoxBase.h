@@ -81,7 +81,7 @@ public:
 	void OnAnimFinished();
 
 	UFUNCTION(BlueprintNativeEvent)
-	void OnHit(const int32& count, class AUnitBase* damagedUnit);
+	void OnHit(const int32& count, class AUnitBase* damagedUnit, bool attackBlocked);
 
 	UFUNCTION(BlueprintCallable)
 	void setSparkRotation(float rotation)

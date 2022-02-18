@@ -61,7 +61,6 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void OnDamaged() override;
 
 private:
 	void Appearance();
@@ -81,6 +80,9 @@ private:
 public:
 	virtual void Attack();
 	FORCEINLINE bool ComboTime() { return !IsAttacking; }
+
+	virtual void EventDead() override;
+
 protected:
 	void AttackDuration(float Duration);
 private:

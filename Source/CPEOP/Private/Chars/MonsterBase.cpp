@@ -63,20 +63,17 @@ void AMonsterBase::Appearance()
 	SetAIEnabled(true);
 }
 
-void AMonsterBase::OnDamaged()
+void AMonsterBase::EventDead()
 {
-	if (IsDead())
-	{
-		GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Ignore);
-		GetCharacterMovement()->Velocity = GetVelocity() / 2.f;
-		GetCharacterMovement()->GravityScale *= 0.75f;
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Ignore);
+	GetCharacterMovement()->Velocity = GetVelocity() / 2.f;
+	GetCharacterMovement()->GravityScale *= 0.75f;
 		
-		SpawnHelper("DeathEffect", 0.f, FRotator(), FVector(DeathEffScale));
-		SetMoveVector(FVector::ZeroVector);
-		SetAIEnabled(false);
-		FTimerHandle nTimer;
-		SET_TIMER(nTimer, this, &AMonsterBase::Death, DEATH_TIME);
-	}
+	SpawnHelper("DeathEffect", 0.f, FRotator(), FVector(DeathEffScale));
+	SetMoveVector(FVector::ZeroVector);
+	SetAIEnabled(false);
+	FTimerHandle nTimer;
+	SET_TIMER(nTimer, this, &AMonsterBase::Death, DEATH_TIME);
 }
 
 void AMonsterBase::Death()

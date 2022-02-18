@@ -363,10 +363,10 @@ void AUnitBase::OnDangerDetected_Implementation(FDangerArg& Arg1, EDangerPriorit
 // End Hit Box//=================================------------------------------
 
 // Taking Damage //==============================------------------------------
-	void AUnitBase::ApplyDamage(class AUnitBase* damageCauser, FHitOption* damageOption, bool fromBehind)
+	bool AUnitBase::ApplyDamage(class AUnitBase* damageCauser, FHitOption* damageOption, bool fromBehind, bool& Blocked)
 	{
 		if (State == EBaseStates::Fall || State == EBaseStates::Teleport || Dead)
-			return;
+			return false;
 
 		bool block  { false };
 		bool crit   { false };
@@ -425,9 +425,10 @@ void AUnitBase::OnDangerDetected_Implementation(FDangerArg& Arg1, EDangerPriorit
 		// Change State
 		if (!block)
 		{
+			Blocked = false;
 			Dead = getStatsComp()->GetHealth() < 0.f;
 
-			if (damage > getStatsComp()->GetMaxHealth() * 0.05f || IsDead())
+			if (damage > getStatsComp()->GetMaxHealth() * 0.05f || Dead)
 			{
 				FState nState;
 				nState.State = EBaseStates::Hit;
@@ -440,10 +441,10 @@ void AUnitBase::OnDangerDetected_Implementation(FDangerArg& Arg1, EDangerPriorit
 				AddImpulse(impulse, HIT_TIME);
 			}
 			
-			
 			if (Dead)
 			{
 				IGameIns::Execute_OnUnitKilled(GetGameInstance(), damageCauser, this);
+				EventDead();
 			}
 
 			// Falling
@@ -460,9 +461,10 @@ void AUnitBase::OnDangerDetected_Implementation(FDangerArg& Arg1, EDangerPriorit
 		}
 		else
 		{
+			Blocked = true;
 			AddImpulse(impulse, HIT_TIME);
 		}
-		OnDamaged();
+		return true;
 	}
 	
 	

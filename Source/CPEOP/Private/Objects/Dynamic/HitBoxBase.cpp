@@ -92,10 +92,8 @@ void AHitBoxBase::Attack(AUnitBase* Enemy)
 {
 	if (Enemy && !Enemy->CheckTeam(OwnerCharacter->GetTeam()) && !Enemy->IsFalling() && !Enemy->CheckState(EBaseStates::Teleport))
 	{
-		++HitCount;
-		OnHit(HitCount, Enemy);
-
 		bool fBehind{ false };
+		bool blocked{ false };
 
 		switch (ImpulseType)
 		{
@@ -115,7 +113,11 @@ void AHitBoxBase::Attack(AUnitBase* Enemy)
 
 		}
 
-		Enemy->ApplyDamage(OwnerCharacter, &Options, fBehind);
+		if (Enemy->ApplyDamage(OwnerCharacter, &Options, fBehind, blocked))
+		{
+			++HitCount;
+			OnHit(HitCount, Enemy, blocked);
+		}
 	}
 }
 
@@ -124,7 +126,7 @@ void AHitBoxBase::OnAnimFinished_Implementation()
 	Destroy();
 }
 
-void AHitBoxBase::OnHit_Implementation(const int32& count, class AUnitBase* damagedUnit)
+void AHitBoxBase::OnHit_Implementation(const int32& count, class AUnitBase* damagedUnit, bool attackBlocked)
 {
 	
 }

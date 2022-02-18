@@ -274,8 +274,8 @@ private:
 	// Taking Damage //==============================------------------------------
 public:
 	/* On Damaged */
-	void ApplyDamage(class AUnitBase* damageCauser, FHitOption* damageOption, bool fromBehind);
-	virtual void OnDamaged() {}
+	bool ApplyDamage(class AUnitBase* damageCauser, FHitOption* damageOption, bool fromBehind, bool& Blocked);
+	virtual void EventDead() {}
 
 	UFUNCTION(BlueprintCallable)
 	EBlockType GetBlockType() { return BlockAttackType; }
