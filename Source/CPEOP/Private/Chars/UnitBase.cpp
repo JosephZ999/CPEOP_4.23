@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Chars/UnitBase.h"
 
 #include "Objects/Dynamic/Helper.h"
@@ -27,12 +26,12 @@ AUnitBase::AUnitBase()
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 	GetSprite()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetCharacterMovement()->BrakingFrictionFactor = 1.f;
-	GetCharacterMovement()->GroundFriction = 1.f;
-	GetCharacterMovement()->MaxWalkSpeed = 150.f;
-	GetCharacterMovement()->GravityScale = 1.2f;
+	GetCharacterMovement()->GroundFriction		  = 1.f;
+	GetCharacterMovement()->MaxWalkSpeed		  = 150.f;
+	GetCharacterMovement()->GravityScale		  = 1.2f;
 
 	DangerNoticeType = EDangerType::None;
-	Dead = false;
+	Dead			 = false;
 
 	ShadowComp = CreateDefaultSubobject<UShadowComponent>(TEXT("Shadow"));
 
@@ -54,7 +53,6 @@ void AUnitBase::Tick(float delta)
 	Move();
 }
 
-
 // AI
 
 void AUnitBase::SetAIEnabled_Implementation(bool Enable)
@@ -65,8 +63,7 @@ void AUnitBase::SetAIEnabled_Implementation(bool Enable)
 	}
 }
 
-
-void AUnitBase::SetEnemy_Implementation(AUnitBase * ObjectRef)
+void AUnitBase::SetEnemy_Implementation(AUnitBase* ObjectRef)
 {
 	if (GetController() && GetController()->GetClass()->ImplementsInterface(UAIEvents::StaticClass()))
 	{
@@ -74,12 +71,11 @@ void AUnitBase::SetEnemy_Implementation(AUnitBase * ObjectRef)
 	}
 }
 
-ADangerBox * AUnitBase::CreateADangerBox(AUnitBase* OwnerUnit, EDangerPriority Priority, FVector Location, FVector Scale, float LifeTime)
+ADangerBox* AUnitBase::CreateADangerBox(AUnitBase* OwnerUnit, EDangerPriority Priority, FVector Location, FVector Scale, float LifeTime)
 {
-	if (!IsValid(OwnerUnit))
-		return nullptr;
+	if (!IsValid(OwnerUnit)) return nullptr;
 
-	FTransform nT(OwnerUnit->GetActorRotation(), Location, Scale);
+	FTransform	nT(OwnerUnit->GetActorRotation(), Location, Scale);
 	ADangerBox* box = OwnerUnit->GetWorld()->SpawnActorDeferred<ADangerBox>(ADangerBox::StaticClass(), nT);
 	if (box)
 	{
@@ -101,671 +97,600 @@ void AUnitBase::OnDangerDetected_Implementation(FDangerArg& Arg1, EDangerPriorit
 }
 
 // Functions
-	void AUnitBase::FindHelper(FString objectPath, TSubclassOf<class AHelper>& Class)
+void AUnitBase::FindHelper(FString objectPath, TSubclassOf<class AHelper>& Class)
+{
+	// Добавляю в конец classPath - .'название класса'
+	if (objectPath.IsEmpty()) return;
+
+	FString									  ObjectName = UMyFunctionLibrary::FindObjectName(objectPath);
+	FString									  finalPath	 = "Class'/Game/" + objectPath + "." + ObjectName + "_C'";
+	ConstructorHelpers::FClassFinder<AHelper> nObject((TEXT("%s"), *finalPath));
+	if (nObject.Succeeded())
 	{
-		// Добавляю в конец classPath - .'название класса'
-		if (objectPath.IsEmpty())
-			return;
-
-		FString ObjectName = UMyFunctionLibrary::FindObjectName(objectPath);
-		FString finalPath = "Class'/Game/" + objectPath + "." + ObjectName + "_C'";
-		ConstructorHelpers::FClassFinder<AHelper> nObject((TEXT("%s"), *finalPath));
-		if (nObject.Succeeded())
-		{
-			Class = nObject.Class;
-			return;
-		}
-
-		UE_LOG(LogTemp, Warning, TEXT("Can't find the class, path: %s "), *objectPath);
+		Class = nObject.Class;
+		return;
 	}
 
-	UPaperFlipbook* AUnitBase::FindAnim(FString objectPath) 
-	{
-		FString ObjectName = UMyFunctionLibrary::FindObjectName(objectPath);
-		FString finalPath = "PaperFlipbook'/Game/" + objectPath + "." + ObjectName + "'";
-		ConstructorHelpers::FObjectFinder<UPaperFlipbook> nObject((TEXT("%s"), *finalPath));
-		if (nObject.Succeeded())
-		{
-			return nObject.Object;
-		}
-	
-		UE_LOG(LogTemp, Warning, TEXT("Cannot find the object, path: %s "), *objectPath);
-		return nullptr;
+	UE_LOG(LogTemp, Warning, TEXT("Can't find the class, path: %s "), *objectPath);
+}
 
-	}
+UPaperFlipbook* AUnitBase::FindAnim(FString objectPath)
+{
+	FString											  ObjectName = UMyFunctionLibrary::FindObjectName(objectPath);
+	FString											  finalPath	 = "PaperFlipbook'/Game/" + objectPath + "." + ObjectName + "'";
+	ConstructorHelpers::FObjectFinder<UPaperFlipbook> nObject((TEXT("%s"), *finalPath));
+	if (nObject.Succeeded()) { return nObject.Object; }
 
-	float AUnitBase::getFrameTime(uint8 frame)
-	{
-		return (frame / GetSprite()->GetFlipbookFramerate()) / CustomTimeDilation;
-	}
+	UE_LOG(LogTemp, Warning, TEXT("Cannot find the object, path: %s "), *objectPath);
+	return nullptr;
+}
 
-	FVector & AUnitBase::GetUnitVelocity()
-	{
-		return GetCharacterMovement()->Velocity;
-	}
+float AUnitBase::getFrameTime(uint8 frame) { return (frame / GetSprite()->GetFlipbookFramerate()) / CustomTimeDilation; }
 
-	void AUnitBase::SetImmortality(float duration)
-	{
-		Immortal = true;
-		GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Ignore);
-		if (duration > 0.f)
-		{
-			SET_TIMER(ImmortalityTimer, this, &AUnitBase::DisableImmortality, duration);
-		}
-		else
-		{
-			Immortal = false;
-			GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Overlap);
-		}
-	}
-	void AUnitBase::DisableImmortality()
+FVector& AUnitBase::GetUnitVelocity() { return GetCharacterMovement()->Velocity; }
+
+void AUnitBase::SetImmortality(float duration)
+{
+	Immortal = true;
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Ignore);
+	if (duration > 0.f) { SET_TIMER(ImmortalityTimer, this, &AUnitBase::DisableImmortality, duration); }
+	else
 	{
 		Immortal = false;
 		GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Overlap);
-
 	}
+}
+void AUnitBase::DisableImmortality()
+{
+	Immortal = false;
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Overlap);
+}
 // Movement //===================================------------------------------
-	void AUnitBase::Move()
+void AUnitBase::Move()
+{
+	if (Control)
 	{
-		if (Control)
-		{
-			AddMovementInput(MoveVector, 1.f);
-			SetRotation(IsMovingRight());
-		}
+		AddMovementInput(MoveVector, 1.f);
+		SetRotation(IsMovingRight());
 	}
+}
 
-	void AUnitBase::SetMoveVector(FVector nVec)
+void AUnitBase::SetMoveVector(FVector nVec) { MoveVector = {nVec.X, nVec.Y, nVec.Z}; }
+
+void AUnitBase::SetRotation(bool right, bool moveVec)
+{
+	if (!Controller) return;
+
+	if (CheckState(EBaseStates::Fall)) return;
+
+	if (moveVec)
 	{
-		MoveVector = { nVec.X, nVec.Y, nVec.Z };
-	}
-
-	void AUnitBase::SetRotation(bool right, bool moveVec)
-	{
-		if (!Controller)
-			return;
-
-		if (CheckState(EBaseStates::Fall))
-			return;
-
-		if (moveVec)
-		{
-			if (!FMath::IsNearlyEqual(MoveVector.X, 0.f, 0.1f))
-			{
-				FRotator nRot = (right) ? FRotator::ZeroRotator : FRotator(0.f, 180.f, 0.f);
-				SetActorRotation(nRot);
-				Controller->SetControlRotation(nRot);	
-			}
-		}
-		else
+		if (!FMath::IsNearlyEqual(MoveVector.X, 0.f, 0.1f))
 		{
 			FRotator nRot = (right) ? FRotator::ZeroRotator : FRotator(0.f, 180.f, 0.f);
 			SetActorRotation(nRot);
 			Controller->SetControlRotation(nRot);
 		}
 	}
-
-	void AUnitBase::AddImpulse(FVector impulse, float time, bool overrideXY, bool overrideZ)
+	else
 	{
-		ImpulseVector = impulse;
-		ImpulseOverrideXY = overrideXY;
-		ImpulseOverrideZ = overrideZ;
-
-		if (time > 0.f)
-		{
-			PAUSE_TIMER(ImpulseTimer);
-			SET_TIMER(ImpulseTimer, this, &AUnitBase::ImpulseDeferred, time);
-		}
-		else
-		{
-			ImpulseDeferred();
-		}
+		FRotator nRot = (right) ? FRotator::ZeroRotator : FRotator(0.f, 180.f, 0.f);
+		SetActorRotation(nRot);
+		Controller->SetControlRotation(nRot);
 	}
+}
 
-	void AUnitBase::ImpulseDeferred()
+void AUnitBase::AddImpulse(FVector impulse, float time, bool overrideXY, bool overrideZ)
+{
+	ImpulseVector	  = impulse;
+	ImpulseOverrideXY = overrideXY;
+	ImpulseOverrideZ  = overrideZ;
+
+	if (time > 0.f)
 	{
-		LaunchCharacter(ImpulseVector, ImpulseOverrideXY, ImpulseOverrideZ);
+		PAUSE_TIMER(ImpulseTimer);
+		SET_TIMER(ImpulseTimer, this, &AUnitBase::ImpulseDeferred, time);
 	}
-
-	void AUnitBase::EventJump()
+	else
 	{
-		if (State == EBaseStates::Stand)
+		ImpulseDeferred();
+	}
+}
+
+void AUnitBase::ImpulseDeferred() { LaunchCharacter(ImpulseVector, ImpulseOverrideXY, ImpulseOverrideZ); }
+
+void AUnitBase::EventJump()
+{
+	if (State == EBaseStates::Stand)
+	{
+		FState nState;
+		nState.State	 = EBaseStates::JumpStart;
+		nState.Animation = "JumpStart";
+		nState.EndState	 = false;
+		NewState(nState);
+
+		FTimerHandle nTimer;
+		SET_TIMER(nTimer, this, &AUnitBase::Jumping, AnimElemTime(GetAnim(nState.Animation)->GetNumFrames()));
+	}
+	else if (State == EBaseStates::Fall)
+	{
+		StandUp();
+	}
+}
+
+void AUnitBase::Jumping()
+{
+	if (State == EBaseStates::JumpStart)
+	{
+		FState nState;
+		nState.State	= EBaseStates::Jumping;
+		nState.EndState = false;
+		NewState(nState);
+
+		FVector jumpVector = MoveVector * GetCharacterMovement()->MaxWalkSpeed;
+		jumpVector.Z	   = GetCharacterMovement()->JumpZVelocity;
+
+		LaunchCharacter(jumpVector, true, true);
+	}
+}
+
+void AUnitBase::Landed(const FHitResult& Hit)
+{
+	if (State == EBaseStates::Jumping || State == EBaseStates::Stand)
+	{
+		if (!GetAnim(FName("JumpLand")) || GetUnitVelocity().Z > -150.f)
 		{
 			FState nState;
-			nState.State = EBaseStates::JumpStart;
-			nState.Animation = "JumpStart";
-			nState.EndState = false;
+			nState.State = EBaseStates::Stand;
 			NewState(nState);
+			return;
+		}
 
-			FTimerHandle nTimer;
-			SET_TIMER(nTimer, this, &AUnitBase::Jumping, AnimElemTime(GetAnim(nState.Animation)->GetNumFrames()));
-		}
-		else if (State == EBaseStates::Fall)
-		{
-			StandUp();
-		}
+		FState nState;
+		nState.State	 = EBaseStates::JumpLand;
+		nState.Animation = "JumpLand";
+		NewState(nState);
 	}
-
-	void AUnitBase::Jumping()
-	{
-		if (State == EBaseStates::JumpStart)
-		{
-			FState nState;
-			nState.State = EBaseStates::Jumping;
-			nState.EndState = false;
-			NewState(nState);
-
-			FVector jumpVector = MoveVector * GetCharacterMovement()->MaxWalkSpeed;
-			jumpVector.Z = GetCharacterMovement()->JumpZVelocity;
-
-			LaunchCharacter(jumpVector, true, true);
-		}
-	}
-
-	void AUnitBase::Landed(const FHitResult & Hit)
-	{
-		if (State == EBaseStates::Jumping || State == EBaseStates::Stand)
-		{
-			if (!GetAnim(FName("JumpLand")) || GetUnitVelocity().Z > -150.f)
-			{
-				FState nState;
-				nState.State = EBaseStates::Stand;
-				NewState(nState);
-				return;
-			}
-
-			FState nState;
-			nState.State = EBaseStates::JumpLand;
-			nState.Animation = "JumpLand";
-			NewState(nState);
-		}
-	}
+}
 // End Movement //===============================------------------------------
 
-
 // Hit Box//=====================================------------------------------
-	void AUnitBase::InitHelper(FName name, FString classPath)
+void AUnitBase::InitHelper(FName name, FString classPath)
+{
+	TSubclassOf<AHelper> nClass;
+	FindHelper(classPath, nClass);
+	if (nClass) { HelpersData.Add(name, nClass); }
+	else
 	{
-		TSubclassOf<AHelper> nClass;
-		FindHelper(classPath, nClass);
-		if (nClass)
-		{
-			HelpersData.Add(name, nClass);
-		}
-		else
-		{
-			HelpersData.Add(name, nullptr);
-		}
+		HelpersData.Add(name, nullptr);
 	}
+}
 
-	void AUnitBase::SpawnHelper(FName name, float time, FRotator rotation, FVector scale)
+void AUnitBase::SpawnHelper(FName name, float time, FRotator rotation, FVector scale)
+{
+	if (!(HelpersData.FindRef(name))) return;
+
+	HelpersOrder.Add(FHelperInfo(State, name, rotation, scale, time));
+
+	if (time > 0.f)
 	{
-		if (!(HelpersData.FindRef(name)))
+		FTimerHandle timer;
+		SET_TIMER(timer, this, &AUnitBase::HelperSort, time);
+	}
+	else
+	{
+		HelperSort();
+	}
+}
+
+void AUnitBase::HelperSort()
+{
+	HelpersOrder.Sort();
+
+	for (FHelperInfo& elem : HelpersOrder)
+	{
+		if (elem.name != "None")
+		{
+			HelperSpawning(elem, HelpersData.FindRef(elem.name));
+			elem.name = FName();
 			return;
-
-		HelpersOrder.Add(FHelperInfo(State, name, rotation, scale, time));
-
-		if (time > 0.f)
-		{
-			FTimerHandle timer;
-			SET_TIMER(timer, this, &AUnitBase::HelperSort, time);
 		}
-		else { HelperSort(); }
 	}
+}
 
-	void AUnitBase::HelperSort()
+void AUnitBase::HelperSpawning(FHelperInfo info, TSubclassOf<class AHelper> hitClass)
+{
+	if (info.state != State) return;
+
+	AHelper* nHelper =
+		GetWorld()->SpawnActorDeferred<AHelper>(HelpersData.FindRef(info.name), FTransform(info.rotation, GetActorLocation(), info.scale));
+	if (nHelper)
 	{
-		HelpersOrder.Sort();
-		
-		for (FHelperInfo& elem : HelpersOrder)
+		// Sets default values
+		if (nHelper->Type == EHelperType::HitBox) { nHelper->Init(this, getStatsComp()->GetDamage(), getStatsComp()->GetCritRate()); }
+
+		if (nHelper->bAttachRotation)
 		{
-			if (elem.name != "None")
-			{
-				HelperSpawning(elem, HelpersData.FindRef(elem.name));
-				elem.name = FName();
-				return;
-			}
+			info.rotation.Yaw		   = (IsLookingRight()) ? 0.f : 180.f;
+			nHelper->InitialLocation.X = (IsLookingRight()) ? nHelper->InitialLocation.X : nHelper->InitialLocation.X * -1.f;
+		}
+
+		nHelper->InitialLocation.Y += 1.f;
+		nHelper->CustomTimeDilation = this->CustomTimeDilation;
+
+		nHelper->FinishSpawning(FTransform(info.rotation, nHelper->InitialLocation + GetActorLocation(), info.scale));
+
+		// Attaching
+		if (nHelper->bAttachToParent)
+		{
+			nHelper->AttachToActor(this,
+				FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, EAttachmentRule::KeepWorld, true),
+				"None");
+			nHelper->SetActorLocation(nHelper->InitialLocation + GetActorLocation());
 		}
 	}
-
-	void AUnitBase::HelperSpawning(FHelperInfo info, TSubclassOf<class AHelper> hitClass)
-	{
-		if (info.state != State)
-			return;
-		
-		AHelper* nHelper = GetWorld()->SpawnActorDeferred<AHelper>(HelpersData.FindRef(info.name), FTransform(info.rotation, GetActorLocation() , info.scale));
-		if (nHelper)
-		{
-			// Sets default values
-			if (nHelper->Type == EHelperType::HitBox)
-			{
-				nHelper->Init(this, getStatsComp()->GetDamage(), getStatsComp()->GetCritRate());
-			}
-			
-			if (nHelper->bAttachRotation)
-			{
-				info.rotation.Yaw	= (IsLookingRight()) ? 0.f : 180.f;
-				nHelper->InitialLocation.X = (IsLookingRight()) ? nHelper->InitialLocation.X : nHelper->InitialLocation.X *-1.f;
-			}
-
-			nHelper->InitialLocation.Y += 1.f;
-			nHelper->CustomTimeDilation = this->CustomTimeDilation;
-
-			nHelper->FinishSpawning(FTransform(info.rotation, nHelper->InitialLocation + GetActorLocation(), info.scale));
-			
-			// Attaching
-			if (nHelper->bAttachToParent)
-			{
-				nHelper->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, EAttachmentRule::KeepWorld, true), "None" );
-				nHelper->SetActorLocation(nHelper->InitialLocation + GetActorLocation());
-			}	
-		}
-	}
+}
 // End Hit Box//=================================------------------------------
 
 // Taking Damage //==============================------------------------------
-	bool AUnitBase::ApplyDamage(class AUnitBase* damageCauser, FHitOption* damageOption, bool fromBehind, bool& Blocked)
+bool AUnitBase::ApplyDamage(class AUnitBase* damageCauser, FHitOption* damageOption, bool fromBehind, bool& Blocked)
+{
+	if (State == EBaseStates::Fall || State == EBaseStates::Teleport || Dead) return false;
+
+	bool block{false};
+	bool crit{false};
+
+	FVector impulse(damageOption->impulse.X, 0.f, damageOption->impulse.Y);
+	impulse.X = ((fromBehind && !IsLookingRight()) || (!fromBehind && IsLookingRight())) ? impulse.X * -1.f : impulse.X;
+
+	if (IsBlocking()) { block = !fromBehind; }
+	else
 	{
-		if (State == EBaseStates::Fall || State == EBaseStates::Teleport || Dead)
-			return false;
-
-		bool block  { false };
-		bool crit   { false };
-	
-		FVector impulse(damageOption->impulse.X, 0.f, damageOption->impulse.Y);
-		impulse.X = ((fromBehind && !IsLookingRight()) || (!fromBehind && IsLookingRight())) ? impulse.X * -1.f : impulse.X;
-
-		if (IsBlocking())
+		if (BlockAttackType != EBlockType::None)
 		{
-			block = !fromBehind;
-		}
-		else
-		{
-			if (BlockAttackType != EBlockType::None)
+			switch (BlockAttackType)
 			{
-				switch (BlockAttackType)
-				{
-				case EBlockType::Forward:	{ block = !fromBehind; break; }
-				case EBlockType::Back:		{ block = fromBehind; break; }
-				case EBlockType::Both:		
-				{ 
-					block = true; 
-					damageOption->impulse = FVector2D(0.f, 0.f);
-					break; 
-				}
-
-				}
+			case EBlockType::Forward:
+			{
+				block = !fromBehind;
+				break;
+			}
+			case EBlockType::Back:
+			{
+				block = fromBehind;
+				break;
+			}
+			case EBlockType::Both:
+			{
+				block				  = true;
+				damageOption->impulse = FVector2D(0.f, 0.f);
+				break;
+			}
 			}
 		}
+	}
 
-		if (block)	
-		{ 
-			getStatsComp()->AddStamina(0.05f); 
-			
-			// Block Spark
-			FRotator SparkRot = { FRotator::ZeroRotator };
-			SparkRot.Yaw = (impulse.X > 0.f) ? 180.f : 0.f;
-			SpawnHelper("BlockSpark", 0.f, SparkRot);
-		}
-		else		
-		{ 
-			crit = damageOption->isCriticalDamage(); 
-			
-			// Spark
-			CreateSpark(damageOption->sparkIndex, damageOption->sparkScale, (damageCauser->IsLookingRight()) ? damageOption->sparkRotation : damageOption->sparkRotation * -1.f);
-		}
+	if (block)
+	{
+		getStatsComp()->AddStamina(0.05f);
 
-		// Taking Damage
-		float damage;
-		if (crit)	{ damage = getStatsComp()->TakeDamage(damageOption->damage * 1.5f, block);	}
-		else		{ damage = getStatsComp()->TakeDamage(damageOption->damage, block);			}
+		// Block Spark
+		FRotator SparkRot = {FRotator::ZeroRotator};
+		SparkRot.Yaw	  = (impulse.X > 0.f) ? 180.f : 0.f;
+		SpawnHelper("BlockSpark", 0.f, SparkRot);
+	}
+	else
+	{
+		crit = damageOption->isCriticalDamage();
 
-		// Damage Text
-		CreateDamageText(damage, damageCauser->IsLookingRight(), crit);
+		// Spark
+		CreateSpark(damageOption->sparkIndex, damageOption->sparkScale,
+			(damageCauser->IsLookingRight()) ? damageOption->sparkRotation : damageOption->sparkRotation * -1.f);
+	}
 
-		// Change State
-		if (!block)
+	// Taking Damage
+	float damage;
+	if (crit) { damage = getStatsComp()->TakeDamage(damageOption->damage * 1.5f, block); }
+	else
+	{
+		damage = getStatsComp()->TakeDamage(damageOption->damage, block);
+	}
+
+	// Damage Text
+	CreateDamageText(damage, damageCauser->IsLookingRight(), crit);
+
+	// Change State
+	if (!block)
+	{
+		Blocked = false;
+		Dead	= getStatsComp()->GetHealth() < 0.f;
+
+		if (damage > getStatsComp()->GetMaxHealth() * 0.05f || Dead)
 		{
-			Blocked = false;
-			Dead = getStatsComp()->GetHealth() < 0.f;
+			FState nState;
+			nState.State	 = EBaseStates::Hit;
+			nState.Animation = "Hit";
+			nState.EndState	 = false;
+			NewState(nState);
 
-			if (damage > getStatsComp()->GetMaxHealth() * 0.05f || Dead)
-			{
-				FState nState;
-				nState.State = EBaseStates::Hit;
-				nState.Animation = "Hit";
-				nState.EndState = false;
-				NewState(nState);
-
-				DisableBlocking();
-				EndStateDeferred(0.4f);
-				AddImpulse(impulse, HIT_TIME);
-			}
-			
-			if (Dead)
-			{
-				IGameIns::Execute_OnUnitKilled(GetGameInstance(), damageCauser, this);
-				EventDead();
-			}
-
-			// Falling
-			if (damageOption->fall || Dead)
-			{
-				if (CanFall)
-				{
-					FallDeferred(HIT_TIME);
-				}
-				SetRotation(impulse.X < 0.f, false);
-				impulse.Z += 100.f;
-				AddImpulse(impulse, HIT_TIME);
-			}
-		}
-		else
-		{
-			Blocked = true;
+			DisableBlocking();
+			EndStateDeferred(0.4f);
 			AddImpulse(impulse, HIT_TIME);
 		}
-		return true;
-	}
-	
-	
-	
-	
-	void AUnitBase::FallDeferred(float time)
-	{
-		SET_TIMER(fallTimer, this, &AUnitBase::Fall, time);
-	}
-	
-	void AUnitBase::Fall()
-	{
-		if (State == EBaseStates::Hit)
-		{
-			FState nState;
-			nState.State = EBaseStates::Fall;
-			nState.Animation = "FallUp";
-			nState.EndState = false;
-			NewState(nState);
 
-			EndStateDeferred(3.f);
-		}
-	}
-
-	void AUnitBase::SetBlockingAttack(EBlockType type, float start, float end)
-	{
-		nBlockT = type;
-
-		if (start > 0.f) { SET_TIMER(blockTimer, this, &AUnitBase::SetBlockType, start); }
-		else { SetBlockType(); }
-
-		if (start + end > 0.f) { SET_TIMER(blockEndTimer, this, &AUnitBase::DisableBlocking, start + end); }
-		else { DisableBlocking(); }
-	}
-
-	void AUnitBase::SetBlockType()
-	{
-		BlockAttackType = nBlockT;
-	}
-	void AUnitBase::DisableBlocking()
-	{
-		PAUSE_TIMER(blockTimer);
-		PAUSE_TIMER(blockEndTimer);
-		BlockAttackType = EBlockType::None;
-	}
-
-	void AUnitBase::StandUp()
-	{
 		if (Dead)
-			return;
+		{
+			IGameIns::Execute_OnUnitKilled(GetGameInstance(), damageCauser, this);
+			EventDead();
+		}
 
-		if (GetCharacterMovement()->IsMovingOnGround() 
-			&& FMath::IsNearlyZero(GetVelocity().X + GetVelocity().Z))
+		// Falling
+		if (damageOption->fall || Dead)
+		{
+			if (CanFall) { FallDeferred(HIT_TIME); }
+			SetRotation(impulse.X < 0.f, false);
+			impulse.Z += 100.f;
+			AddImpulse(impulse, HIT_TIME);
+		}
+	}
+	else
+	{
+		Blocked = true;
+		AddImpulse(impulse, HIT_TIME);
+	}
+	return true;
+}
+
+void AUnitBase::FallDeferred(float time) { SET_TIMER(fallTimer, this, &AUnitBase::Fall, time); }
+
+void AUnitBase::Fall()
+{
+	if (State == EBaseStates::Hit)
+	{
+		FState nState;
+		nState.State	 = EBaseStates::Fall;
+		nState.Animation = "FallUp";
+		nState.EndState	 = false;
+		NewState(nState);
+
+		EndStateDeferred(3.f);
+	}
+}
+
+void AUnitBase::SetBlockingAttack(EBlockType type, float start, float end)
+{
+	nBlockT = type;
+
+	if (start > 0.f) { SET_TIMER(blockTimer, this, &AUnitBase::SetBlockType, start); }
+	else
+	{
+		SetBlockType();
+	}
+
+	if (start + end > 0.f) { SET_TIMER(blockEndTimer, this, &AUnitBase::DisableBlocking, start + end); }
+	else
+	{
+		DisableBlocking();
+	}
+}
+
+void AUnitBase::SetBlockType() { BlockAttackType = nBlockT; }
+void AUnitBase::DisableBlocking()
+{
+	PAUSE_TIMER(blockTimer);
+	PAUSE_TIMER(blockEndTimer);
+	BlockAttackType = EBlockType::None;
+}
+
+void AUnitBase::StandUp()
+{
+	if (Dead) return;
+
+	if (GetCharacterMovement()->IsMovingOnGround() && FMath::IsNearlyZero(GetVelocity().X + GetVelocity().Z))
+	{
+		FState nState;
+		nState.State	 = EBaseStates::StandUp;
+		nState.Animation = "StandUp";
+		NewState(nState);
+	}
+	else
+	{
+		if (GetVelocity().Z > 20.f)
 		{
 			FState nState;
-			nState.State = EBaseStates::StandUp;
-			nState.Animation = "StandUp";
+			nState.State	 = EBaseStates::StandUp;
+			nState.Animation = "StandUpAir";
 			NewState(nState);
 		}
-		else
-		{
-			if (GetVelocity().Z > 20.f)
-			{
-				FState nState;
-				nState.State = EBaseStates::StandUp;
-				nState.Animation = "StandUpAir";
-				NewState(nState);
-			}
-		}
 	}
-	void AUnitBase::CreateSpark(uint8 index, FVector2D scale, float rotation)
+}
+void AUnitBase::CreateSpark(uint8 index, FVector2D scale, float rotation)
+{
+	UPaperFlipbook* nAnimation = IGameIns::Execute_GetSparkAnimation(GetGameInstance(), index);
+	if (!nAnimation) return;
+
+	// Spawn Location
+	FVector nLocation = GetActorLocation();
+	nLocation.X += FMath::FRandRange(-15.f, 15.f);
+	nLocation.Z += FMath::FRandRange(-15.f, 15.f);
+	nLocation.Y += 1.f;
+
+	// Spawn Transform
+	FTransform nTransform{FRotator::ZeroRotator, nLocation, {scale.X, 1.f, scale.Y}};
+
+	AHelper* nSpark = GetWorld()->SpawnActorDeferred<AHitSparkBase>(AHitSparkBase::StaticClass(), nTransform);
+	if (nSpark)
 	{
-		UPaperFlipbook* nAnimation = IGameIns::Execute_GetSparkAnimation(GetGameInstance(), index);
-		if (!nAnimation)
-			return;
+		// Init animation and rotation
+		nSpark->Init(nAnimation, rotation);
 
-		// Spawn Location
-		FVector nLocation = GetActorLocation();
-		nLocation.X += FMath::FRandRange(-15.f, 15.f);
-		nLocation.Z += FMath::FRandRange(-15.f, 15.f);
-		nLocation.Y += 1.f;
+		// Finish Spawning
+		nSpark->FinishSpawning(nTransform);
 
-		// Spawn Transform
-		FTransform nTransform
-		{
-			FRotator::ZeroRotator,
-			nLocation,
-			{scale.X, 1.f, scale.Y}
-		};
-
-		AHelper* nSpark = GetWorld()->SpawnActorDeferred<AHitSparkBase>(AHitSparkBase::StaticClass(), nTransform);
-		if (nSpark)
-		{
-			// Init animation and rotation
-			nSpark->Init(nAnimation, rotation);
-			
-			// Finish Spawning
-			nSpark->FinishSpawning(nTransform);
-
-			// Attach to this actor
-			//nSpark->AttachToActor(this,	FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, EAttachmentRule::KeepWorld, true));
-			//nSpark->SetActorLocation(nLocation);
-		}
+		// Attach to this actor
+		// nSpark->AttachToActor(this,	FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld,
+		// EAttachmentRule::KeepWorld, true)); nSpark->SetActorLocation(nLocation);
 	}
-	void AUnitBase::CreateDamageText(float damage, bool moveRight, bool crit)
+}
+void AUnitBase::CreateDamageText(float damage, bool moveRight, bool crit)
+{
+	TSubclassOf<AHelper> nClass = IGameIns::Execute_GetDamageTextClass(GetGameInstance());
+
+	if (!nClass) return;
+
+	if (FMath::IsNearlyEqual(damage, 0.f)) { crit = false; }
+
+	if (!IGameIns::Execute_CanCreateDamageText(GetGameInstance(), crit)) return;
+
+	// Location
+	FTransform nTransform{FRotator::ZeroRotator, GetActorLocation(), FVector::OneVector};
+
+	// Spawning
+	AHelper* nText = GetWorld()->SpawnActorDeferred<AHelper>(nClass, nTransform);
+	if (nText)
 	{
-		TSubclassOf<AHelper> nClass = IGameIns::Execute_GetDamageTextClass(GetGameInstance());
-		
-		if (!nClass)
-			return;
-
-		if (FMath::IsNearlyEqual(damage, 0.f))
-		{
-			crit = false;
-		}
-
-		if (!IGameIns::Execute_CanCreateDamageText(GetGameInstance(), crit))
-			return;
-
-		// Location
-		FTransform nTransform
-		{
-			FRotator::ZeroRotator,
-			GetActorLocation(),
-			FVector::OneVector
-		};
-
-		// Spawning
-		AHelper* nText = GetWorld()->SpawnActorDeferred<AHelper>(nClass, nTransform);
-		if (nText)
-		{
-			nText->Init(damage, crit, moveRight);
-			nText->FinishSpawning(nTransform);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Creating damage text failed"));
-		}
+		nText->Init(damage, crit, moveRight);
+		nText->FinishSpawning(nTransform);
 	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Creating damage text failed"));
+	}
+}
 // End Taking Damage //==========================------------------------------
 
-// State Type //=================================------------------------------	
-	void AUnitBase::NewState(FState& state)
+// State Type //=================================------------------------------
+void AUnitBase::NewState(FState& state)
+{
+	State = state.State;
+	UPaperFlipbook* nAnim{AnimData->FindRef(state.Animation)};
+	if (nAnim)
 	{
-		State = state.State;
-		UPaperFlipbook* nAnim{ AnimData->FindRef(state.Animation) };
-		if (nAnim)
+		Control = false;
+		GetSprite()->SetFlipbook(nAnim);
+		GetSprite()->SetLooping(!state.EndState);
+		GetSprite()->SetPlaybackPositionInFrames(state.AnimationFrame, false);
+		GetSprite()->Play();
+
+		if (state.Rotate) { SetRotation(IsMovingRight()); }
+
+		if (state.EndState) { EndStateDeferred(getFrameTime(nAnim->GetNumFrames() - state.AnimationFrame)); }
+		else
+		{
+			PAUSE_TIMER(EndStateTimer);
+		}
+	}
+	else
+	{
+		if (state.Animation == "Hide")
 		{
 			Control = false;
-			GetSprite()->SetFlipbook(nAnim);
-			GetSprite()->SetLooping(!state.EndState);
-			GetSprite()->SetPlaybackPositionInFrames(state.AnimationFrame, false);
-			GetSprite()->Play();
+			GetSprite()->SetFlipbook(nullptr);
 
-			if (state.Rotate)
+			if (state.EndState) { EndStateDeferred(getFrameTime(nAnim->GetNumFrames() - state.AnimationFrame)); }
+			else
 			{
-				SetRotation(IsMovingRight());
+				PAUSE_TIMER(EndStateTimer);
 			}
-
-			if (state.EndState)
-			{
-				EndStateDeferred(getFrameTime(nAnim->GetNumFrames() - state.AnimationFrame));
-			}
-			else { PAUSE_TIMER(EndStateTimer); }
 		}
 		else
 		{
-			if (state.Animation == "Hide")
-			{
-				Control = false;
-				GetSprite()->SetFlipbook(nullptr);
-
-				if (state.EndState)
-				{
-					EndStateDeferred(getFrameTime(nAnim->GetNumFrames() - state.AnimationFrame));
-				}
-				else { PAUSE_TIMER(EndStateTimer); }
-			}
-			else
-			{
-				Control = true;
-			}
+			Control = true;
 		}
 	}
+}
 
-	void AUnitBase::NewState(uint8 state)
+void AUnitBase::NewState(uint8 state)
+{
+	EndState();
+	State	= state;
+	Control = false;
+}
+
+void AUnitBase::EndStateDeferred(float time)
+{
+	if (time > 0.f) { SET_TIMER(EndStateTimer, this, &AUnitBase::EndState, time); }
+	else
 	{
 		EndState();
-		State = state;
-		Control = false;
 	}
+}
+void AUnitBase::EndState()
+{
+	// На всякий случаи
+	PAUSE_TIMER(EndStateTimer);
+	PAUSE_TIMER(ImpulseTimer);
+	GetSprite()->SetLooping(true);
+	GetSprite()->Play();
+	HelpersOrder.Empty();
 
-	void AUnitBase::EndStateDeferred(float time)
+	if (State == EBaseStates::Fall) { StandUp(); }
+	else
 	{
-		if (time > 0.f)
+		if (GetCharacterMovement()->IsMovingOnGround())
 		{
-			SET_TIMER(EndStateTimer, this, &AUnitBase::EndState, time);
+			FState nState;
+			nState.State = EBaseStates::Stand;
+			NewState(nState);
 		}
 		else
 		{
-			EndState();
+			FState nState;
+			nState.State = EBaseStates::Jumping;
+			NewState(nState);
 		}
 	}
-	void AUnitBase::EndState()
-	{
-		// На всякий случаи
-		PAUSE_TIMER(EndStateTimer);
-		PAUSE_TIMER(ImpulseTimer);
-		GetSprite()->SetLooping(true);
-		GetSprite()->Play();
-		HelpersOrder.Empty();
-
-		if (State == EBaseStates::Fall)
-		{
-			StandUp();
-		}
-		else
-		{
-			if (GetCharacterMovement()->IsMovingOnGround())
-			{
-				FState nState;
-				nState.State = EBaseStates::Stand;
-				NewState(nState);
-			}
-			else
-			{
-				FState nState;
-				nState.State = EBaseStates::Jumping;
-				NewState(nState);
-			}
-		}
-	}
+}
 
 //---------------------------------------------// Animations
-	
-	void AUnitBase::InitAnim(FName name, FString flipbookPath)
-	{
-		if(AnimData)
-		{
-			UPaperFlipbook* nAnim{ nullptr };
-			nAnim = FindAnim(flipbookPath);
-			if (nAnim)
-			{
-				AnimData->Add(name, nAnim);
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Animation data not selected"));
-		}
-	}
-	
-	void AUnitBase::SetAnim(UPaperFlipbook * anim, bool playFromStart)
-	{
-		if (anim)
-		{
-			GetSprite()->SetFlipbook(anim);
-			if (playFromStart)
-			{
-				GetSprite()->PlayFromStart();
-			}
-		}
-		else
-		{
-			GetSprite()->SetFlipbook(nullptr);
-		}
-	}
-	void AUnitBase::SetAnim(FName name, bool playFromStart)
-	{
-		UPaperFlipbook* nAnim = AnimData->FindRef(name);
-		if (nAnim)
-		{
-			GetSprite()->SetFlipbook(nAnim);
-			if (playFromStart)
-			{
-				GetSprite()->PlayFromStart();
-			}
-		}
-	}
 
-	UPaperFlipbook * AUnitBase::GetAnim(FName AnimName)
+void AUnitBase::InitAnim(FName name, FString flipbookPath)
+{
+	if (AnimData)
 	{
-		return AnimData->FindRef(AnimName);
+		UPaperFlipbook* nAnim{nullptr};
+		nAnim = FindAnim(flipbookPath);
+		if (nAnim) { AnimData->Add(name, nAnim); }
 	}
-
-	float AUnitBase::AnimElemTime(uint8 frame)
+	else
 	{
-		return frame / GetSprite()->GetFlipbookFramerate();
+		UE_LOG(LogTemp, Warning, TEXT("Animation data not selected"));
 	}
+}
 
-// End State Type //=============================------------------------------	
+void AUnitBase::SetAnim(UPaperFlipbook* anim, bool playFromStart)
+{
+	if (anim)
+	{
+		GetSprite()->SetFlipbook(anim);
+		if (playFromStart) { GetSprite()->PlayFromStart(); }
+	}
+	else
+	{
+		GetSprite()->SetFlipbook(nullptr);
+	}
+}
+void AUnitBase::SetAnim(FName name, bool playFromStart)
+{
+	UPaperFlipbook* nAnim = AnimData->FindRef(name);
+	if (nAnim)
+	{
+		GetSprite()->SetFlipbook(nAnim);
+		if (playFromStart) { GetSprite()->PlayFromStart(); }
+	}
+}
 
+UPaperFlipbook* AUnitBase::GetAnim(FName AnimName) { return AnimData->FindRef(AnimName); }
+
+float AUnitBase::AnimElemTime(uint8 frame) { return frame / GetSprite()->GetFlipbookFramerate(); }
+
+// End State Type //=============================------------------------------
 
 //---------------------------------------------// Attack Danger Notification
-	void AUnitBase::DangerN(float duration, EDangerType type)
-	{
-		DangerNoticeType = type;
-		SET_TIMER(DamageNTimer, this, &AUnitBase::DangerNFinish, duration);
-	}
+void AUnitBase::DangerN(float duration, EDangerType type)
+{
+	DangerNoticeType = type;
+	SET_TIMER(DamageNTimer, this, &AUnitBase::DangerNFinish, duration);
+}
 
-	void AUnitBase::DangerNFinish()
-	{
-		DangerNoticeType = EDangerType::None;
-	}
+void AUnitBase::DangerNFinish() { DangerNoticeType = EDangerType::None; }

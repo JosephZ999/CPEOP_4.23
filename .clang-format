@@ -1,0 +1,25 @@
+Language: Cpp
+BasedOnStyle: Microsoft
+IndentWidth: '4'
+UseTab: Always
+TabWidth: '4'
+BreakBeforeBraces: Allman
+ColumnLimit: '140'
+AccessModifierOffset: '-4'
+SortIncludes: false
+AllowShortBlocksOnASingleLine: true
+AlignAfterOpenBracket: DontAlign
+AllowShortFunctionsOnASingleLine: Inline
+PointerAlignment: Left
+AlignConsecutiveDeclarations: true
+
+AlignConsecutiveAssignments: true
+AlignConsecutiveMacros: AcrossEmptyLinesAndComments
+AlignTrailingComments: true
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortEnumsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: true
+BreakConstructorInitializers: BeforeComma
+SpaceAfterLogicalNot: true
+SpaceAfterTemplateKeyword: true

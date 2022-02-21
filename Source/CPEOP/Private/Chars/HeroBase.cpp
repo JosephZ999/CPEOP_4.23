@@ -1,53 +1,47 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Chars/HeroBase.h"
 
-#include "sys/MyGameInstance.h"
-#include "PaperFlipbookComponent.h"
-#include "PaperFlipbook.h"
 #include "Chars/Components/ShadowComponent.h"
+#include "PaperFlipbook.h"
+#include "PaperFlipbookComponent.h"
+#include "sys/MyGameInstance.h"
 
-#include "Components/SceneComponent.h"
-#include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "UObject/ConstructorHelpers.h"
+#include "Components/SceneComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "UObject/ConstructorHelpers.h"
 #include "Sys/MyFunctionLibrary.h"
-
+#include "UObject/ConstructorHelpers.h"
 
 // Camera Settings
-#define ARM_LOCATION		FVector(80, 0, 0)
-#define ARM_ROTATION		FRotator(-20, -90, 0)
-#define ARM_LENGTH			600.f
+#define ARM_LOCATION	 FVector(80, 0, 0)
+#define ARM_ROTATION	 FRotator(-20, -90, 0)
+#define ARM_LENGTH		 600.f
 
-#define CAM_INTERP			3.f
+#define CAM_INTERP		 3.f
 
 // Movement Settings
-#define MAX_WALK_SPEED		200.f
-#define GRAVITY_SCALE		1.2f
-#define MAX_ACCELERATION	4000.f
+#define MAX_WALK_SPEED	 200.f
+#define GRAVITY_SCALE	 1.2f
+#define MAX_ACCELERATION 4000.f
 
-#define WALK_ERROR_T		20.f
-#define JUMP_ERROR_T		50.f
+#define WALK_ERROR_T	 20.f
+#define JUMP_ERROR_T	 50.f
 
 // Dash Settings
-#define DASH_VELOCITY		250.f
-#define DASH_VELOCITY_Z		300.f
+#define DASH_VELOCITY	 250.f
+#define DASH_VELOCITY_Z	 300.f
 
 // Action Settings
-#define SKILL_TIMER			0.2f
-#define POW_CHARGE_TIMER	0.5f
-
-
+#define SKILL_TIMER		 0.2f
+#define POW_CHARGE_TIMER 0.5f
 
 FName AHeroBase::ArmCompName(TEXT("ArmComp"));
 FName AHeroBase::CameraCompName(TEXT("CameraComp"));
 FName AHeroBase::HeroStatsCompName(TEXT("HeroStatsComp"));
-
 
 AHeroBase::AHeroBase()
 {
@@ -76,23 +70,21 @@ AHeroBase::AHeroBase()
 	{
 		CameraComp->SetupAttachment(ArmComp);
 		CameraComp->SetProjectionMode(ECameraProjectionMode::Orthographic);
-		CameraComp->OrthoWidth = 450;
+		CameraComp->OrthoWidth		  = 450;
 		CameraComp->OrthoFarClipPlane = 1500;
 	}
-	
+
 	HeroStatsComp = CreateDefaultSubobject<UHeroStats>(HeroStatsCompName);
 
 	// Movement Component Settings
-	GetCharacterMovement()->MaxWalkSpeed = MAX_WALK_SPEED;
-	GetCharacterMovement()->GravityScale = GRAVITY_SCALE;
-	GetCharacterMovement()->Mass = 30;
+	GetCharacterMovement()->MaxWalkSpeed	= MAX_WALK_SPEED;
+	GetCharacterMovement()->GravityScale	= GRAVITY_SCALE;
+	GetCharacterMovement()->Mass			= 30;
 	GetCharacterMovement()->MaxAcceleration = MAX_ACCELERATION;
-	GetCharacterMovement()->JumpZVelocity = 500.f;
+	GetCharacterMovement()->JumpZVelocity	= 500.f;
 
 	// Helpers
 	InitHelper("Teleport", "Blueprint/Objects/Dynamic/TeleportEff");
-	
-
 }
 
 void AHeroBase::BeginPlay()
@@ -112,19 +104,16 @@ void AHeroBase::Tick(float delta)
 }
 
 // Timeline
-UCurveFloat * AHeroBase::FindCurveFloat(FString path)
+UCurveFloat* AHeroBase::FindCurveFloat(FString path)
 {
-	FString objectName = UMyFunctionLibrary::FindObjectName(path);
-	FString fullPath = "CurveFloat'/Game/" + path + "." + objectName + "'";
+	FString										   objectName = UMyFunctionLibrary::FindObjectName(path);
+	FString										   fullPath	  = "CurveFloat'/Game/" + path + "." + objectName + "'";
 	ConstructorHelpers::FObjectFinder<UCurveFloat> nCurve((TEXT("%s"), *fullPath));
-	if (nCurve.Succeeded())
-	{
-		return nCurve.Object;
-	}
+	if (nCurve.Succeeded()) { return nCurve.Object; }
 	return nullptr;
 }
 
-void AHeroBase::PlayTimeline(UObject* targetObject, UCurveFloat * curve, FName functionName, bool looping)
+void AHeroBase::PlayTimeline(UObject* targetObject, UCurveFloat* curve, FName functionName, bool looping)
 {
 	if (curve)
 	{
@@ -150,105 +139,107 @@ void AHeroBase::EndState()
 }
 
 // Movement // Sprint // Dash //
-	void AHeroBase::Sprint(FVector fwVector)
+void AHeroBase::Sprint(FVector fwVector)
+{
+	GetCharacterMovement()->MaxWalkSpeed = getHeroStatsComp()->getSprintSpeed();
+	SET_TIMER(SprintPowReducingTimer, this, &AHeroBase::SprintPowReducing, cTime(0.05f), true);
+	Sprinting = true;
+}
+
+void AHeroBase::StopSprinting()
+{
+	GetCharacterMovement()->MaxWalkSpeed = getHeroStatsComp()->getWalkSpeed();
+	PAUSE_TIMER(SprintPowReducingTimer);
+	Sprinting = false;
+}
+
+void AHeroBase::SprintPowReducing()
+{
+	getHeroStatsComp()->AddStamina(-0.01f);
+}
+
+void AHeroBase::Dash(FVector fwVector)
+{
+	fwVector *= DASH_VELOCITY;
+	fwVector.Z = DASH_VELOCITY_Z;
+	DashVector = fwVector;
+
+	if (GetCharacterMovement()->IsMovingOnGround() && (isComboTime() || CheckState(EBaseStates::Blocking)) ||
+		CheckState(EBaseStates::JumpLand))
 	{
-		GetCharacterMovement()->MaxWalkSpeed = getHeroStatsComp()->getSprintSpeed();
-		SET_TIMER(SprintPowReducingTimer, this, &AHeroBase::SprintPowReducing, cTime(0.05f), true);
-		Sprinting = true;
+		DoDash();
 	}
-
-	void AHeroBase::StopSprinting()
+	else
 	{
-		GetCharacterMovement()->MaxWalkSpeed = getHeroStatsComp()->getWalkSpeed();
-		PAUSE_TIMER(SprintPowReducingTimer);
-		Sprinting = false;
+		addKey(EComboKey::CK_Dash);
 	}
+}
 
-	void AHeroBase::SprintPowReducing()
-	{
-		getHeroStatsComp()->AddStamina(-0.01f);
-	}
+void AHeroBase::DoDash()
+{
+	FState nState;
+	nState.State		  = EBaseStates::Dash;
+	nState.Animation	  = "JumpStart";
+	nState.AnimationFrame = (CheckState(EBaseStates::JumpLand)) ? 1 : 0;
+	nState.Rotate		  = false;
+	nState.EndState		  = false;
+	NewState(nState);
 
-	void AHeroBase::Dash(FVector fwVector)
-	{
-		fwVector *= DASH_VELOCITY;
-		fwVector.Z = DASH_VELOCITY_Z;
-		DashVector = fwVector;
+	float DashTime = AnimElemTime(GetAnim("JumpStart")->GetNumFrames() - nState.AnimationFrame);
 
-		if (
-			GetCharacterMovement()->IsMovingOnGround() && (isComboTime() 
-			|| CheckState(EBaseStates::Blocking))
-			|| CheckState(EBaseStates::JumpLand)
-			)
-		{
-			DoDash();
-		}
-		else
-		{
-			addKey(EComboKey::CK_Dash);
-		}
-	}
-
-	void AHeroBase::DoDash()
-	{
-		FState nState;
-		nState.State = EBaseStates::Dash;
-		nState.Animation = "JumpStart";
-		nState.AnimationFrame = (CheckState(EBaseStates::JumpLand)) ? 1 : 0;
-		nState.Rotate = false;
-		nState.EndState = false;
-		NewState(nState);
-
-		float DashTime = AnimElemTime(GetAnim("JumpStart")->GetNumFrames() - nState.AnimationFrame);
-
-		AddImpulse(DashVector, DashTime);
-		EndStateDeferred(DashTime + cTime(0.01f));
-	}
+	AddImpulse(DashVector, DashTime);
+	EndStateDeferred(DashTime + cTime(0.01f));
+}
 // End
 
 // Blocking Movement //==========================------------------------------
 
-	void AHeroBase::Move()
+void AHeroBase::Move()
+{
+	if (Control)
 	{
-		if (Control)
+		float MovementScale = 1.f;
+		if (LockUp)
 		{
-			float MovementScale = 1.f;
-			if (LockUp)
-			{
-				if (MoveVector.Y < -0.7f) MovementScale = 0.f;
-				else UnlockMovementY();
-			}
-			else if (LockDown)
-			{
-				if (MoveVector.Y > 0.7f) MovementScale = 0.f;
-				else UnlockMovementY();
-			}
-
-			if (LockForward)
-			{
-				if (MoveVector.X > 0.7f) MovementScale = 0.f;
-				else UnlockMovementX();
-			}
-			else if (LockBack)
-			{
-				if (MoveVector.X < -0.7f) MovementScale = 0.f;
-				else UnlockMovementX();
-			}
-
-			AddMovementInput(MoveVector, MovementScale);
-			if (MoveVector != FVector::ZeroVector)
-			{
-				SetRotation(IsMovingRight());
-			}
+			if (MoveVector.Y < -0.7f)
+				MovementScale = 0.f;
+			else
+				UnlockMovementY();
 		}
-	}
-
-	void AHeroBase::UpdateAnim()
-	{
-		const FVector velocity = GetVelocity();
-		UPaperFlipbook* anim{ nullptr };
-		switch (GetState())
+		else if (LockDown)
 		{
+			if (MoveVector.Y > 0.7f)
+				MovementScale = 0.f;
+			else
+				UnlockMovementY();
+		}
+
+		if (LockForward)
+		{
+			if (MoveVector.X > 0.7f)
+				MovementScale = 0.f;
+			else
+				UnlockMovementX();
+		}
+		else if (LockBack)
+		{
+			if (MoveVector.X < -0.7f)
+				MovementScale = 0.f;
+			else
+				UnlockMovementX();
+		}
+
+		AddMovementInput(MoveVector, MovementScale);
+		if (MoveVector != FVector::ZeroVector) { SetRotation(IsMovingRight()); }
+	}
+}
+
+void AHeroBase::UpdateAnim()
+{
+	const FVector	velocity = GetVelocity();
+	UPaperFlipbook* anim{nullptr};
+	switch (GetState())
+	{
 		case EBaseStates::Stand:
 		{
 			if (!(GetCharacterMovement()->IsMovingOnGround()))
@@ -271,10 +262,7 @@ void AHeroBase::EndState()
 		}
 		case EBaseStates::Jumping:
 		{
-			if (velocity.Z > JUMP_ERROR_T)
-			{
-				anim = AnimData->FindRef("JumpUp");
-			}
+			if (velocity.Z > JUMP_ERROR_T) { anim = AnimData->FindRef("JumpUp"); }
 			else if (velocity.Z < -JUMP_ERROR_T)
 			{
 				anim = AnimData->FindRef("JumpDown");
@@ -287,10 +275,7 @@ void AHeroBase::EndState()
 		}
 		case EBaseStates::Blocking:
 		{
-			if (FMath::IsNearlyZero(GetUnitVelocity().Z, 50.f))
-			{
-				anim = AnimData->FindRef("Block");
-			}
+			if (FMath::IsNearlyZero(GetUnitVelocity().Z, 50.f)) { anim = AnimData->FindRef("Block"); }
 			else
 			{
 				anim = AnimData->FindRef("BlockAir");
@@ -299,91 +284,94 @@ void AHeroBase::EndState()
 		}
 		case EBaseStates::Fall:
 		{
-			if (GetCharacterMovement()->IsMovingOnGround())
+			if (GetCharacterMovement()->IsMovingOnGround()) { anim = AnimData->FindRef("FallHold"); }
+			else if (velocity.Z > 0.f)
 			{
-				anim = AnimData->FindRef("FallHold");
+				anim = AnimData->FindRef("FallUp");
 			}
-			else if (velocity.Z > 0.f)	{ anim = AnimData->FindRef("FallUp");	}
-			else						{ anim = AnimData->FindRef("FallDown"); }
+			else
+			{
+				anim = AnimData->FindRef("FallDown");
+			}
 			break;
 		}
 
-		} // End Switch
+	}  // End Switch
 
-		if (anim)
-		{
-			GetSprite()->SetFlipbook(anim);
-		}
+	if (anim) { GetSprite()->SetFlipbook(anim); }
 
-	} // End Function
+}  // End Function
 
-	void AHeroBase::OnCompHit(
-		UPrimitiveComponent*	HitComponent,
-		AActor*					OtherActor,
-		UPrimitiveComponent*	OtherComp,
-		FVector					NormalImpulse,
-		const FHitResult&		Hit)
+void AHeroBase::OnCompHit(
+	UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	if (OtherComp->ComponentHasTag("Wall")) { LockMovement(Hit.ImpactPoint); }
+}
+
+void AHeroBase::LockMovement(FVector Point)
+{
+	Point = GetActorLocation() - Point;
+
+	if (Point.Y > 5.f) { LockUp = true; }
+	else if (Point.Y < -5.f)
 	{
-		if (OtherComp->ComponentHasTag("Wall"))
-		{
-			LockMovement(Hit.ImpactPoint);
-		}
+		LockDown = true;
 	}
-
-	void AHeroBase::LockMovement(FVector Point)
+	else if (Point.X > 5.f)
 	{
-		Point = GetActorLocation() - Point;
-
-		if		(Point.Y >	5.f)	{ LockUp		= true;	}
-		else if (Point.Y < -5.f)	{ LockDown		= true; }
-		else if (Point.X >	5.f)	{ LockBack		= true; }
-		else if (Point.X < -5.f)	{ LockForward	= true; }
+		LockBack = true;
 	}
-
-	void AHeroBase::UnlockMovementX()
+	else if (Point.X < -5.f)
 	{
-		LockForward = false;
-		LockBack	= false;
+		LockForward = true;
 	}
+}
 
-	void AHeroBase::UnlockMovementY()
-	{
-		LockUp		= false;
-		LockDown	= false;
-	}
+void AHeroBase::UnlockMovementX()
+{
+	LockForward = false;
+	LockBack	= false;
+}
+
+void AHeroBase::UnlockMovementY()
+{
+	LockUp	 = false;
+	LockDown = false;
+}
 // End Blocking Movement //======================------------------------------
 
 // Camera Behaviour //===========================------------------------------
-	FVector AHeroBase::GetCameraLocation()
-	{
-		FVector CamPointLoc = CameraSceneComp->GetComponentLocation();
-		FVector nLoc = FVector::ZeroVector;
-		nLoc.X = FMath::Clamp(CamPointLoc.X, CameraXClampA, CameraXClampB);
-		nLoc.Y = FMath::Clamp(CamPointLoc.Y, CameraYClampA, CameraYClampB);
-		nLoc.Z = CamPointLoc.Z;
-		return nLoc;
-	}
+FVector AHeroBase::GetCameraLocation()
+{
+	FVector CamPointLoc = CameraSceneComp->GetComponentLocation();
+	FVector nLoc		= FVector::ZeroVector;
+	nLoc.X				= FMath::Clamp(CamPointLoc.X, CameraXClampA, CameraXClampB);
+	nLoc.Y				= FMath::Clamp(CamPointLoc.Y, CameraYClampA, CameraYClampB);
+	nLoc.Z				= CamPointLoc.Z;
+	return nLoc;
+}
 
-	void AHeroBase::UpdateCameraView(float delta)
+void AHeroBase::UpdateCameraView(float delta)
+{
+	switch (CameraMode)
 	{
-		switch (CameraMode)
+		case ECameraMode::Free:
 		{
-		case ECameraMode::Free: 
-		{
-			const FVector ArmLoc = ArmComp->GetComponentLocation();
+			const FVector ArmLoc	  = ArmComp->GetComponentLocation();
 			const FVector CamPointLoc = CameraSceneComp->GetComponentLocation();
-			
+
 			// New Location
 			FVector nLoc = FVector::ZeroVector;
-			nLoc.X = FMath::Clamp(CamPointLoc.X, CameraXClampA, CameraXClampB);
-			nLoc.Y = FMath::Clamp(CamPointLoc.Y, CameraYClampA, CameraYClampB);
-			nLoc.Z = CamPointLoc.Z;
+			nLoc.X		 = FMath::Clamp(CamPointLoc.X, CameraXClampA, CameraXClampB);
+			nLoc.Y		 = FMath::Clamp(CamPointLoc.Y, CameraYClampA, CameraYClampB);
+			nLoc.Z		 = CamPointLoc.Z;
 
 			ArmComp->SetWorldLocation(FMath::VInterpTo(ArmLoc, nLoc, delta, CAM_INTERP));
 
 			if (CameraTargetActor)
 			{
-				if (FVector::Distance(GetActorLocation(), CameraTargetActor->GetActorLocation()) < CameraTargetDist && CameraTargetActor->GetActorLocation().Z < CameraTargetDist / 2.f)
+				if (FVector::Distance(GetActorLocation(), CameraTargetActor->GetActorLocation()) < CameraTargetDist &&
+					CameraTargetActor->GetActorLocation().Z < CameraTargetDist / 2.f)
 				{
 					CameraMode = ECameraMode::Target;
 				}
@@ -401,7 +389,7 @@ void AHeroBase::EndState()
 		{
 			if (IsValid(CameraTargetActor))
 			{
-				const FVector myLoc = GetActorLocation();
+				const FVector myLoc		= GetActorLocation();
 				const FVector targetLoc = CameraTargetActor->GetActorLocation();
 
 				if (FVector::Distance(myLoc, targetLoc) > CameraTargetDist || targetLoc.Z > CameraTargetDist / 2.f)
@@ -410,355 +398,330 @@ void AHeroBase::EndState()
 					return;
 				}
 
-				FVector nLoc
-				{
-					FMath::Clamp(FMath::Lerp(myLoc.X, targetLoc.X, 0.5f), CameraXClampA, CameraXClampB),
+				FVector nLoc{FMath::Clamp(FMath::Lerp(myLoc.X, targetLoc.X, 0.5f), CameraXClampA, CameraXClampB),
 					FMath::Clamp(FMath::Lerp(myLoc.Y, targetLoc.Y, 0.5f), CameraYClampA, CameraYClampB),
-					FMath::Lerp(myLoc.Z, targetLoc.Z, 0.5f)
-				};
+					FMath::Lerp(myLoc.Z, targetLoc.Z, 0.5f)};
 
 				ArmComp->SetWorldLocation(FMath::VInterpTo(ArmComp->GetComponentLocation(), nLoc, delta, CAM_INTERP));
 			}
 			else
 			{
-				CameraMode = ECameraMode::Free;
+				CameraMode		  = ECameraMode::Free;
 				CameraTargetActor = nullptr;
 			}
 		}
-		} // End Switch
-	}
+	}  // End Switch
+}
 
-	void AHeroBase::SetCameraViewF(float ClampA, float ClampB)
+void AHeroBase::SetCameraViewF(float ClampA, float ClampB)
+{
+	if (ClampA != CameraXClampA || ClampB != CameraXClampB)
 	{
-		if (ClampA != CameraXClampA || ClampB != CameraXClampB)
-		{
-			CameraXClampA = ClampA;
-			CameraXClampB = ClampB;
+		CameraXClampA = ClampA;
+		CameraXClampB = ClampB;
 
-			const FVector CameraPointLoc = CameraSceneComp->GetComponentLocation();
-			ArmComp->SetWorldLocation(
-				FVector(
-					FMath::Clamp(CameraPointLoc.X, CameraXClampA, CameraXClampB),
-					0, CameraPointLoc.Z)
-			);
-		}
-		CameraMode = ECameraMode::Free;
+		const FVector CameraPointLoc = CameraSceneComp->GetComponentLocation();
+		ArmComp->SetWorldLocation(FVector(FMath::Clamp(CameraPointLoc.X, CameraXClampA, CameraXClampB), 0, CameraPointLoc.Z));
 	}
+	CameraMode = ECameraMode::Free;
+}
 
-	void AHeroBase::SetCameraViewA(FVector CameraLocation, float Duration, ECameraMode NextCamMode)
+void AHeroBase::SetCameraViewA(FVector CameraLocation, float Duration, ECameraMode NextCamMode)
+{
+	CameraLastMode = NextCamMode;
+	CameraView	   = CameraLocation;
+	CameraMode	   = ECameraMode::Action;
+
+	SET_TIMER(CamActionTimer, this, &AHeroBase::DisableCameraViewA, FMath::Max(Duration, 0.2f));
+}
+
+void AHeroBase::DisableCameraViewA()
+{
+	CameraMode = CameraLastMode;
+}
+
+void AHeroBase::SetCameraTarget(AUnitBase* target, float dist)
+{
+	if (target == nullptr || target == this) { CameraTargetActor = nullptr; }
+	else
 	{
-		CameraLastMode = NextCamMode;
-		CameraView = CameraLocation;
-		CameraMode = ECameraMode::Action;
-
-		SET_TIMER(CamActionTimer, this, &AHeroBase::DisableCameraViewA, FMath::Max(Duration, 0.2f));
+		CameraTargetActor = target;
+		CameraTargetDist  = dist;
+		CameraMode		  = ECameraMode::Target;
 	}
-
-	void AHeroBase::DisableCameraViewA()
-	{
-		CameraMode = CameraLastMode;
-	}
-
-	void AHeroBase::SetCameraTarget(AUnitBase * target, float dist)
-	{
-		if (target == nullptr || target == this)
-		{
-			CameraTargetActor = nullptr;
-		}
-		else
-		{
-			CameraTargetActor = target;
-			CameraTargetDist = dist;
-			CameraMode = ECameraMode::Target;
-		}
-	}
+}
 // End Camera Behaviour //=======================------------------------------
 
 // Actions //====================================------------------------------
-	void AHeroBase::Attack()
-	{
-		
-	}
-	
-	void AHeroBase::AttackHold()
-	{
-		SET_TIMER(skillEnTimer, this, &AHeroBase::SkillEnable, cTime(SKILL_TIMER));
-		SET_TIMER(PowChargeTimer, this, &AHeroBase::PowCharge, cTime(POW_CHARGE_TIMER));
-	}
-	
-	void AHeroBase::AttackBack()
-	{
-	}
-	
-	void AHeroBase::AttackForward()
-	{
-	}
-	
-	void AHeroBase::Block()
-	{
-		if (CheckState(EBaseStates::Stand) || CheckState(EBaseStates::Jumping))
-		{
-			FState nState;
-			nState.State = EBaseStates::Blocking;
-			nState.Animation = "Block";
-			nState.EndState = false;
-			NewState(nState);
+void AHeroBase::Attack() {}
 
-			PAUSE_TIMER(BlockTimer);
-			PowChargeEnd();
-		}
-		else
-		{
-			SET_TIMER(BlockTimer, this, &AHeroBase::Block, 0.1f, true);
-		}
-	}
-	
-	void AHeroBase::BlockStop()
+void AHeroBase::AttackHold()
+{
+	SET_TIMER(skillEnTimer, this, &AHeroBase::SkillEnable, cTime(SKILL_TIMER));
+	SET_TIMER(PowChargeTimer, this, &AHeroBase::PowCharge, cTime(POW_CHARGE_TIMER));
+}
+
+void AHeroBase::AttackBack() {}
+
+void AHeroBase::AttackForward() {}
+
+void AHeroBase::Block()
+{
+	if (CheckState(EBaseStates::Stand) || CheckState(EBaseStates::Jumping))
 	{
+		FState nState;
+		nState.State	 = EBaseStates::Blocking;
+		nState.Animation = "Block";
+		nState.EndState	 = false;
+		NewState(nState);
+
 		PAUSE_TIMER(BlockTimer);
-		if (GetState() == EBaseStates::Blocking)
-		{
-			EndStateDeferred(cTime(0.1f));
-		}
+		PowChargeEnd();
 	}
-
-	void AHeroBase::PowCharge()
+	else
 	{
-		if (CheckState(EBaseStates::Stand))
-		{
-			FState nState;
-			nState.State = EBaseStates::PowCharge;
-			nState.Animation = "PowChargeStart";
-			nState.Rotate = false;
-			nState.EndState = false;
-			NewState(nState);
-
-			SET_TIMER(PowChargeLoopTimer, this, &AHeroBase::PowCharge, AnimElemTime(GetAnim(nState.Animation)->GetNumFrames()));
-		}
-		else if (CheckState(EBaseStates::PowCharge))
-		{
-			FState nState;
-			nState.State = EBaseStates::PowChargeLoop;
-			nState.Animation = "PowChargeLoop";
-			nState.Rotate = false;
-			nState.EndState = false;
-			NewState(nState);
-
-			SET_TIMER(PowChargeLoopTimer, this, &AHeroBase::PowChargeLoop, cTime(0.05f));
-		}
+		SET_TIMER(BlockTimer, this, &AHeroBase::Block, 0.1f, true);
 	}
-	
-	void AHeroBase::PowChargeLoop()
+}
+
+void AHeroBase::BlockStop()
+{
+	PAUSE_TIMER(BlockTimer);
+	if (GetState() == EBaseStates::Blocking) { EndStateDeferred(cTime(0.1f)); }
+}
+
+void AHeroBase::PowCharge()
+{
+	if (CheckState(EBaseStates::Stand))
 	{
-		if (CheckState(EBaseStates::PowChargeLoop))
-		{
-			SET_TIMER(PowChargeLoopTimer, this, &AHeroBase::PowChargeLoop, cTime(0.05f));
-			// Add Power
-			GET_STATS->AddStamina(0.02f + getHeroStatsComp()->getStamina() / 100.f);
-		}
+		FState nState;
+		nState.State	 = EBaseStates::PowCharge;
+		nState.Animation = "PowChargeStart";
+		nState.Rotate	 = false;
+		nState.EndState	 = false;
+		NewState(nState);
 
+		SET_TIMER(PowChargeLoopTimer, this, &AHeroBase::PowCharge, AnimElemTime(GetAnim(nState.Animation)->GetNumFrames()));
 	}
-	
-	void AHeroBase::PowChargeEnd()
+	else if (CheckState(EBaseStates::PowCharge))
 	{
-		PAUSE_TIMER(PowChargeTimer);
-		PAUSE_TIMER(PowChargeLoopTimer);
+		FState nState;
+		nState.State	 = EBaseStates::PowChargeLoop;
+		nState.Animation = "PowChargeLoop";
+		nState.Rotate	 = false;
+		nState.EndState	 = false;
+		NewState(nState);
 
-		if (CheckState(EBaseStates::PowChargeLoop) || CheckState(EBaseStates::PowCharge))
-		{
-			FState nState;
-			nState.State = EBaseStates::PowChargeEnd;
-			nState.Animation = "PowChargeEnd";
-			nState.Rotate = false;
-			NewState(nState);
-		}
+		SET_TIMER(PowChargeLoopTimer, this, &AHeroBase::PowChargeLoop, cTime(0.05f));
 	}
+}
 
-	void AHeroBase::SkillEnable()
+void AHeroBase::PowChargeLoop()
+{
+	if (CheckState(EBaseStates::PowChargeLoop))
 	{
-		Skill = true;
-		SET_TIMER(skillDisTimer, this, &AHeroBase::SkillDisable, cTime(1.f));
-		HeroSkillActivated();
+		SET_TIMER(PowChargeLoopTimer, this, &AHeroBase::PowChargeLoop, cTime(0.05f));
+		// Add Power
+		GET_STATS->AddStamina(0.02f + getHeroStatsComp()->getStamina() / 100.f);
 	}
+}
 
-	void AHeroBase::SkillDisable()
-	{
-		Skill = false;
-		PAUSE_TIMER(skillDisTimer);
-		HeroSkillDeactivated();
-	}
+void AHeroBase::PowChargeEnd()
+{
+	PAUSE_TIMER(PowChargeTimer);
+	PAUSE_TIMER(PowChargeLoopTimer);
 
-	void AHeroBase::SkillCanceled()
+	if (CheckState(EBaseStates::PowChargeLoop) || CheckState(EBaseStates::PowCharge))
 	{
-		PAUSE_TIMER(skillEnTimer);
+		FState nState;
+		nState.State	 = EBaseStates::PowChargeEnd;
+		nState.Animation = "PowChargeEnd";
+		nState.Rotate	 = false;
+		NewState(nState);
 	}
+}
+
+void AHeroBase::SkillEnable()
+{
+	Skill = true;
+	SET_TIMER(skillDisTimer, this, &AHeroBase::SkillDisable, cTime(1.f));
+	HeroSkillActivated();
+}
+
+void AHeroBase::SkillDisable()
+{
+	Skill = false;
+	PAUSE_TIMER(skillDisTimer);
+	HeroSkillDeactivated();
+}
+
+void AHeroBase::SkillCanceled()
+{
+	PAUSE_TIMER(skillEnTimer);
+}
 
 // End Actions //================================------------------------------
 
 // Actions Combination //========================------------------------------
-	void AHeroBase::Combo(float time)
+void AHeroBase::Combo(float time)
+{
+	if (time > 0.f)
 	{
-		if (time > 0.f)
-		{
-			SET_TIMER(ComboTimer, this, &AHeroBase::ComboI, time, false);
-			ComboSuccess = false;
-		}
+		SET_TIMER(ComboTimer, this, &AHeroBase::ComboI, time, false);
+		ComboSuccess = false;
 	}
+}
 
-	void AHeroBase::ComboI()
-	{
-		ComboSuccess = true;
-	}
+void AHeroBase::ComboI()
+{
+	ComboSuccess = true;
+}
 
-	void AHeroBase::addKey(EComboKey key)
+void AHeroBase::addKey(EComboKey key)
+{
+	ComboKeys.Add(key);
+}
+
+void AHeroBase::ResetKeys()
+{
+	PAUSE_TIMER(ComboTimer);
+	KeyIndex = 0;
+	ComboKeys.Empty();
+}
+
+EComboKey AHeroBase::getNextKey()
+{
+	++KeyIndex;
+	if (ComboKeys.Num() > KeyIndex) { return ComboKeys[KeyIndex]; }
+	else
 	{
-		ComboKeys.Add(key);
+		return EComboKey::CK_None;
 	}
-	
-	void AHeroBase::ResetKeys()
-	{
-		PAUSE_TIMER(ComboTimer);
-		KeyIndex = 0;
-		ComboKeys.Empty();
-	}
-	
-	EComboKey AHeroBase::getNextKey()
-	{
-		++KeyIndex;
-		if (ComboKeys.Num() > KeyIndex) { return ComboKeys[KeyIndex];}
-		else							{ return EComboKey::CK_None; }
-	}
+}
 // End Actions Combination //====================------------------------------
 
 //---------------------------------------------// Teleport
-	void AHeroBase::Teleport()
+void AHeroBase::Teleport()
+{
+	if (IsImmortal()) return;
+
+	if (!getHeroStatsComp()->checkStamina(1.f / getHeroStatsComp()->getTeleportCost(), false))
 	{
-		if (IsImmortal())
-			return;
-
-		if (!getHeroStatsComp()->checkStamina(1.f / getHeroStatsComp()->getTeleportCost(), false))
-		{
-			NotEnoughStamina();
-			return;
-		}
-
-		if (MoveVector == FVector::ZeroVector || CheckState(EBaseStates::Fall) || CheckState(EBaseStates::Teleport) || IsDead())
-			return;
-
-		if (BlockAttackType != EBlockType::None && !isComboTime())
-			return;
-
-		tp_initialLocation = GetActorLocation();
-		tp_Vector = MoveVector;
-		tp_DistPassed = 0.f;
-		tp_MaxDist = 100.f;
-
-		NewState(EBaseStates::Teleport);
-		SetAnim(nullptr, true);
-	
-		FRotator tp_HelperRot = tp_Vector.ToOrientationRotator();
-		FVector tp_HelperScale = { 1.f, 1.f, 1.f };
-		if (FMath::IsNearlyEqual(tp_HelperRot.Yaw, 90.f, 10.f))
-		{
-			tp_HelperRot.Roll	= 90.f;
-			tp_HelperRot.Yaw	= 90.f;
-			tp_HelperScale.X	= 2.f;
-		}
-		else if (FMath::IsNearlyEqual(tp_HelperRot.Yaw, -90.f, 10.f))
-		{
-			tp_HelperRot.Roll	= -90.f;
-			tp_HelperRot.Yaw	= -90.f;
-			tp_HelperScale.X	= 2.f;
-		}
-		SpawnHelper("Teleport", 0.f, tp_HelperRot, tp_HelperScale);
-		getShadow()->HideShadow();
-	}
-	void AHeroBase::Teleport(FVector nLocation)
-	{
-		if (IsImmortal())
-			return;
-
-		if (!getHeroStatsComp()->checkStamina(1.f / getHeroStatsComp()->getTeleportCost(), false))
-			return;
-
-		if (CheckState(EBaseStates::Fall) || CheckState(EBaseStates::Teleport) || IsDead())
-			return;
-
-		if (BlockAttackType != EBlockType::None && !isComboTime())
-			return;
-
-		tp_initialLocation = GetActorLocation();
-		nLocation.Z = tp_initialLocation.Z;
-		FRotator lookRotation = UKismetMathLibrary::FindLookAtRotation(tp_initialLocation, nLocation);
-		tp_Vector = UKismetMathLibrary::GetForwardVector(lookRotation);
-		tp_DistPassed = 0.f;
-		tp_MaxDist = FVector::Dist(tp_initialLocation, nLocation);
-
-		NewState(EBaseStates::Teleport);
-		SetAnim(nullptr, true);
-		
-		FRotator& tp_HelperRot = lookRotation;
-		FVector tp_HelperScale = { 1.f, 1.f, 1.f };
-
-		if (FMath::IsNearlyEqual(tp_HelperRot.Yaw, 90.f, 10.f))
-		{
-			tp_HelperRot.Roll	= 90.f;
-			tp_HelperRot.Yaw	= 90.f;
-			tp_HelperScale.X	= 2.f;
-		}
-		else if (FMath::IsNearlyEqual(tp_HelperRot.Yaw, -90.f, 10.f))
-		{
-			tp_HelperRot.Roll	= -90.f;
-			tp_HelperRot.Yaw	= -90.f;
-			tp_HelperScale.X	= 2.f;
-		}
-		SpawnHelper("Teleport", 0.f, tp_HelperRot, tp_HelperScale);
-		getShadow()->HideShadow();
+		NotEnoughStamina();
+		return;
 	}
 
-	void AHeroBase::TeleportTick(float delta)
-	{
-		if (CheckState(EBaseStates::Teleport))
-		{
-			float speed{ 1000 * delta };
-			tp_DistPassed += speed;
-			SetActorLocation(GetActorLocation() + tp_Vector * speed, true);
-			if (tp_DistPassed >= tp_MaxDist)
-			{
-				EndState();
-				GetCharacterMovement()->Velocity = tp_Vector * 300.f;
+	if (MoveVector == FVector::ZeroVector || CheckState(EBaseStates::Fall) || CheckState(EBaseStates::Teleport) || IsDead()) return;
 
-				// Minus stamina
-				float dist = FVector::Dist(tp_initialLocation, GetActorLocation());
-				float minusStamina = FMath::Min(1.2f, dist / 100.f) / getHeroStatsComp()->getTeleportCost();
-				GET_STATS->AddStamina(-(minusStamina));
-				getShadow()->ShowShadow();
-			}
+	if (BlockAttackType != EBlockType::None && !isComboTime()) return;
+
+	tp_initialLocation = GetActorLocation();
+	tp_Vector		   = MoveVector;
+	tp_DistPassed	   = 0.f;
+	tp_MaxDist		   = 100.f;
+
+	NewState(EBaseStates::Teleport);
+	SetAnim(nullptr, true);
+
+	FRotator tp_HelperRot	= tp_Vector.ToOrientationRotator();
+	FVector	 tp_HelperScale = {1.f, 1.f, 1.f};
+	if (FMath::IsNearlyEqual(tp_HelperRot.Yaw, 90.f, 10.f))
+	{
+		tp_HelperRot.Roll = 90.f;
+		tp_HelperRot.Yaw  = 90.f;
+		tp_HelperScale.X  = 2.f;
+	}
+	else if (FMath::IsNearlyEqual(tp_HelperRot.Yaw, -90.f, 10.f))
+	{
+		tp_HelperRot.Roll = -90.f;
+		tp_HelperRot.Yaw  = -90.f;
+		tp_HelperScale.X  = 2.f;
+	}
+	SpawnHelper("Teleport", 0.f, tp_HelperRot, tp_HelperScale);
+	getShadow()->HideShadow();
+}
+void AHeroBase::Teleport(FVector nLocation)
+{
+	if (IsImmortal()) return;
+
+	if (!getHeroStatsComp()->checkStamina(1.f / getHeroStatsComp()->getTeleportCost(), false)) return;
+
+	if (CheckState(EBaseStates::Fall) || CheckState(EBaseStates::Teleport) || IsDead()) return;
+
+	if (BlockAttackType != EBlockType::None && !isComboTime()) return;
+
+	tp_initialLocation	  = GetActorLocation();
+	nLocation.Z			  = tp_initialLocation.Z;
+	FRotator lookRotation = UKismetMathLibrary::FindLookAtRotation(tp_initialLocation, nLocation);
+	tp_Vector			  = UKismetMathLibrary::GetForwardVector(lookRotation);
+	tp_DistPassed		  = 0.f;
+	tp_MaxDist			  = FVector::Dist(tp_initialLocation, nLocation);
+
+	NewState(EBaseStates::Teleport);
+	SetAnim(nullptr, true);
+
+	FRotator& tp_HelperRot	 = lookRotation;
+	FVector	  tp_HelperScale = {1.f, 1.f, 1.f};
+
+	if (FMath::IsNearlyEqual(tp_HelperRot.Yaw, 90.f, 10.f))
+	{
+		tp_HelperRot.Roll = 90.f;
+		tp_HelperRot.Yaw  = 90.f;
+		tp_HelperScale.X  = 2.f;
+	}
+	else if (FMath::IsNearlyEqual(tp_HelperRot.Yaw, -90.f, 10.f))
+	{
+		tp_HelperRot.Roll = -90.f;
+		tp_HelperRot.Yaw  = -90.f;
+		tp_HelperScale.X  = 2.f;
+	}
+	SpawnHelper("Teleport", 0.f, tp_HelperRot, tp_HelperScale);
+	getShadow()->HideShadow();
+}
+
+void AHeroBase::TeleportTick(float delta)
+{
+	if (CheckState(EBaseStates::Teleport))
+	{
+		float speed{1000 * delta};
+		tp_DistPassed += speed;
+		SetActorLocation(GetActorLocation() + tp_Vector * speed, true);
+		if (tp_DistPassed >= tp_MaxDist)
+		{
+			EndState();
+			GetCharacterMovement()->Velocity = tp_Vector * 300.f;
+
+			// Minus stamina
+			float dist		   = FVector::Dist(tp_initialLocation, GetActorLocation());
+			float minusStamina = FMath::Min(1.2f, dist / 100.f) / getHeroStatsComp()->getTeleportCost();
+			GET_STATS->AddStamina(-(minusStamina));
+			getShadow()->ShowShadow();
 		}
 	}
+}
 
 // Transformation
-	void AHeroBase::ChangeForm(FName formName)
-	{
-		getHeroStatsComp()->SetForm(formName);
-		GetCharacterMovement()->MaxWalkSpeed = getHeroStatsComp()->getWalkSpeed();
-	}
-	void AHeroBase::InitForm(FName formName, FVector stats)
-	{
-		getHeroStatsComp()->AddForms(formName, stats);
-	}
+void AHeroBase::ChangeForm(FName formName)
+{
+	getHeroStatsComp()->SetForm(formName);
+	GetCharacterMovement()->MaxWalkSpeed = getHeroStatsComp()->getWalkSpeed();
+}
+void AHeroBase::InitForm(FName formName, FVector stats)
+{
+	getHeroStatsComp()->AddForms(formName, stats);
+}
 // End
 
 //---------------------------------------------// Hero Inputs
-	void AHeroBase::BtnSetMovement_Implementation(FVector Value)
+void AHeroBase::BtnSetMovement_Implementation(FVector Value)
+{
+	SetMoveVector(Value);
+}
+
+void AHeroBase::BtnAction_Implementation(EInputActionType action, bool btnReleased)
+{
+	switch (action)
 	{
-		SetMoveVector(Value);
-	}
-	
-	void AHeroBase::BtnAction_Implementation(EInputActionType action, bool btnReleased)
-	{
-		switch (action)
-		{
 		case EInputActionType::A_Center:
 		{
 			if (btnReleased)
@@ -835,59 +798,60 @@ void AHeroBase::EndState()
 			}
 			break;
 		}
-		case EInputActionType::A_BlockEnd: { BlockStop();	break; }
-		} // End switch
-
-		if (btnReleased)
+		case EInputActionType::A_BlockEnd:
 		{
-			PowChargeEnd();
-			SkillCanceled();
+			BlockStop();
+			break;
 		}
-	}
+	}  // End switch
 
-	void AHeroBase::BtnDash_Implementation(FVector forwardVector, bool Released)
+	if (btnReleased)
 	{
-		if (Released)
+		PowChargeEnd();
+		SkillCanceled();
+	}
+}
+
+void AHeroBase::BtnDash_Implementation(FVector forwardVector, bool Released)
+{
+	if (Released)
+	{
+		// Stop Sprinting
+		if (isSprinting())
 		{
-			// Stop Sprinting
-			if (isSprinting())
-			{
-				StopSprinting();
-				return;
-			}
+			StopSprinting();
+			return;
+		}
 
-			// Set Dash Forward Vector
-			if (BtnDashVector.IsNearlyZero())
-			{
-				BtnDashVector = forwardVector;
-				SET_TIMER(BtnDashTimer, this, &AHeroBase::BtnDashReset, cTime(0.3));
-				return;
-			}
+		// Set Dash Forward Vector
+		if (BtnDashVector.IsNearlyZero())
+		{
+			BtnDashVector = forwardVector;
+			SET_TIMER(BtnDashTimer, this, &AHeroBase::BtnDashReset, cTime(0.3));
+			return;
+		}
 
-			if (FVector::PointsAreNear(BtnDashVector, forwardVector, 0.25f))
-			{
-				if (!CheckState(EBaseStates::Stand))
-				{
-					Dash(BtnDashVector);
-				}
-			}
-			else
-			{
-				BtnDashVector = forwardVector;
-				SET_TIMER(BtnDashTimer, this, &AHeroBase::BtnDashReset, cTime(0.3));
-			}
-		}	// Released End
+		if (FVector::PointsAreNear(BtnDashVector, forwardVector, 0.25f))
+		{
+			if (!CheckState(EBaseStates::Stand)) { Dash(BtnDashVector); }
+		}
 		else
 		{
-			if (CheckState(EBaseStates::Stand) && FVector::PointsAreNear(BtnDashVector, forwardVector, 0.25f))
-			{
-				// PlayerCharacter->Sprint(BtnDashVector);
-			}
+			BtnDashVector = forwardVector;
+			SET_TIMER(BtnDashTimer, this, &AHeroBase::BtnDashReset, cTime(0.3));
+		}
+	}  // Released End
+	else
+	{
+		if (CheckState(EBaseStates::Stand) && FVector::PointsAreNear(BtnDashVector, forwardVector, 0.25f))
+		{
+			// PlayerCharacter->Sprint(BtnDashVector);
 		}
 	}
+}
 
-	void AHeroBase::BtnTeleport_Implementation()
-	{
-		Teleport();
-	}
+void AHeroBase::BtnTeleport_Implementation()
+{
+	Teleport();
+}
 // End

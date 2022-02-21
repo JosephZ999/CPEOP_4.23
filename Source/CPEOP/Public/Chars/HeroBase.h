@@ -12,14 +12,28 @@
 #define GET_STATS getHeroStatsComp()
 
 /**
- * 
+ *
  */
 
 class UCurveFloat;
 
 UENUM()
-enum class ECameraMode : uint8 { Free, Action, Target, };
-enum EComboKey { CK_None, CK_Attack, CK_AForward, CK_ABackward, CK_Jump, CK_Block, CK_Dash };
+enum class ECameraMode : uint8
+{
+	Free,
+	Action,
+	Target,
+};
+enum EComboKey
+{
+	CK_None,
+	CK_Attack,
+	CK_AForward,
+	CK_ABackward,
+	CK_Jump,
+	CK_Block,
+	CK_Dash
+};
 
 UCLASS()
 class CPEOP_API AHeroBase : public AUnitBase, public IHeroInput
@@ -28,6 +42,7 @@ class CPEOP_API AHeroBase : public AUnitBase, public IHeroInput
 
 public:
 	AHeroBase();
+
 private:
 	static FName ArmCompName;
 	static FName CameraCompName;
@@ -36,7 +51,7 @@ private:
 private:
 	/** Точка к которой будет двигаться камера с интерполяцтей */
 	UPROPERTY(Category = Camera, VisibleAnywhere, Meta = (AllowPrivateAccess = "true"))
-	class USceneComponent* CameraSceneComp; 
+	class USceneComponent* CameraSceneComp;
 
 	/** Точка к которой будет двигаться камера с интерполяцтей */
 	UPROPERTY(Category = Camera, VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
@@ -50,75 +65,71 @@ private:
 	UPROPERTY(Category = Components, VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
 	class UHeroStats* HeroStatsComp;
 
-
 public:
 	FORCEINLINE virtual class UUnitStatsBase* getStatsComp() const { return HeroStatsComp; }
-	FORCEINLINE class UHeroStats* getHeroStatsComp()         const { return HeroStatsComp; }
+	FORCEINLINE class UHeroStats*			  getHeroStatsComp() const { return HeroStatsComp; }
 
 	FVector GetCameraLocation();
+
 protected:
-	virtual void BeginPlay()		override;
-	virtual void EndState()			override;
+	virtual void BeginPlay() override;
+	virtual void EndState() override;
+
 public:
-	virtual void Tick(float delta)	override;
+	virtual void Tick(float delta) override;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void NotEnoughPower();
 	UFUNCTION(BlueprintImplementableEvent)
 	void NotEnoughStamina();
 
-//---------------------------------------------// Timeline
+	//---------------------------------------------// Timeline
 protected:
 	UCurveFloat* FindCurveFloat(FString path);
-	void PlayTimeline(UObject* targetObject, UCurveFloat* curve, FName functionName, bool looping);
-	void StopTimeline();
-	FTimeline CurveTimeline;
+	void		 PlayTimeline(UObject* targetObject, UCurveFloat* curve, FName functionName, bool looping);
+	void		 StopTimeline();
+	FTimeline	 CurveTimeline;
 
-//---------------------------------------------// Movement // Sprint // Dash //
+	//---------------------------------------------// Movement // Sprint // Dash //
 public:
-	void Sprint	(FVector fwVector);
-	void StopSprinting();
-	void Dash	(FVector fwVector);
-	void DoDash();
+	void			 Sprint(FVector fwVector);
+	void			 StopSprinting();
+	void			 Dash(FVector fwVector);
+	void			 DoDash();
 	FORCEINLINE bool isSprinting() { return Sprinting; }
 
 private:
-	FVector DashVector;
-	bool Sprinting;
+	FVector		 DashVector;
+	bool		 Sprinting;
 	FTimerHandle SprintPowReducingTimer;
-	void SprintPowReducing();
-//---------------------------------------------// End
+	void		 SprintPowReducing();
+	//---------------------------------------------// End
 
-//---------------------------------------------// Blocking Movement
+	//---------------------------------------------// Blocking Movement
 private:
-	virtual void Move() override;
+	virtual void	 Move() override;
 	FORCEINLINE void UpdateAnim();
 
 	UFUNCTION()
-	void OnCompHit(
-		UPrimitiveComponent*	HitComponent,
-		AActor*					OtherActor,
-		UPrimitiveComponent*	OtherComp,
-		FVector					NormalImpulse,
-		const FHitResult&		Hit
-	);
+	void OnCompHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse,
+		const FHitResult& Hit);
 
 	void LockMovement(FVector Point);
 	void UnlockMovementX();
 	void UnlockMovementY();
 
-	bool LockUp			= false;
-	bool LockDown		= false;
-	bool LockForward	= false;
-	bool LockBack		= false;
-//---------------------------------------------// End
+	bool LockUp		 = false;
+	bool LockDown	 = false;
+	bool LockForward = false;
+	bool LockBack	 = false;
+	//---------------------------------------------// End
 
-//---------------------------------------------// Camera Behaviour
+	//---------------------------------------------// Camera Behaviour
 private:
 	ECameraMode CameraMode = ECameraMode::Free;
 
 	// Calls in every frame
-	FORCEINLINE void UpdateCameraView(float delta); 
+	FORCEINLINE void UpdateCameraView(float delta);
 
 public:
 	// Free Mode
@@ -126,22 +137,27 @@ public:
 	void SetCameraViewF(float CameraStartLoc, float CameraEndLoc);
 
 	UFUNCTION(BlueprintCallable)
-	void SetCameraClampY(float ClampA, float ClampB) { CameraYClampA = ClampA; CameraYClampB = ClampB; }
+	void SetCameraClampY(float ClampA, float ClampB)
+	{
+		CameraYClampA = ClampA;
+		CameraYClampB = ClampB;
+	}
 
 private:
-	float CameraXClampA = -200; // Camera view point A in Free Mode
-	float CameraXClampB = 200; // Camera view point B in Free Mode
+	float CameraXClampA = -200;	 // Camera view point A in Free Mode
+	float CameraXClampB = 200;	 // Camera view point B in Free Mode
 	float CameraYClampA = -500.f;
 	float CameraYClampB = 500.f;
-	
+
 	// Action Mode
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetCameraViewA(FVector CameraLocation, float Duration, ECameraMode NextCamMode = ECameraMode::Free);
+
 private:
-	void DisableCameraViewA();
-	FVector CameraView{ FVector::ZeroVector }; // Camera view in Action Mode
-	ECameraMode CameraLastMode = ECameraMode::Free;
+	void		 DisableCameraViewA();
+	FVector		 CameraView{FVector::ZeroVector};  // Camera view in Action Mode
+	ECameraMode	 CameraLastMode = ECameraMode::Free;
 	FTimerHandle CamActionTimer;
 
 public:
@@ -151,30 +167,31 @@ public:
 
 	UFUNCTION()
 	const FVector& GetCameraViewPosition() const { return CameraView; }
+
 private:
+	UPROPERTY()
 	AUnitBase* CameraTargetActor;
-	float CameraTargetDist;
+	float	   CameraTargetDist;
 
-//---------------------------------------------// End
+	//---------------------------------------------// End
 
-
-//---------------------------------------------// Actions
+	//---------------------------------------------// Actions
 public:
 	virtual void Attack();
 	virtual void AttackHold();
 	virtual void AttackBack();
 	virtual void AttackForward();
 	virtual void AttackDown() {}
-	void Block();
-	void BlockStop();
+	void		 Block();
+	void		 BlockStop();
 	FTimerHandle BlockTimer;
 
 	UFUNCTION(BlueprintCallable)
-		void Bp_Block() { Block(); }
+	void Bp_Block() { Block(); }
 
-	void PowCharge();
-	void PowChargeLoop();
-	void PowChargeEnd();
+	void		 PowCharge();
+	void		 PowChargeLoop();
+	void		 PowChargeEnd();
 	FTimerHandle PowChargeTimer;
 	FTimerHandle PowChargeLoopTimer;
 
@@ -187,54 +204,56 @@ public:
 
 	void SkillDisable();
 	void SkillCanceled();
-	bool IsSkillActive()const { return Skill; }
+	bool IsSkillActive() const { return Skill; }
+
 private:
 	FTimerHandle skillEnTimer;
 	FTimerHandle skillDisTimer;
-	bool Skill;
-//---------------------------------------------// End
+	bool		 Skill;
+	//---------------------------------------------// End
 
-//---------------------------------------------// Actions Combination
+	//---------------------------------------------// Actions Combination
 private:
-	FTimerHandle		ComboTimer;
-	TArray<EComboKey>	ComboKeys;
-	bool				ComboSuccess;
-	uint8				KeyIndex;
+	FTimerHandle	  ComboTimer;
+	TArray<EComboKey> ComboKeys;
+	bool			  ComboSuccess;
+	uint8			  KeyIndex;
 
 public:
-	void Combo(float time);
-	virtual void ComboI();
+	void			 Combo(float time);
+	virtual void	 ComboI();
 	FORCEINLINE bool isComboTime() const { return ComboSuccess; }
 
 	void addKey(EComboKey key);
 
 	UFUNCTION(BlueprintCallable, Category = "Actions Combo")
 	void ResetKeys();
+
 protected:
 	EComboKey getNextKey();
-//---------------------------------------------// End
+	//---------------------------------------------// End
 
-//---------------------------------------------// Teleport
+	//---------------------------------------------// Teleport
 public:
 	void Teleport();
 	void Teleport(FVector nLocation);
 
 private:
-	void TeleportTick(float delta);
+	void	TeleportTick(float delta);
 	FVector tp_initialLocation;
 	FVector tp_Vector;
-	float tp_DistPassed;
-	float tp_MaxDist;
-//---------------------------------------------// End
+	float	tp_DistPassed;
+	float	tp_MaxDist;
+	//---------------------------------------------// End
 
-//---------------------------------------------// Transformation
+	//---------------------------------------------// Transformation
 public:
 	UFUNCTION(BlueprintCallable)
 	void ChangeForm(FName formName);
 	void InitForm(FName formName, FVector stats);
-//---------------------------------------------// End
+	//---------------------------------------------// End
 
-//---------------------------------------------// Hero Inputs
+	//---------------------------------------------// Hero Inputs
 public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Hero Commands")
 	void BtnSetMovement(FVector Value);
@@ -248,5 +267,5 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Hero Comnnads")
 	void BtnTeleport();
 
-//---------------------------------------------// End
+	//---------------------------------------------// End
 };

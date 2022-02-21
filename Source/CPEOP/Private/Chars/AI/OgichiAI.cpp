@@ -11,12 +11,12 @@
 #define MAX_DIST_X 100.f
 #define MAX_DIST_Y 30.f
 
-#define TP_CHANCE 0.3f
+#define TP_CHANCE  0.3f
 
 AOgichiAI::AOgichiAI()
 {
 	SearchStepRadius = 50.f;
-	SearchSteps = 15;
+	SearchSteps		 = 15;
 }
 
 void AOgichiAI::tpReload(float time)
@@ -25,15 +25,9 @@ void AOgichiAI::tpReload(float time)
 	SET_TIMER(tpReloadTimer, this, &AOgichiAI::tpReset, time);
 }
 
-void AOgichiAI::tpReset()
-{
-	canTeleport = true;
-}
+void AOgichiAI::tpReset() { canTeleport = true; }
 
-void AOgichiAI::BeginPlay()
-{
-	Super::BeginPlay();
-}
+void AOgichiAI::BeginPlay() { Super::BeginPlay(); }
 
 void AOgichiAI::AIBody()
 {
@@ -89,7 +83,6 @@ void AOgichiAI::AIBody()
 	{
 	case EBaseStates::Stand:
 	{
-
 		// Swort Twist if enemy fall
 		if (getEnemy()->IsFalling())
 		{
@@ -101,9 +94,8 @@ void AOgichiAI::AIBody()
 		if (getDistanceX() < MAX_DIST_X && getDistanceY() < MAX_DIST_Y)
 		{
 			// Block
-			if (getEnemy()->GetDangerType() == EDangerType::MeleeAttack
-				&& ((isEnemyOnRight() && !getEnemy()->IsLookingRight()) || (!isEnemyOnRight() && getEnemy()->IsLookingRight()))
-				)
+			if (getEnemy()->GetDangerType() == EDangerType::MeleeAttack &&
+				((isEnemyOnRight() && !getEnemy()->IsLookingRight()) || (!isEnemyOnRight() && getEnemy()->IsLookingRight())))
 			{
 				OgichiRef->SetMoveVector(getForwardVector());
 				OgichiRef->Block();
@@ -133,10 +125,8 @@ void AOgichiAI::AIBody()
 			OgichiRef->SetMoveVector(getForwardVector(60));
 
 			// Ogi_Getsuga
-			if (UKismetMathLibrary::RandomBoolWithWeight(0.01f) 
-				&& OgichiRef->getHeroStatsComp()->checkStamina(-(GETSUGA_COST))
-				&& OgichiRef->getHeroStatsComp()->checkPower(-(GETSUGA_COST))
-				&& getDistanceY() < MIN_DIST_Y)
+			if (UKismetMathLibrary::RandomBoolWithWeight(0.01f) && OgichiRef->getHeroStatsComp()->checkStamina(-(GETSUGA_COST)) &&
+				OgichiRef->getHeroStatsComp()->checkPower(-(GETSUGA_COST)) && getDistanceY() < MIN_DIST_Y)
 			{
 				OgichiRef->SetRotation(isEnemyOnRight(), false);
 				OgichiRef->SkillEnable();
@@ -152,8 +142,7 @@ void AOgichiAI::AIBody()
 
 	case EBaseStates::Blocking:
 	{
-		if (getEnemy()->GetDangerType() == EDangerType::None)
-			OgichiRef->BlockStop();
+		if (getEnemy()->GetDangerType() == EDangerType::None) OgichiRef->BlockStop();
 	}
 
 	case EBaseStates::Hit:
@@ -172,10 +161,7 @@ void AOgichiAI::AIBody()
 
 	case EBaseStates::Fall:
 	{
-		if (OgichiRef->GetVelocity().Z > 20.f)
-		{
-			OgichiRef->StandUp();
-		}
+		if (OgichiRef->GetVelocity().Z > 20.f) { OgichiRef->StandUp(); }
 	}
 
 	case EOgichiState::Ogi_Attack_1:
@@ -206,11 +192,9 @@ void AOgichiAI::AIBody()
 
 	case EOgichiState::Ogi_Attack_2:
 	{
-		if (!OgichiRef->isComboTime())
-			return;
+		if (!OgichiRef->isComboTime()) return;
 
-		if (getDistanceY() > MAX_DIST_Y)
-			return;
+		if (getDistanceY() > MAX_DIST_Y) return;
 
 		// Sword Twist
 		if (getDistanceX() > MAX_DIST_X)
@@ -252,15 +236,12 @@ void AOgichiAI::AIBody()
 			return;
 		}
 
-		if (getDistanceY() > MAX_DIST_Y)
-			return;
+		if (getDistanceY() > MAX_DIST_Y) return;
 
 		// Ogi_Getsuga
-		if (getDistanceX() > MAX_DIST_X && getDistanceX() < MAX_DIST_X * 4
-			&& UKismetMathLibrary::RandomBoolWithWeight(0.2f)
-			&& OgichiRef->getHeroStatsComp()->checkStamina(-(GETSUGA_TENSHOU_COST))
-			&& OgichiRef->getHeroStatsComp()->checkPower(-(GETSUGA_TENSHOU_COST))
-			)
+		if (getDistanceX() > MAX_DIST_X && getDistanceX() < MAX_DIST_X * 4 && UKismetMathLibrary::RandomBoolWithWeight(0.2f) &&
+			OgichiRef->getHeroStatsComp()->checkStamina(-(GETSUGA_TENSHOU_COST)) &&
+			OgichiRef->getHeroStatsComp()->checkPower(-(GETSUGA_TENSHOU_COST)))
 		{
 			OgichiRef->SetRotation(isEnemyOnRight(), false);
 			OgichiRef->SkillEnable();
@@ -289,10 +270,5 @@ void AOgichiAI::AIBody()
 		break;
 	}
 
-
-
 	} // End Switch
-
-
-
 }
