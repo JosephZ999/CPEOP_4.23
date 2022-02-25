@@ -4,9 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "PaperCharacter.h"
+#include "sys/Interfaces/UnitGetters.h"
 #include "Sys/Interfaces/AIEvents.h"
 #include "TimerManager.h"
 #include "UnitBase.generated.h"
+
+DECLARE_MULTICAST_DELEGATE(FOnStateChanged);
 
 #define SET_TIMER	GetWorldTimerManager().SetTimer
 #define PAUSE_TIMER GetWorldTimerManager().PauseTimer
@@ -114,12 +117,14 @@ enum class EDangerType : uint8
 };
 
 UCLASS()
-class CPEOP_API AUnitBase : public APaperCharacter, public IAIEvents
+class CPEOP_API AUnitBase : public APaperCharacter, public IUnitGetters, public IAIEvents
 {
 	GENERATED_BODY()
 
 public:
 	AUnitBase();
+
+	FOnStateChanged OnStateChanged;
 
 protected:
 	virtual void BeginPlay();
@@ -146,7 +151,7 @@ private:
 protected:
 	bool CanFall{true};
 
-	//--------------------------// AI
+	// AI
 public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AI Interface")
 	void SetAIEnabled(bool Enable);
@@ -157,11 +162,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Category = "AI Interface")
 	void OnDangerDetected(FDangerArg& Arg1, enum EDangerPriority Arg2);
 
-	UFUNCTION(BlueprintCallable, Category = "UnitBase", Meta = (Keywords = "CDB"))
-	static ADangerBox* CreateADangerBox(
-		AUnitBase* OwnerUnit, enum EDangerPriority Priority, FVector Location, FVector Scale, float LifeTime);
+	UFUNCTION()
+	void CreateADangerBox(EDangerPriority Priority, FDangerOptions& Options);
 
-	// Getters and Setters //
+	// Getters and Setters
 public:
 	UFUNCTION(BlueprintCallable)
 	bool CheckState(uint8 nState) const { return State == nState; }
@@ -200,8 +204,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE bool IsFalling() const { return State == EBaseStates::Fall; }
 
-	// Functions //----------------------------------
-public:
+public: // Functions
 	void			FindHelper(FString objectPath, TSubclassOf<class AHelper>& Class);
 	UPaperFlipbook* FindAnim(FString objectPath);
 
@@ -219,7 +222,7 @@ public:
 	void		 DisableImmortality();
 	FTimerHandle ImmortalityTimer;
 
-	// Movement //===================================------------------------------
+	// Movement
 protected:
 	virtual void Move();
 	FVector		 MoveVector;
@@ -249,16 +252,15 @@ public:
 	void Jumping();
 
 	virtual void Landed(const FHitResult& Hit) override;
-	// End Movement //===============================------------------------------
 
-	// Helper //=====================================------------------------------
+	// Helper //==================================
 protected:
 	/*Добавляет класс "HitBox" в массив компонента "HitComp"
 	 * Пример: InitHelper("Ogi_Attack_1, "Blueprint/HitBox/Ogi_Attack_1")*/
 	void InitHelper(FName name, FString classPath = FString());
 
 	/* Собирает данные о создаваемом обьекте и запускает таймер для спавна */
-	void SpawnHelper(FName name, float time = 0.f, FRotator rotation = {0.f, 0.f, 0.f}, FVector scale = FVector::OneVector);
+	void SpawnHelperDeferred(FName name, float time = 0.f, FRotator rotation = {0.f, 0.f, 0.f}, FVector scale = FVector::OneVector);
 
 private:
 	/* Список всех обьектов 'HitBox' */
@@ -272,9 +274,10 @@ private:
 	void HelperSort();
 
 	/* */
-	void HelperSpawning(FHelperInfo info, TSubclassOf<class AHelper> hitClass);
+	void HelperSpawning(FHelperInfo info);
 
-	// End Helper //=================================------------------------------
+	void CreateSpark(uint8 index, FVector2D scale, float rotation);
+	void CreateDamageText(float damage, bool moveRight, bool crit);
 
 	// Taking Damage //==============================------------------------------
 public:
@@ -304,13 +307,9 @@ public:
 	void StandUp();
 
 private:
-	void CreateSpark(uint8 index, FVector2D scale, float rotation);
-	void CreateDamageText(float damage, bool moveRight, bool crit);
-
 public:
 	UFUNCTION(BlueprintCallable)
 	void BP_Fall() { Fall(); }
-	// End Taking Damage //==========================------------------------------
 
 	// State Type //=================================------------------------------
 protected:
@@ -324,13 +323,12 @@ protected:
 
 	// Animations
 	TMap<FName, class UPaperFlipbook*>* AnimData{nullptr};
-	void								InitAnim(FName name, FString flipbookPath);
-	void								SetAnim(UPaperFlipbook* anim, bool playFromStart);
-	void								SetAnim(FName name, bool playFromStart);
-	UPaperFlipbook*						GetAnim(FName AnimName);
-	float								AnimElemTime(uint8 frame);
 
-	// End State Type //=============================------------------------------
+	void			InitAnim(FName name, FString flipbookPath);
+	void			SetAnim(UPaperFlipbook* anim, bool playFromStart);
+	void			SetAnim(FName name, bool playFromStart);
+	UPaperFlipbook* GetAnim(FName AnimName);
+	float			AnimElemTime(uint8 frame);
 
 	//---------------------------------------------// Attack Danger Notification
 protected:

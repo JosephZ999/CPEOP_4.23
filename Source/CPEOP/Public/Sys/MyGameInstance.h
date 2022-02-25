@@ -9,8 +9,23 @@
 
 #include "MyGameInstance.generated.h"
 
+USTRUCT(BlueprintType)
+struct FDefFightData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class ADmgTextBase> DamageText;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class ADangerBox> DangerBox;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<class UPaperFlipbook*> Sparks;
+};
+
 /**
- * 
+ *
  */
 UCLASS()
 class CPEOP_API UMyGameInstance : public UGameInstance, public IGameIns
@@ -18,14 +33,11 @@ class CPEOP_API UMyGameInstance : public UGameInstance, public IGameIns
 	GENERATED_BODY()
 
 private:
+	UPROPERTY(EditDefaultsOnly, Category = "Game Settings")
+	FDefFightData FightClasses;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Game Settings", Meta = (AllowPrivateAccess = "true"))
-	TArray<class UPaperFlipbook*> Data_Sparks;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Game Settings", Meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<class ADmgTextBase> DamageText;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game Settings", Meta = (AllowPrivateAccess = "true", ClampMin = 0, ClampMax = 100))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game Settings",
+		Meta = (AllowPrivateAccess = "true", ClampMin = 0, ClampMax = 100))
 	uint8 DamageTextRate;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game Settings", Meta = (AllowPrivateAccess = "true"))
@@ -42,4 +54,6 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Category = "GameIns Events")
 	bool CanCreateDamageText(bool Crited);
 
+	UFUNCTION(BlueprintNativeEvent, Category = "GameIns Events")
+	class TSubclassOf<class ADangerBox> GetDangerBoxClass();
 };

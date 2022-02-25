@@ -10,6 +10,7 @@ UENUM(BlueprintType)
 enum class EDangerPriority : uint8
 {
 	Normal,
+	Explosion,
 };
 
 USTRUCT(BlueprintType)
@@ -17,12 +18,45 @@ struct FDangerArg
 {
 	GENERATED_BODY()
 
-		FDangerArg()
-		// : param1
-		// , param2
-	{}
+	FDangerArg()
+	// : param1
+	// , param2
+	{
+	}
 	FVector2D Size;
 	FVector2D Position; // 0.5 - Actor in center of danger region
+};
+
+USTRUCT(BlueprintType)
+struct FDangerOptions
+{
+	GENERATED_BODY()
+
+	FDangerOptions() {}
+
+	FDangerOptions(FVector nScale)
+		: Location(FVector::ZeroVector)
+		, Scale(nScale)
+		, LifeTime(0.3f)
+		, AttachToOwner(true)
+		, ShowRadius(true)
+	{
+	}
+
+	FDangerOptions(FVector nScale, FVector nLocation)
+		: Location(nLocation)
+		, Scale(nScale)
+		, LifeTime(0.3f)
+		, AttachToOwner(true)
+		, ShowRadius(true)
+	{
+	}
+
+	FVector Location;
+	FVector Scale;
+	float	LifeTime;
+	bool	AttachToOwner;
+	bool	ShowRadius;
 };
 
 USTRUCT(BlueprintType)
@@ -48,7 +82,7 @@ class UAIEvents : public UInterface
 };
 
 /**
- * 
+ *
  */
 class CPEOP_API IAIEvents
 {
@@ -69,7 +103,7 @@ public:
 	void SetAIOptions(const FAIOptions& Options);
 
 	/*
-	
+
 	void GetEnemy();
 	void SetEnemy();
 	...

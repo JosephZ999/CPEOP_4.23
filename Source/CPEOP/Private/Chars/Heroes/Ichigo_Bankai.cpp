@@ -7,30 +7,29 @@ void AIchigo::b_InputA()
 {
 	switch (GetState())
 	{
-	case EBaseStates::Stand:			{ b_Attack_1(); break; }
-	case EBaseStates::Jumping:			{ b_Attack_Air(); break; }
+	case EBaseStates::Stand:
+	{
+		b_Attack_1();
+		break;
+	}
+	case EBaseStates::Jumping:
+	{
+		b_Attack_Air();
+		break;
+	}
 	case EIchigoState::Ichi_Attack_1:
 	{
-		if (isComboTime()) 
-		{ 
-			b_Attack_2(); 
-		}
+		if (isComboTime()) { b_Attack_2(); }
 		break;
 	}
 	case EIchigoState::Ichi_Attack_2:
 	{
-		if (isComboTime()) 
-		{
-			b_Attack_3(); 
-		}
+		if (isComboTime()) { b_Attack_3(); }
 		break;
 	}
 	case EIchigoState::Ichi_Attack_3:
 	{
-		if (isComboTime()) 
-		{ 
-			b_Attack_4(); 
-		}
+		if (isComboTime()) { b_Attack_4(); }
 		break;
 	}
 	} // Switch End
@@ -42,10 +41,7 @@ void AIchigo::b_InputB()
 	{
 	case EBaseStates::Stand:
 	{
-		if (IsSkillActive())
-		{
-			b_RExplosion();
-		}
+		if (IsSkillActive()) { b_RExplosion(); }
 		else
 		{
 			b_Attack_B();
@@ -54,21 +50,19 @@ void AIchigo::b_InputB()
 	}
 	case EIchigoState::Ichi_Attack_2:
 	{
-		if (isComboTime())
-		{
-			b_Attack_B();
-		}
+		if (isComboTime()) { b_Attack_B(); }
 		break;
 	}
 	case EIchigoState::Ichi_Attack_3:
 	{
-		if (isComboTime())
-		{
-			b_Attack_B();
-		}
+		if (isComboTime()) { b_Attack_B(); }
 		break;
 	}
-	case EBaseStates::PowChargeLoop: { b_RExplosion(); break; }
+	case EBaseStates::PowChargeLoop:
+	{
+		b_RExplosion();
+		break;
+	}
 	} // Switch End
 }
 
@@ -78,33 +72,28 @@ void AIchigo::b_InputFW()
 	{
 	case EBaseStates::Stand:
 	{
-		if (IsSkillActive())
-		{
-			b_Getsuga();
-		}
+		if (IsSkillActive()) { b_Getsuga(); }
 		else
 		{
 			b_Attack_FW();
 		}
 		break;
 	}
-	case EIchigoState::Ichi_Attack_2: 
-	{ 
-		if (isComboTime()) 
-		{ 
-			b_Attack_FW(); 
-		} 
-		break; 
-	}
-	case EIchigoState::Ichi_Attack_3: 
+	case EIchigoState::Ichi_Attack_2:
 	{
-		if (isComboTime()) 
-		{ 
-			b_Attack_FW(); 
-		} 
-		break; 
+		if (isComboTime()) { b_Attack_FW(); }
+		break;
 	}
-	case EBaseStates::PowChargeLoop: { b_Getsuga(); break; }
+	case EIchigoState::Ichi_Attack_3:
+	{
+		if (isComboTime()) { b_Attack_FW(); }
+		break;
+	}
+	case EBaseStates::PowChargeLoop:
+	{
+		b_Getsuga();
+		break;
+	}
 	} // End Switch
 }
 
@@ -112,15 +101,16 @@ void AIchigo::b_InputD()
 {
 	switch (GetState())
 	{
-	case EBaseStates::Stand: 
-	{ 
-		if (IsSkillActive()) 
-		{ 
-			b_Shikai(); 
-		} 
-		break; 
+	case EBaseStates::Stand:
+	{
+		if (IsSkillActive()) { b_Shikai(); }
+		break;
 	}
-	case EBaseStates::PowChargeLoop: { b_Shikai(); break; }
+	case EBaseStates::PowChargeLoop:
+	{
+		b_Shikai();
+		break;
+	}
 	} // End Switch
 }
 
@@ -131,12 +121,12 @@ void AIchigo::b_InputD()
 void AIchigo::b_Attack_1()
 {
 	FState nState;
-	nState.State = EIchigoState::Ichi_Attack_1;
+	nState.State	 = EIchigoState::Ichi_Attack_1;
 	nState.Animation = "Attack_1";
 	NewState(nState);
 
 	AddImpulse(BASE_VELOCITY, getFrameTime(1));
-	SpawnHelper("b_Attack_1", getFrameTime(3));
+	SpawnHelperDeferred("b_Attack_1", getFrameTime(3));
 	Combo(getFrameTime(7));
 
 	SetBlockingAttack(EBlockType::Forward, getFrameTime(3), BLOCK_DURATION);
@@ -146,12 +136,12 @@ void AIchigo::b_Attack_1()
 void AIchigo::b_Attack_2()
 {
 	FState nState;
-	nState.State = EIchigoState::Ichi_Attack_2;
+	nState.State	 = EIchigoState::Ichi_Attack_2;
 	nState.Animation = "Attack_2";
 	NewState(nState);
 
 	AddImpulse(BASE_VELOCITY, getFrameTime(1));
-	SpawnHelper("b_Attack_2", getFrameTime(3));
+	SpawnHelperDeferred("b_Attack_2", getFrameTime(3));
 	Combo(getFrameTime(7));
 
 	SetBlockingAttack(EBlockType::Forward, getFrameTime(3), BLOCK_DURATION);
@@ -161,12 +151,12 @@ void AIchigo::b_Attack_2()
 void AIchigo::b_Attack_3()
 {
 	FState nState;
-	nState.State = EIchigoState::Ichi_Attack_3;
+	nState.State	 = EIchigoState::Ichi_Attack_3;
 	nState.Animation = "Attack_3";
 	NewState(nState);
 
 	AddImpulse(BASE_VELOCITY, getFrameTime(3));
-	SpawnHelper("b_Attack_3", getFrameTime(4));
+	SpawnHelperDeferred("b_Attack_3", getFrameTime(4));
 	Combo(getFrameTime(9));
 
 	SetBlockingAttack(EBlockType::Both, getFrameTime(3), getFrameTime(4));
@@ -176,12 +166,12 @@ void AIchigo::b_Attack_3()
 void AIchigo::b_Attack_4()
 {
 	FState nState;
-	nState.State = EIchigoState::Ichi_Attack_4;
+	nState.State	 = EIchigoState::Ichi_Attack_4;
 	nState.Animation = "Attack_4";
 	NewState(nState);
 
 	AddImpulse(BASE_VELOCITY, getFrameTime(2));
-	SpawnHelper("b_Attack_4", getFrameTime(3));
+	SpawnHelperDeferred("b_Attack_4", getFrameTime(3));
 	Combo(getFrameTime(10));
 
 	SetBlockingAttack(EBlockType::Forward, getFrameTime(3), BLOCK_DURATION);
@@ -190,27 +180,22 @@ void AIchigo::b_Attack_4()
 
 void AIchigo::b_Attack_FW()
 {
-	if (!GET_STATS->checkStamina(2.f / getHeroStatsComp()->getTeleportCost(), false))
+	if (! GET_STATS->checkStamina(2.f / getHeroStatsComp()->getTeleportCost(), false))
 	{
 		NotEnoughStamina();
 		return;
 	}
 
 	FState nState;
-	nState.State = EIchigoState::Ichi_Attack_FW;
+	nState.State	 = EIchigoState::Ichi_Attack_FW;
 	nState.Animation = "Attack_FW";
 	NewState(nState);
 
-	SpawnHelper("b_Attack_FW", getFrameTime(5));
-	SpawnHelper("Teleport", getFrameTime(3), GetActorRotation());
+	SpawnHelperDeferred("b_Attack_FW", getFrameTime(5));
+	SpawnHelperDeferred("Teleport", getFrameTime(3), GetActorRotation());
 	SetCameraViewA(GetCameraLocation(), getFrameTime(12));
 
-	GET_STATS->AddStamina(
-		-2.f / getHeroStatsComp()->getTeleportCost(),
-		getFrameTime(4),
-		false,
-		EIchigoState::Ichi_Attack_FW
-	);
+	GET_STATS->AddStamina(-2.f / getHeroStatsComp()->getTeleportCost(), getFrameTime(4), false, EIchigoState::Ichi_Attack_FW);
 
 	SetBlockingAttack(EBlockType::Forward, getFrameTime(4), BLOCK_DURATION);
 	DangerN(getFrameTime(5), EDangerType::MeleeAttack);
@@ -223,30 +208,21 @@ void AIchigo::b_Attack_FW()
 void AIchigo::b_AttackDash(float value)
 {
 	FVector TargetLocation = DashStartLoc;
-	if (IsLookingRight())
-	{
-		TargetLocation.X = FMath::Lerp(TargetLocation.X, TargetLocation.X + 200.f, value);
-	}
+	if (IsLookingRight()) { TargetLocation.X = FMath::Lerp(TargetLocation.X, TargetLocation.X + 200.f, value); }
 	else
 	{
 		TargetLocation.X = FMath::Lerp(TargetLocation.X, TargetLocation.X - 200.f, value);
 	}
 	SetActorLocation(TargetLocation, true);
-	if (!CheckState(EIchigoState::Ichi_Attack_FW))
-	{
-		StopTimeline();
-	}
+	if (! CheckState(EIchigoState::Ichi_Attack_FW)) { StopTimeline(); }
 }
 
 void AIchigo::b_Attack_FW_Slash()
 {
-	if (!GET_STATS->checkStamina(1.f / getHeroStatsComp()->getTeleportCost(), false))
+	if (! GET_STATS->checkStamina(1.f / getHeroStatsComp()->getTeleportCost(), false))
 	{
 		NotEnoughStamina();
-		if (CheckState(EIchigoState::Ichi_Attack_FW_Slash))
-		{
-			b_Attack_FW_End();
-		}
+		if (CheckState(EIchigoState::Ichi_Attack_FW_Slash)) { b_Attack_FW_End(); }
 		return;
 	}
 
@@ -259,32 +235,29 @@ void AIchigo::b_Attack_FW_Slash()
 
 	FState nState;
 	nState.Animation = "Hide";
-	nState.EndState = false;
-	nState.Rotate = false;
-	nState.State = EIchigoState::Ichi_Attack_FW_Slash;
+	nState.EndState	 = false;
+	nState.Rotate	 = false;
+	nState.State	 = EIchigoState::Ichi_Attack_FW_Slash;
 	NewState(nState);
 
 	GET_STATS->AddStamina(-1.f / getHeroStatsComp()->getTeleportCost());
 	SetCameraViewA(GetCameraViewPosition(), 0.2f);
 	getShadow()->HideShadow();
 
+	SpawnHelperDeferred("b_Attack_FW_Slash", 0.05f);
+	SpawnHelperDeferred("b_Attack_FW_Slash", 0.1f);
 
-	SpawnHelper("b_Attack_FW_Slash", 0.05f);
-	SpawnHelper("b_Attack_FW_Slash", 0.1f);
-
-	SetActorLocation(
-		b_SlashLocation + FVector(120.f * ((IsLookingRight()) ? -1 : 1.f), 0.f, 0.f), true
-	);
+	SetActorLocation(b_SlashLocation + FVector(120.f * ((IsLookingRight()) ? -1 : 1.f), 0.f, 0.f), true);
 
 	for (int i = 1; i <= 2; i++)
 	{
-		bool OnRight = (i % 2 == 0);
+		bool	OnRight = (i % 2 == 0);
 		FVector nLoc(GetActorLocation());
 		nLoc.X += (OnRight) ? FMath::RandRange(100.f, 150.f) : FMath::RandRange(-100.f, -150.f);
 		nLoc.Y += FMath::RandRange(-75.f, 75.f);
 
 		FAfterImageStruct nImg("Run", nLoc, true, 0);
-		nImg.Rotation = (!OnRight);
+		nImg.Rotation = (! OnRight);
 		AfterImage->Create(nImg, i * 0.04f);
 	}
 
@@ -296,10 +269,8 @@ void AIchigo::b_Attack_FW_End()
 {
 	getShadow()->ShowShadow();
 
-	SetActorLocation(
-		b_SlashLocation + FVector(200.f * ((IsLookingRight()) ? -1 : 1.f), 0.f, 0.f), true
-	);
-	SpawnHelper("Teleport", 0.f, GetActorRotation());
+	SetActorLocation(b_SlashLocation + FVector(200.f * ((IsLookingRight()) ? -1 : 1.f), 0.f, 0.f), true);
+	SpawnHelperDeferred("Teleport", 0.f, GetActorRotation());
 
 	EndStateDeferred(0.1f);
 }
@@ -307,12 +278,12 @@ void AIchigo::b_Attack_FW_End()
 void AIchigo::b_Attack_B()
 {
 	FState nState;
-	nState.State = EIchigoState::Ichi_Attack_B;
+	nState.State	 = EIchigoState::Ichi_Attack_B;
 	nState.Animation = "Attack_B";
 	NewState(nState);
 
 	AddImpulse(SP_VELOCITY, getFrameTime(4));
-	SpawnHelper("b_Attack_B", getFrameTime(6));
+	SpawnHelperDeferred("b_Attack_B", getFrameTime(6));
 	Combo(getFrameTime(11));
 
 	SetBlockingAttack(EBlockType::Forward, getFrameTime(5), BLOCK_DURATION);
@@ -322,12 +293,12 @@ void AIchigo::b_Attack_B()
 void AIchigo::b_Attack_Air()
 {
 	FState nState;
-	nState.State = EIchigoState::Ichi_Attack_Air;
+	nState.State	 = EIchigoState::Ichi_Attack_Air;
 	nState.Animation = "AttackAir";
 	NewState(nState);
 
 	AddImpulse(FVector(GetUnitVelocity().X, GetUnitVelocity().Y, 200.f), getFrameTime(3));
-	SpawnHelper("b_AttackAir", getFrameTime(4));
+	SpawnHelperDeferred("b_AttackAir", getFrameTime(4));
 	Combo(getFrameTime(12));
 
 	SetBlockingAttack(EBlockType::Forward, getFrameTime(4), BLOCK_DURATION);
@@ -337,16 +308,15 @@ void AIchigo::b_Attack_Air()
 void AIchigo::b_Getsuga()
 {
 
-	if (!getHeroStatsComp()->CheckSkill("Getsuga"))
-		return;
+	if (! getHeroStatsComp()->CheckSkill("Getsuga")) return;
 
-	bool Return{ false };
-	if (!getHeroStatsComp()->checkStamina(-(GETSUGA_COST)))
+	bool Return{false};
+	if (! getHeroStatsComp()->checkStamina(-(GETSUGA_COST)))
 	{
 		NotEnoughStamina();
 		Return = true;
 	}
-	if (!getHeroStatsComp()->checkPower(-(GETSUGA_COST)))
+	if (! getHeroStatsComp()->checkPower(-(GETSUGA_COST)))
 	{
 		NotEnoughPower();
 		Return = true;
@@ -354,12 +324,12 @@ void AIchigo::b_Getsuga()
 	if (Return) { return; }
 
 	FState nState;
-	nState.State = EIchigoState::Ichi_GetsugaStart;
+	nState.State	 = EIchigoState::Ichi_GetsugaStart;
 	nState.Animation = "GetsugaReady";
 	NewState(nState);
 
 	AddImpulse(MoveVector * 300.f, 0.f);
-	SpawnHelper("b_GetsugaEff", getFrameTime(2));
+	SpawnHelperDeferred("b_GetsugaEff", getFrameTime(2));
 	GET_STATS->AddStamina(GETSUGA_COST, AnimElemTime(9), true, EIchigoState::Ichi_GetsugaFW);
 
 	SetBlockingAttack(EBlockType::Both, 0.f, getFrameTime(10));
@@ -370,39 +340,38 @@ void AIchigo::b_Getsuga()
 void AIchigo::b_GetsugaFW()
 {
 	FState nState;
-	nState.State = EIchigoState::Ichi_GetsugaFW;
+	nState.State	 = EIchigoState::Ichi_GetsugaFW;
 	nState.Animation = "Getsuga";
-	nState.Rotate = false;
+	nState.Rotate	 = false;
 	NewState(nState);
 
-	SpawnHelper("b_Getsuga", getFrameTime(2));
+	SpawnHelperDeferred("b_Getsuga", getFrameTime(2));
 	Combo(getFrameTime(8));
 }
 
 void AIchigo::b_GetsugaB()
 {
 	FState nState;
-	nState.State = EIchigoState::Ichi_GetsugaFW;
+	nState.State	 = EIchigoState::Ichi_GetsugaFW;
 	nState.Animation = "GetsugaB";
-	nState.Rotate = false;
+	nState.Rotate	 = false;
 	NewState(nState);
 
-	SpawnHelper("b_Getsuga", getFrameTime(2), FRotator(45.f, 0.f, 0.f));
+	SpawnHelperDeferred("b_Getsuga", getFrameTime(2), FRotator(45.f, 0.f, 0.f));
 	Combo(getFrameTime(8));
 }
 
 void AIchigo::b_RExplosion()
 {
-	if (!getHeroStatsComp()->CheckSkill("RExplosion"))
-		return;
+	if (! getHeroStatsComp()->CheckSkill("RExplosion")) return;
 
-	bool Return{ false };
-	if (!getHeroStatsComp()->checkStamina(-(EXPLOSION_COST)))
+	bool Return{false};
+	if (! getHeroStatsComp()->checkStamina(-(EXPLOSION_COST)))
 	{
 		NotEnoughStamina();
 		Return = true;
 	}
-	if (!getHeroStatsComp()->checkPower(-(EXPLOSION_COST)))
+	if (! getHeroStatsComp()->checkPower(-(EXPLOSION_COST)))
 	{
 		NotEnoughPower();
 		Return = true;
@@ -410,12 +379,12 @@ void AIchigo::b_RExplosion()
 	if (Return) { return; }
 
 	FState nState;
-	nState.State = EIchigoState::Ichi_RExplosion;
+	nState.State	 = EIchigoState::Ichi_RExplosion;
 	nState.Animation = "RExplosion";
 	NewState(nState);
 
 	AddImpulse(MoveVector * 300.f, 0.f);
-	SpawnHelper("b_RExplosion", getFrameTime(7));
+	SpawnHelperDeferred("b_RExplosion", getFrameTime(7));
 	GET_STATS->AddStamina(EXPLOSION_COST, AnimElemTime(7), true, EIchigoState::Ichi_RExplosion);
 
 	SetBlockingAttack(EBlockType::Both, 0.f, AnimElemTime(14));
@@ -425,11 +394,10 @@ void AIchigo::b_RExplosion()
 
 void AIchigo::b_Shikai()
 {
-	if (!getHeroStatsComp()->CheckSkill("Bankai"))
-		return;
+	if (! getHeroStatsComp()->CheckSkill("Bankai")) return;
 
 	FState nState;
-	nState.State = EIchigoState::Ichi_Shikai;
+	nState.State	 = EIchigoState::Ichi_Shikai;
 	nState.Animation = "Shikai";
 	NewState(nState);
 
@@ -454,8 +422,16 @@ void AIchigo::BankaiComboI()
 	{
 		switch (key)
 		{
-		case EComboKey::CK_Attack:			{ b_Attack_2(); break; }
-		case EComboKey::CK_Dash:			{ DoDash();     break; }
+		case EComboKey::CK_Attack:
+		{
+			b_Attack_2();
+			break;
+		}
+		case EComboKey::CK_Dash:
+		{
+			DoDash();
+			break;
+		}
 		}
 		break;
 	}
@@ -463,10 +439,26 @@ void AIchigo::BankaiComboI()
 	{
 		switch (key)
 		{
-		case EComboKey::CK_Attack:			{ b_Attack_3();  break; }
-		case EComboKey::CK_ABackward:		{ b_Attack_B();  break; }
-		case EComboKey::CK_AForward:		{ b_Attack_FW(); break; }
-		case EComboKey::CK_Dash:			{ DoDash();      break; }
+		case EComboKey::CK_Attack:
+		{
+			b_Attack_3();
+			break;
+		}
+		case EComboKey::CK_ABackward:
+		{
+			b_Attack_B();
+			break;
+		}
+		case EComboKey::CK_AForward:
+		{
+			b_Attack_FW();
+			break;
+		}
+		case EComboKey::CK_Dash:
+		{
+			DoDash();
+			break;
+		}
 		}
 		break;
 	}
@@ -474,7 +466,11 @@ void AIchigo::BankaiComboI()
 	{
 		switch (key)
 		{
-		case EComboKey::CK_Dash:			{ DoDash();      break; }
+		case EComboKey::CK_Dash:
+		{
+			DoDash();
+			break;
+		}
 		}
 		break;
 	}
@@ -482,7 +478,11 @@ void AIchigo::BankaiComboI()
 	{
 		switch (key)
 		{
-		case EComboKey::CK_Dash:			{ DoDash();      break; }
+		case EComboKey::CK_Dash:
+		{
+			DoDash();
+			break;
+		}
 		}
 		break;
 	}
@@ -491,7 +491,11 @@ void AIchigo::BankaiComboI()
 	{
 		switch (key)
 		{
-		case EComboKey::CK_Dash:			{ DoDash();      break; }
+		case EComboKey::CK_Dash:
+		{
+			DoDash();
+			break;
+		}
 		}
 		break;
 	}
@@ -499,8 +503,16 @@ void AIchigo::BankaiComboI()
 	{
 		switch (key)
 		{
-		case EComboKey::CK_Attack:			{ b_Attack_FW_Slash();	break; }
-		case EComboKey::CK_Dash:			{ DoDash();				break; }
+		case EComboKey::CK_Attack:
+		{
+			b_Attack_FW_Slash();
+			break;
+		}
+		case EComboKey::CK_Dash:
+		{
+			DoDash();
+			break;
+		}
 		}
 		break;
 	}
@@ -508,8 +520,16 @@ void AIchigo::BankaiComboI()
 	{
 		switch (key)
 		{
-		case EComboKey::CK_Attack:			{ b_Attack_FW_Slash();	break; }
-		default:							{ b_Attack_FW_End();	break; }
+		case EComboKey::CK_Attack:
+		{
+			b_Attack_FW_Slash();
+			break;
+		}
+		default:
+		{
+			b_Attack_FW_End();
+			break;
+		}
 		}
 		break;
 	}
@@ -517,8 +537,16 @@ void AIchigo::BankaiComboI()
 	{
 		switch (key)
 		{
-		case EComboKey::CK_ABackward:		{ b_GetsugaB();		break; }
-		default:							{ b_GetsugaFW();	break; }
+		case EComboKey::CK_ABackward:
+		{
+			b_GetsugaB();
+			break;
+		}
+		default:
+		{
+			b_GetsugaFW();
+			break;
+		}
 		}
 		break;
 	}
@@ -526,7 +554,11 @@ void AIchigo::BankaiComboI()
 	{
 		switch (key)
 		{
-		case EComboKey::CK_Dash:			{ DoDash();			break; }
+		case EComboKey::CK_Dash:
+		{
+			DoDash();
+			break;
+		}
 		}
 		break;
 	}

@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Shrieker.h"
 #include "ShriekerSummon.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -23,11 +22,7 @@ AShrieker::AShrieker()
 
 //--------------------------------------//
 
-
-void AShrieker::BeginPlay()
-{
-	Super::BeginPlay();
-}
+void AShrieker::BeginPlay() { Super::BeginPlay(); }
 
 // Animation
 
@@ -35,15 +30,11 @@ void AShrieker::AnimUpdate()
 {
 	if (CheckState(EBaseStates::Stand))
 	{
-		if (MoveVector.IsNearlyZero(0.1f) || FMath::IsNearlyZero(GetUnitVelocity().X, 1.f))
-		{
-			SetAnim(FName("Stand"), false);
-		}
+		if (MoveVector.IsNearlyZero(0.1f) || FMath::IsNearlyZero(GetUnitVelocity().X, 1.f)) { SetAnim(FName("Stand"), false); }
 		else
 		{
 			SetAnim(FName("Walk"), false);
 		}
-
 	}
 }
 
@@ -57,17 +48,22 @@ void AShrieker::EndState()
 
 	switch (GetState())
 	{
-	case EBaseStates::Jumping: { NewState(nState); break; }
-	case EBaseStates::JumpLand: { NewState(nState); break; }
+	case EBaseStates::Jumping:
+	{
+		NewState(nState);
+		break;
+	}
+	case EBaseStates::JumpLand:
+	{
+		NewState(nState);
+		break;
+	}
 	} // Switch End
 }
 
-void AShrieker::Landed(const FHitResult & Hit)
+void AShrieker::Landed(const FHitResult& Hit)
 {
-	if (CheckState(EBaseStates::Hit))
-	{
-		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
-	}
+	if (CheckState(EBaseStates::Hit)) { GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying); }
 }
 
 //--------------------------------------//
@@ -75,30 +71,30 @@ void AShrieker::Landed(const FHitResult & Hit)
 void AShrieker::Attack()
 {
 	FState nState;
-	nState.State = EMonsterStates::M_Attack_1;
+	nState.State	 = EMonsterStates::M_Attack_1;
 	nState.Animation = "Attack";
 	NewState(nState);
 
-	SpawnHelper("AttackSlash", AnimElemTime(3));
+	SpawnHelperDeferred("AttackSlash", AnimElemTime(3));
 	AddImpulse(MoveVector * 200.f, AnimElemTime(2));
 }
 
 void AShrieker::Summon()
 {
 	FState nState;
-	nState.State = EMonsterStates::M_Super;
+	nState.State	 = EMonsterStates::M_Super;
 	nState.Animation = "Attack";
 	NewState(nState);
 
 	BP_Summon();
 }
 
-AShriekerSummon * AShrieker::SpawnSummon(TSubclassOf<class AShriekerSummon> Class, FVector Location)
+AShriekerSummon* AShrieker::SpawnSummon(TSubclassOf<class AShriekerSummon> Class, FVector Location)
 {
 	if (SummonsNum > 0)
 	{
-		FTransform nTransform{FRotator(0.f), Location, FVector(1.f)};
-		AShriekerSummon * nSummon = GetWorld()->SpawnActorDeferred<AShriekerSummon>(Class, nTransform);
+		FTransform		 nTransform{FRotator(0.f), Location, FVector(1.f)};
+		AShriekerSummon* nSummon = GetWorld()->SpawnActorDeferred<AShriekerSummon>(Class, nTransform);
 		if (nSummon)
 		{
 			UGameplayStatics::FinishSpawningActor(nSummon, nTransform);
@@ -109,7 +105,4 @@ AShriekerSummon * AShrieker::SpawnSummon(TSubclassOf<class AShriekerSummon> Clas
 	return nullptr;
 }
 
-void AShrieker::SetSummonsNum(uint8 Num)
-{
-	SummonsNum = Num;
-}
+void AShrieker::SetSummonsNum(uint8 Num) { SummonsNum = Num; }

@@ -4,22 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Components/BoxComponent.h"
-#include "Components/SceneComponent.h"
+#include "Components/TimelineComponent.h"
 #include "DangerBox.generated.h"
 
-//class USceneComponent;
-//class UBoxComponent;
-//enum EDangerPriority;
+class USceneComponent;
+class UBoxComponent;
+class UStaticMeshComponent;
 
+/**/
 UCLASS()
 class CPEOP_API ADangerBox : public AActor
 {
 	GENERATED_BODY()
-
-	// Components Name
-	static FName RootCompName;
-	static FName BoxCompName;
 
 private:
 	UPROPERTY(Category = Component, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -28,18 +24,54 @@ private:
 	UPROPERTY(Category = Component, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UBoxComponent* Box;
 
-	enum EDangerPriority _Priority;
-	uint8 _Team;
-	float _LifeTime;
+	UPROPERTY(Category = Component, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* Plane;
 
-public:	
+	EDangerPriority _Priority;
+	uint8			_Team;
+	float			_LifeTime;
+	bool			_IsFading;
+	bool			_IsVisible;
+
+	FTimeline	 _CTimeline;
+	UCurveFloat* _CurveFadeIn;
+	UCurveFloat* _CurveFadeOut;
+
+	UPROPERTY(EditDefaultsOnly)
+	UMaterialInterface* _BoxMaterial;
+
+	UPROPERTY(EditDefaultsOnly)
+	UMaterialInterface* _SphereMaterial;
+
+protected:
+	virtual void BeginPlay() override;
+
+public:
 	// Sets default values for this actor's properties
 	ADangerBox();
+
+	virtual void Tick(float delta) override;
+
+	UFUNCTION()
+	void Init(uint8 Team, float LifeTime, bool ShowRegion, enum EDangerPriority Priority);
 
 	UFUNCTION()
 	void BeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
 
-	UFUNCTION()
-	void Init(uint8 Team, float LifeTime, enum EDangerPriority Priority);
-};
+	void OnOwnerStateChanged();
 
+private:
+	UFUNCTION()
+	void FadeOut();
+
+	UFUNCTION()
+	void TimeLine(float Value);
+
+public:
+	// Blueprint functions
+	UFUNCTION(BlueprintCallable)
+	float GetLifeTime() const { return _LifeTime; }
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnStartFade();
+};

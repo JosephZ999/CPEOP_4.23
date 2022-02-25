@@ -29,7 +29,7 @@ class CPEOP_API AHitBoxBase : public AHelper
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	// Sets default values for this actor's properties
 	AHitBoxBase();
 
@@ -43,7 +43,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-// Options //
+	// Options //
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "Helper Options")
 	bool LoopAnim;
@@ -60,7 +60,7 @@ private:
 	bool RandEnemy; // Range Attacks
 
 	TArray<AUnitBase*> EnemiesInRange;
-	FTimerHandle AttackTimer;
+	FTimerHandle	   AttackTimer;
 
 	UPROPERTY(EditDefaultsOnly, Category = "RandAttack")
 	float AttackDelay;
@@ -73,19 +73,13 @@ private:
 
 public:
 	virtual void Init(AUnitBase* owner, float damage, float crit) override;
-	
+
 	UFUNCTION()
 	void OnBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
-	
-	UFUNCTION(BlueprintNativeEvent)
-	void OnAnimFinished();
 
 	UFUNCTION(BlueprintNativeEvent)
 	void OnHit(const int32& count, class AUnitBase* damagedUnit, bool attackBlocked);
 
 	UFUNCTION(BlueprintCallable)
-	void setSparkRotation(float rotation)
-	{
-		Options.sparkRotation = rotation;
-	}
+	void setSparkRotation(float rotation) { Options.sparkRotation = rotation; }
 };

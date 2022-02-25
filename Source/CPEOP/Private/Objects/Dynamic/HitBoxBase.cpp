@@ -1,11 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Objects/Dynamic/HitBoxBase.h"
 
 #include "TimerManager.h"
 #include "Kismet/GameplayStatics.h"
-
 
 // Sets default values
 AHitBoxBase::AHitBoxBase()
@@ -21,15 +19,15 @@ AHitBoxBase::AHitBoxBase()
 	GetSprite()->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Overlap);
 
 	// Hit Box Options
-	Options.damage		= 1.f;
-	Options.critRate	= 1.f;
+	Options.damage	 = 1.f;
+	Options.critRate = 1.f;
 
 	LoopAnim = false;
 	HitCount = 0;
-	
+
 	ImpulseType = EImpulseType::OwnerLocation;
 
-	RandEnemy = false;
+	RandEnemy	= false;
 	AttackDelay = 0.05f;
 }
 
@@ -41,32 +39,30 @@ void AHitBoxBase::BeginPlay()
 	GetSprite()->SetLooping(LoopAnim);
 
 	// End of animation
-	if (!LoopAnim)
+	if (! LoopAnim)
 	{
 		FTimerHandle timer;
-		float animLength = GetSprite()->GetFlipbookLength() / CustomTimeDilation;
-		GetWorldTimerManager().SetTimer(timer, this, &AHitBoxBase::OnAnimFinished, animLength);
+		float		 animLength = GetSprite()->GetFlipbookLength() / CustomTimeDilation;
+		SetLifeSpan(animLength);
 	}
 
 	OnActorBeginOverlap.AddDynamic(this, &AHitBoxBase::OnBeginOverlap);
 }
 
-
 // Init // Init // Init // Init // Init // Init // Init // Init //
 void AHitBoxBase::Init(AUnitBase* ownerChar, float damage, float crit)
 {
-	OwnerCharacter = ownerChar;
-	Options.damage = Options.damage * damage;
+	OwnerCharacter	 = ownerChar;
+	Options.damage	 = Options.damage * damage;
 	Options.critRate = crit;
-	
 }
 
-void AHitBoxBase::OnBeginOverlap(AActor * OverlappedActor, AActor * OtherActor)
+void AHitBoxBase::OnBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
 {
 	AUnitBase* HitUnit = Cast<AUnitBase>(OtherActor);
 	if (RandEnemy && HitUnit)
 	{
-		if (!HitUnit->CheckTeam(OwnerCharacter->GetTeam()))
+		if (! HitUnit->CheckTeam(OwnerCharacter->GetTeam()))
 		{
 			EnemiesInRange.Add(HitUnit);
 			SET_TIMER(AttackTimer, this, &AHitBoxBase::AttackRandUnit, AttackDelay);
@@ -90,27 +86,26 @@ void AHitBoxBase::AttackRandUnit()
 
 void AHitBoxBase::Attack(AUnitBase* Enemy)
 {
-	if (Enemy && !Enemy->CheckTeam(OwnerCharacter->GetTeam()) && !Enemy->IsFalling() && !Enemy->CheckState(EBaseStates::Teleport))
+	if (Enemy && ! Enemy->CheckTeam(OwnerCharacter->GetTeam()) && ! Enemy->IsFalling() && ! Enemy->CheckState(EBaseStates::Teleport))
 	{
-		bool fBehind{ false };
-		bool blocked{ false };
+		bool fBehind{false};
+		bool blocked{false};
 
 		switch (ImpulseType)
 		{
 		case EImpulseType::Rotation:
 		{
-			fBehind = (FMath::IsNearlyZero(GetActorRotation().Yaw) && Enemy->IsLookingRight())
-				|| (!FMath::IsNearlyZero(GetActorRotation().Yaw) && !Enemy->IsLookingRight());
+			fBehind = (FMath::IsNearlyZero(GetActorRotation().Yaw) && Enemy->IsLookingRight()) ||
+					  (! FMath::IsNearlyZero(GetActorRotation().Yaw) && ! Enemy->IsLookingRight());
 			break;
 		}
 		// case EImpulseType::Location: break;
 		case EImpulseType::OwnerLocation:
 		{
-			fBehind = (Enemy->GetActorLocation().X > OwnerCharacter->GetActorLocation().X && Enemy->IsLookingRight())
-				|| (Enemy->GetActorLocation().X < OwnerCharacter->GetActorLocation().X && !Enemy->IsLookingRight());
+			fBehind = (Enemy->GetActorLocation().X > OwnerCharacter->GetActorLocation().X && Enemy->IsLookingRight()) ||
+					  (Enemy->GetActorLocation().X < OwnerCharacter->GetActorLocation().X && ! Enemy->IsLookingRight());
 			break;
 		}
-
 		}
 
 		if (Enemy->ApplyDamage(OwnerCharacter, &Options, fBehind, blocked))
@@ -121,12 +116,4 @@ void AHitBoxBase::Attack(AUnitBase* Enemy)
 	}
 }
 
-void AHitBoxBase::OnAnimFinished_Implementation()
-{
-	Destroy();
-}
-
-void AHitBoxBase::OnHit_Implementation(const int32& count, class AUnitBase* damagedUnit, bool attackBlocked)
-{
-	
-}
+void AHitBoxBase::OnHit_Implementation(const int32& count, class AUnitBase* damagedUnit, bool attackBlocked) {}

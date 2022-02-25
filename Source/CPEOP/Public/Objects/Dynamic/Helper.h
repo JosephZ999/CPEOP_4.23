@@ -32,10 +32,9 @@ private:
 	class UPaperFlipbookComponent* Sprite;
 
 public:
-
 	FORCEINLINE class UPaperFlipbookComponent* GetSprite() const { return Sprite; }
 
-public:	
+public:
 	// Sets default values for this actor's properties
 	AHelper(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
@@ -46,23 +45,22 @@ public:
 	bool bAttachToParent;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Helper Options")
-	bool bAttachRotation;	// Attach rotation to parent actor rotation
-	
+	bool bAttachRotation; // Attach rotation to parent actor rotation
+
 	UPROPERTY(EditDefaultsOnly, Category = "Helper Options")
 	FVector InitialLocation;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
 public:
-	virtual void Tick(float DeltaTime) override;
-
-public:	
 	// HitBox Initialization
-	virtual void Init(class AUnitBase* owner, float damage, float crit) {};
+	virtual void Init(class AUnitBase* owner, float damage, float crit){};
 	// DmgText Init
-	virtual void Init(float damage, bool crit, bool isMovingRight) {};
+	virtual void Init(float damage, bool crit, bool isMovingRight){};
 	// Spark Init
-	virtual void Init(class UPaperFlipbook* anim, float rotation) {};
+	virtual void Init(class UPaperFlipbook* anim, float rotation){};
 
+	virtual void OnOwnerStateChanged();
 };

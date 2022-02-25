@@ -14,7 +14,7 @@ class UGameIns : public UInterface
 };
 
 /**
- * 
+ *
  */
 class CPEOP_API IGameIns
 {
@@ -22,7 +22,6 @@ class CPEOP_API IGameIns
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-
 	UFUNCTION(BlueprintNativeEvent, Category = "GameIns Events")
 	void OnUnitKilled(class AUnitBase* Killer, class AUnitBase* KilledUnit);
 
@@ -35,4 +34,6 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Category = "GameIns Events")
 	bool CanCreateDamageText(bool Crited);
 
+	UFUNCTION(BlueprintNativeEvent, Category = "GameIns Events")
+	TSubclassOf<class ADangerBox> GetDangerBoxClass();
 };
