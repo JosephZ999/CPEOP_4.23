@@ -7,6 +7,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "TimerManager.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Chars/UnitBase.h"
 
 #define BOX_SIZE 25.f
 
@@ -105,7 +106,7 @@ void ADangerBox::BeginPlay()
 
 	// Set initial location
 	FVector nLocation = Plane->GetComponentLocation();
-	nLocation.Z		  = 0.f;
+	nLocation.Z		  = 1.f;
 	Plane->SetWorldLocation(nLocation);
 
 	if (_IsVisible && _CurveFadeIn)
@@ -122,32 +123,57 @@ void ADangerBox::Tick(float delta)
 {
 	Super::Tick(delta);
 	_CTimeline.TickTimeline(delta);
-	//
 }
 
 void ADangerBox::BeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
 {
-	float MaxLocX = Box->GetScaledBoxExtent().X * 2.f;
-	float MaxLocY = Box->GetScaledBoxExtent().Y * 2.f;
+	AUnitBase* OtherUnit = Cast<AUnitBase>(OtherActor);
 
-	float ALocX = GetActorLocation().X;
-	float ALocY = GetActorLocation().Y - MaxLocY / 2.f;
-
-	float BLocX = OtherActor->GetActorLocation().X;
-	float BLocY = OtherActor->GetActorLocation().Y;
+	if (! OtherUnit) return;
+	if (OtherUnit->GetTeam() == _Team) return;
 
 	FDangerArg nDanger;
-	nDanger.Position.X = FMath::Abs((ALocX - BLocX) / MaxLocX);
-	nDanger.Position.Y = FMath::Abs((ALocY - BLocY) / MaxLocY);
-	nDanger.Size	   = {MaxLocX, MaxLocY};
 
-	IAIEvents::Execute_OnDangerDetected(OtherActor, nDanger, _Priority);
+	const FVector Size			= Box->GetScaledBoxExtent();
+	const FVector OtherLocation = OtherActor->GetActorLocation();
+
+	switch (_Priority)
+	{
+	case EDangerPriority::Explosion:
+	{
+		const FVector Location = GetActorLocation();
+		nDanger.Position.X	   = FMath::Abs((Location.X - OtherLocation.X) / Size.X);
+		nDanger.Position.Y	   = FMath::Abs((Location.Y - OtherLocation.Y) / Size.Y);
+		nDanger.DangerPosition = Location;
+		// nDanger.Size		   = {Size.X, Size.Y};
+		break;
+	}
+	default:
+	{
+		bool	IsLookRight = GetActorForwardVector().X > 0.f;
+		FVector Location	= GetActorLocation();
+		Location.X += ((IsLookRight) ? (-Size.X) : Size.X);
+
+		nDanger.Position.X	   = FMath::Abs((Location.X - OtherLocation.X) / (Size.X * 2));
+		nDanger.Position.Y	   = FMath::Abs((Location.Y - OtherLocation.Y) / Size.Y);
+		nDanger.DangerPosition = Location;
+		// nDanger.Size		   = {Size.X, Size.Y};
+	}
+	} // End Switch
+
+	nDanger.Priority = _Priority;
+
+	const FVector Location = GetActorLocation();
+	nDanger.StartLocation  = FVector2D(Location.X - Size.X, Location.Y - Size.Y);
+	nDanger.EndLocation	   = FVector2D(Location.X + Size.X, Location.Y + Size.Y);
+
+	IAIEvents::Execute_OnDangerDetected(OtherActor, nDanger);
 }
 
 void ADangerBox::OnOwnerStateChanged()
 {
-	Box->SetActive(false);
-	OnStartFade();
+	if (Box) { Box->SetActive(false); }
+	if (GetAttachParentActor()) { DetachFromActor(FDetachmentTransformRules(EDetachmentRule::KeepWorld, false)); }
 }
 
 void ADangerBox::FadeOut()
@@ -166,7 +192,7 @@ void ADangerBox::FadeOut()
 		_CTimeline.SetLooping(false);
 		_CTimeline.PlayFromStart();
 	}
-
+	if (GetAttachParentActor()) { DetachFromActor(FDetachmentTransformRules(EDetachmentRule::KeepWorld, false)); }
 	OnStartFade();
 }
 

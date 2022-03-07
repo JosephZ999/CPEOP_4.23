@@ -144,8 +144,8 @@ public:
 	}
 
 private:
-	float CameraXClampA = -200;	 // Camera view point A in Free Mode
-	float CameraXClampB = 200;	 // Camera view point B in Free Mode
+	float CameraXClampA = -200; // Camera view point A in Free Mode
+	float CameraXClampB = 200;	// Camera view point B in Free Mode
 	float CameraYClampA = -500.f;
 	float CameraYClampB = 500.f;
 
@@ -156,7 +156,7 @@ public:
 
 private:
 	void		 DisableCameraViewA();
-	FVector		 CameraView{FVector::ZeroVector};  // Camera view in Action Mode
+	FVector		 CameraView{FVector::ZeroVector}; // Camera view in Action Mode
 	ECameraMode	 CameraLastMode = ECameraMode::Free;
 	FTimerHandle CamActionTimer;
 
@@ -235,7 +235,7 @@ protected:
 
 	//---------------------------------------------// Teleport
 public:
-	void Teleport();
+	bool Teleport();
 	void Teleport(FVector nLocation);
 
 private:

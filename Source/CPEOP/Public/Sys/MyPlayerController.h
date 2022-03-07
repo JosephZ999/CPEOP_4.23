@@ -7,14 +7,14 @@
 #include "MyPlayerController.generated.h"
 
 /**
- * 
+ *
  */
 
 UCLASS()
 class CPEOP_API AMyPlayerController : public APlayerController
 {
 	GENERATED_BODY()
-	
+
 public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void ShowInputWidget();
@@ -24,12 +24,11 @@ public:
 
 	// Character Calls
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void CharLevelUp();
+	void CharLevelUp(AActor* Hero);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void HeroSkillActivated();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void HeroSkillDeactivated();
-
 };

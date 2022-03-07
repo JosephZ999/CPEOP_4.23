@@ -1,31 +1,25 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "ShriekerSummonAI.h"
 #include "Chars/Monsters/ShriekerSummon.h"
 
-AShriekerSummonAI::AShriekerSummonAI()
-{
-	SearchStepRadius = 100.f;
-	SearchSteps = 10;
-}
+AShriekerSummonAI::AShriekerSummonAI() { SetSearchOptions(100.f, 10); }
 
 void AShriekerSummonAI::AIBody()
 {
 	Super::AIBody();
 
-	if (!OwnerRef)
+	if (! OwnerRef)
 	{
 		OwnerRef = Cast<AShriekerSummon>(GetPawn());
 		return;
 	}
 
-	if (OwnerRef->IsDead())
-		return;
+	if (OwnerRef->IsDead()) return;
 
-	if (!getEnemy())
+	if (! getEnemy())
 	{
-		if (!SearchEnemy(OwnerRef->GetTeam()))
+		if (! SearchEnemy(OwnerRef->GetTeam()))
 		{
 			OwnerRef->SetMoveVector(FVector::ZeroVector);
 			Wait(1.f);
@@ -42,7 +36,7 @@ void AShriekerSummonAI::AIBody()
 			if (getDistance() > 50.f)
 			{
 				FVector nImpulse = getForwardVector();
-				nImpulse.Z = 1.f;
+				nImpulse.Z		 = 1.f;
 				OwnerRef->JumpTo(nImpulse);
 				OwnerRef->SetRotation(isEnemyOnRight(), false);
 				return;
@@ -51,7 +45,7 @@ void AShriekerSummonAI::AIBody()
 			// Move away if it's not first attack
 			if (AttackSuccess)
 			{
-				FVector nImpulse = FVector(((FMath::RandBool()) ? 1.f : -1.f), 0.f,	0.8f);
+				FVector nImpulse = FVector(((FMath::RandBool()) ? 1.f : -1.f), 0.f, 0.8f);
 				OwnerRef->JumpTo(nImpulse);
 				OwnerRef->SetRotation(nImpulse.X > 0.f, false);
 				AttackSuccess = false;
@@ -75,7 +69,7 @@ void AShriekerSummonAI::AIBody()
 	}
 	case EBaseStates::Jumping:
 	{
-		if (!OwnerRef->IsOnGround() && getDistanceX() <= 75.f && getDistanceY() <= 30.f)
+		if (! OwnerRef->IsOnGround() && getDistanceX() <= 75.f && getDistanceY() <= 30.f)
 		{
 			// Jump Attack
 			OwnerRef->SetRotation(isEnemyOnRight(), false);
@@ -93,8 +87,4 @@ void AShriekerSummonAI::AIBody()
 	} // Switch end
 }
 
-void AShriekerSummonAI::AttackSuccessReset()
-{
-	AttackSuccess = false;
-}
-
+void AShriekerSummonAI::AttackSuccessReset() { AttackSuccess = false; }

@@ -104,11 +104,11 @@ void AUnitBase::CreateADangerBox(EDangerPriority Priority, FDangerOptions& Optio
 	}
 }
 
-void AUnitBase::OnDangerDetected_Implementation(FDangerArg& Arg1, EDangerPriority Arg2)
+void AUnitBase::OnDangerDetected_Implementation(FDangerArg& DangerInfo)
 {
 	if (IsValid(GetController()) && GetController()->GetClass()->ImplementsInterface(UAIEvents::StaticClass()))
 	{
-		IAIEvents::Execute_OnDangerDetected(GetController(), Arg1, Arg2);
+		IAIEvents::Execute_OnDangerDetected(GetController(), DangerInfo);
 	}
 
 	// UE_LOG(LogTemp, Warning, TEXT("UnitBase OnDangerDetected Arg: Pos X - %f, Pos Y - %f"), Arg1.Position.X, Arg1.Position.Y);
@@ -160,6 +160,7 @@ void AUnitBase::SetImmortality(float duration)
 		GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Overlap);
 	}
 }
+
 void AUnitBase::DisableImmortality()
 {
 	Immortal = false;
@@ -383,6 +384,7 @@ void AUnitBase::CreateSpark(uint8 index, FVector2D scale, float rotation)
 		// EAttachmentRule::KeepWorld, true)); nSpark->SetActorLocation(nLocation);
 	}
 }
+
 void AUnitBase::CreateDamageText(float damage, bool moveRight, bool crit)
 {
 	TSubclassOf<AHelper> nClass = IGameIns::Execute_GetDamageTextClass(GetGameInstance());
@@ -553,6 +555,7 @@ void AUnitBase::SetBlockingAttack(EBlockType type, float start, float end)
 }
 
 void AUnitBase::SetBlockType() { BlockAttackType = nBlockT; }
+
 void AUnitBase::DisableBlocking()
 {
 	PAUSE_TIMER(blockTimer);

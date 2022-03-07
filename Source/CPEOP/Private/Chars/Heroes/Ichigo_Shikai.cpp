@@ -1,6 +1,8 @@
 #include "Chars/Heroes/Ichigo.h"
 #include "Chars/Components/ShadowComponent.h"
 
+#define DANGER_SCALEX 1.6f
+
 //----------------------------------------------/ Input
 
 void AIchigo::sh_InputA()
@@ -154,7 +156,7 @@ void AIchigo::sh_Attack_1()
 	SetBlockingAttack(EBlockType::Forward, getFrameTime(4), BLOCK_DURATION);
 	DangerN(getFrameTime(6), EDangerType::MeleeAttack);
 
-	FDangerOptions nDanger(FVector(1.5f, 1.f, 1.f));
+	FDangerOptions nDanger(FVector(DANGER_SCALEX, 1.f, 1.f));
 	CreateADangerBox(EDangerPriority::Normal, nDanger);
 }
 
@@ -171,6 +173,9 @@ void AIchigo::sh_Attack_2()
 
 	SetBlockingAttack(EBlockType::Forward, getFrameTime(4), BLOCK_DURATION);
 	DangerN(getFrameTime(6), EDangerType::MeleeAttack);
+
+	FDangerOptions nDanger(FVector(DANGER_SCALEX, 1.f, 1.f));
+	CreateADangerBox(EDangerPriority::Normal, nDanger);
 }
 
 void AIchigo::sh_Attack_Air()
@@ -204,6 +209,9 @@ void AIchigo::sh_Attack_FW()
 
 	FTimerHandle nTimer;
 	SET_TIMER(nTimer, this, &AIchigo::sh_GetsugaFW, getFrameTime(5));
+
+	FDangerOptions nDanger(FVector(DANGER_SCALEX, 1.f, 1.f));
+	CreateADangerBox(EDangerPriority::Normal, nDanger);
 }
 
 void AIchigo::sh_GetsugaFW()
@@ -249,6 +257,10 @@ void AIchigo::sh_Attack_B()
 
 	FTimerHandle nTimer;
 	SET_TIMER(nTimer, this, &AIchigo::sh_GetsugaB, getFrameTime(6));
+
+	FDangerOptions nDanger(FVector(DANGER_SCALEX + 0.2f, 1.f, 1.f));
+	nDanger.LifeTime = 0.5f;
+	CreateADangerBox(EDangerPriority::Normal, nDanger);
 }
 
 void AIchigo::sh_GetsugaB()
@@ -343,6 +355,9 @@ void AIchigo::sh_SwordThrow()
 	SpawnHelperDeferred("sh_SwordThrow", getFrameTime(5));
 
 	SetBlockingAttack(EBlockType::Forward, getFrameTime(5), BLOCK_DURATION);
+
+	FDangerOptions nDanger(FVector(4.f, 1.f, 1.f));
+	CreateADangerBox(EDangerPriority::Ranged, nDanger);
 }
 
 void AIchigo::sh_GetsugaStart()
@@ -386,6 +401,9 @@ void AIchigo::sh_GetsugaSlash()
 	GET_STATS->AddStamina(GETSUGA_TENSHOU_COST, getFrameTime(2), true, GetState());
 
 	DangerN(getFrameTime(5), EDangerType::MeleeAttack);
+
+	FDangerOptions nDanger(FVector(DANGER_SCALEX, 1.f, 1.f));
+	CreateADangerBox(EDangerPriority::Normal, nDanger);
 }
 
 void AIchigo::sh_RExplosion()

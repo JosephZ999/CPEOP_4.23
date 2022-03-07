@@ -84,9 +84,9 @@ void AHitBoxBase::AttackRandUnit()
 	}
 }
 
-void AHitBoxBase::Attack(AUnitBase* Enemy)
+void AHitBoxBase::Attack(AUnitBase* _Enemy)
 {
-	if (Enemy && ! Enemy->CheckTeam(OwnerCharacter->GetTeam()) && ! Enemy->IsFalling() && ! Enemy->CheckState(EBaseStates::Teleport))
+	if (_Enemy && ! _Enemy->CheckTeam(OwnerCharacter->GetTeam()) && ! _Enemy->IsFalling() && ! _Enemy->CheckState(EBaseStates::Teleport))
 	{
 		bool fBehind{false};
 		bool blocked{false};
@@ -95,23 +95,23 @@ void AHitBoxBase::Attack(AUnitBase* Enemy)
 		{
 		case EImpulseType::Rotation:
 		{
-			fBehind = (FMath::IsNearlyZero(GetActorRotation().Yaw) && Enemy->IsLookingRight()) ||
-					  (! FMath::IsNearlyZero(GetActorRotation().Yaw) && ! Enemy->IsLookingRight());
+			fBehind = (FMath::IsNearlyZero(GetActorRotation().Yaw) && _Enemy->IsLookingRight()) ||
+					  (! FMath::IsNearlyZero(GetActorRotation().Yaw) && ! _Enemy->IsLookingRight());
 			break;
 		}
 		// case EImpulseType::Location: break;
 		case EImpulseType::OwnerLocation:
 		{
-			fBehind = (Enemy->GetActorLocation().X > OwnerCharacter->GetActorLocation().X && Enemy->IsLookingRight()) ||
-					  (Enemy->GetActorLocation().X < OwnerCharacter->GetActorLocation().X && ! Enemy->IsLookingRight());
+			fBehind = (_Enemy->GetActorLocation().X > OwnerCharacter->GetActorLocation().X && _Enemy->IsLookingRight()) ||
+					  (_Enemy->GetActorLocation().X < OwnerCharacter->GetActorLocation().X && ! _Enemy->IsLookingRight());
 			break;
 		}
 		}
 
-		if (Enemy->ApplyDamage(OwnerCharacter, &Options, fBehind, blocked))
+		if (_Enemy->ApplyDamage(OwnerCharacter, &Options, fBehind, blocked))
 		{
 			++HitCount;
-			OnHit(HitCount, Enemy, blocked);
+			OnHit(HitCount, _Enemy, blocked);
 		}
 	}
 }

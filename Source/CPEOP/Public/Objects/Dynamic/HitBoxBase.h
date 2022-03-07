@@ -69,7 +69,7 @@ private:
 	void AttackRandUnit();
 
 	UFUNCTION()
-	void Attack(AUnitBase* Enemy);
+	void Attack(AUnitBase* _Enemy);
 
 public:
 	virtual void Init(AUnitBase* owner, float damage, float crit) override;

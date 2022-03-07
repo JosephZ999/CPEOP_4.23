@@ -583,19 +583,19 @@ EComboKey AHeroBase::getNextKey()
 // End Actions Combination //====================------------------------------
 
 //---------------------------------------------// Teleport
-void AHeroBase::Teleport()
+bool AHeroBase::Teleport()
 {
-	if (IsImmortal()) return;
+	if (IsImmortal()) return false;
 
 	if (! getHeroStatsComp()->checkStamina(1.f / getHeroStatsComp()->getTeleportCost(), false))
 	{
 		NotEnoughStamina();
-		return;
+		return false;
 	}
 
-	if (MoveVector == FVector::ZeroVector || CheckState(EBaseStates::Fall) || CheckState(EBaseStates::Teleport) || IsDead()) return;
+	if (MoveVector == FVector::ZeroVector || CheckState(EBaseStates::Fall) || CheckState(EBaseStates::Teleport) || IsDead()) return false;
 
-	if (BlockAttackType != EBlockType::None && ! isComboTime()) return;
+	if (BlockAttackType != EBlockType::None && ! isComboTime()) return false;
 
 	tp_initialLocation = GetActorLocation();
 	tp_Vector		   = MoveVector;
@@ -621,6 +621,7 @@ void AHeroBase::Teleport()
 	}
 	SpawnHelperDeferred("Teleport", 0.f, tp_HelperRot, tp_HelperScale);
 	getShadow()->HideShadow();
+	return true;
 }
 void AHeroBase::Teleport(FVector nLocation)
 {

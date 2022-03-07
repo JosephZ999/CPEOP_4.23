@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "PaperCharacter.h"
-#include "sys/Interfaces/UnitGetters.h"
 #include "Sys/Interfaces/AIEvents.h"
 #include "TimerManager.h"
 #include "UnitBase.generated.h"
@@ -117,7 +116,7 @@ enum class EDangerType : uint8
 };
 
 UCLASS()
-class CPEOP_API AUnitBase : public APaperCharacter, public IUnitGetters, public IAIEvents
+class CPEOP_API AUnitBase : public APaperCharacter, public IAIEvents
 {
 	GENERATED_BODY()
 
@@ -133,6 +132,7 @@ public:
 	virtual void Tick(float delta);
 
 	bool Control = true; // Запрещает любые движение
+
 private:
 	// Variables //
 	uint8 State{0};
@@ -160,9 +160,9 @@ public:
 	void SetEnemy(class AUnitBase* ObjectRef);
 
 	UFUNCTION(BlueprintNativeEvent, Category = "AI Interface")
-	void OnDangerDetected(FDangerArg& Arg1, enum EDangerPriority Arg2);
+	void OnDangerDetected(FDangerArg& DangerInfo);
 
-	UFUNCTION()
+	/* *Box Size 25*/
 	void CreateADangerBox(EDangerPriority Priority, FDangerOptions& Options);
 
 	// Getters and Setters
@@ -175,11 +175,11 @@ public:
 
 	uint8& GetStateRef() { return State; }
 
-	bool CheckTeam(uint8 nTeam) { return Team == nTeam; }
+	bool CheckTeam(uint8 nTeam) const { return Team == nTeam; }
 
 	void SetTeam(uint8 nTeam) { Team = nTeam; }
 
-	FORCEINLINE const uint8& GetTeam() { return Team; }
+	FORCEINLINE const uint8& GetTeam() const { return Team; }
 
 	UFUNCTION(BlueprintCallable)
 	virtual class UUnitStatsBase* getStatsComp() const { return nullptr; }
@@ -189,16 +189,17 @@ public:
 
 	// Conditions //
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	virtual bool IsDead() { return Dead; }
+	bool IsDead() const { return Dead; }
 
 	FORCEINLINE bool IsImmortal() { return Immortal; }
 
 	/* Условия блокировки атак */
 	FORCEINLINE virtual bool IsBlocking() { return State == EBaseStates::Blocking; }
 
-	/* Смотрит вправо */
-	FORCEINLINE virtual bool IsLookingRight() { return int(GetActorRotation().Yaw) == 0; }
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE bool IsLookingRight() { return GetActorForwardVector().X > 0.f; }
 
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE bool IsMovingRight() { return MoveVector.X > 0.f; }
 
 	UFUNCTION(BlueprintCallable)

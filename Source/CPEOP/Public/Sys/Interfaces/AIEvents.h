@@ -9,7 +9,10 @@
 UENUM(BlueprintType)
 enum class EDangerPriority : uint8
 {
+	None,
 	Normal,
+	Ranged,
+	Arrow,
 	Explosion,
 };
 
@@ -23,8 +26,20 @@ struct FDangerArg
 	// , param2
 	{
 	}
-	FVector2D Size;
-	FVector2D Position; // 0.5 - Actor in center of danger region
+	EDangerPriority Priority;
+
+	/* Value (0-1)
+	 * Position X - if (Priority == Normal) returns 0 if a Character is near Enemy
+	 * Position X - if (Priority == Explosion) returns 0 when a Character in center
+	 * Position Y -> 0 when Character in center (0-1)
+	 */
+	FVector2D Position;
+
+	//
+	FVector2D StartLocation;
+	FVector2D EndLocation;
+
+	FVector DangerPosition;
 };
 
 USTRUCT(BlueprintType)
@@ -35,7 +50,7 @@ struct FDangerOptions
 	FDangerOptions() {}
 
 	FDangerOptions(FVector nScale)
-		: Location(FVector::ZeroVector)
+		: Location(FVector(nScale.X * 25.f, 0.f, 0.f))
 		, Scale(nScale)
 		, LifeTime(0.3f)
 		, AttachToOwner(true)
@@ -43,7 +58,7 @@ struct FDangerOptions
 	{
 	}
 
-	FDangerOptions(FVector nScale, FVector nLocation)
+	FDangerOptions(FVector nLocation, FVector nScale)
 		: Location(nLocation)
 		, Scale(nScale)
 		, LifeTime(0.3f)
@@ -66,12 +81,9 @@ struct FAIOptions
 
 	FAIOptions() {}
 
-	UPROPERTY(BlueprintReadWrite)
-	float MinDist;
-	UPROPERTY(BlueprintReadWrite)
-	float MaxDist;
-	UPROPERTY(BlueprintReadWrite)
-	float AttackVel;
+	UPROPERTY(BlueprintReadWrite) float MinDist	  = 50.f;
+	UPROPERTY(BlueprintReadWrite) float MaxDist	  = 100.f;
+	UPROPERTY(BlueprintReadWrite) float AttackVel = 1.f;
 };
 
 // This class does not need to be modified.
@@ -94,7 +106,7 @@ public:
 	void SetAIEnabled(bool Enable);
 
 	UFUNCTION(BlueprintNativeEvent, Category = "AI Interface")
-	void OnDangerDetected(FDangerArg& Arg1, EDangerPriority Arg2);
+	void OnDangerDetected(FDangerArg& DangerInfo);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AI Interface")
 	void SetEnemy(class AUnitBase* ObjectRef);
