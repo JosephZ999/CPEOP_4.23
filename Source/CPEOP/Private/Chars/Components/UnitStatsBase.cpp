@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Chars/Components/UnitStatsBase.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
@@ -16,10 +15,9 @@ UUnitStatsBase::UUnitStatsBase()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	AddStaminaValue = { 0 };
+	AddStaminaValue = {0};
 	// ...
 }
-
 
 // Called when the game starts
 void UUnitStatsBase::BeginPlay()
@@ -28,7 +26,6 @@ void UUnitStatsBase::BeginPlay()
 
 	OwnerState = &(Cast<AUnitBase>(GetOwner())->GetStateRef());
 }
-
 
 // Called every frame
 void UUnitStatsBase::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -48,7 +45,7 @@ void UUnitStatsBase::AddStamina(float value, float time, bool skill, int desired
 
 		if (desiredState >= 0)
 			DesiredState = desiredState;
-		
+
 		GetWorld()->GetTimerManager().SetTimer(AddStaminaTimer, this, &UUnitStatsBase::AddStaminaDeffered, time);
 	}
 	else
@@ -75,5 +72,5 @@ void UUnitStatsBase::RestoreStamina()
 
 bool UUnitStatsBase::AddStaminaCanceled()
 {
-	return !(*OwnerState == DesiredState);
+	return ! (*OwnerState == DesiredState);
 }

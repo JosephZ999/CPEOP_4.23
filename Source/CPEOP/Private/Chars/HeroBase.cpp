@@ -112,7 +112,10 @@ UCurveFloat* AHeroBase::FindCurveFloat(FString path)
 	FString fullPath   = "CurveFloat'/Game/" + path + "." + objectName + "'";
 
 	ConstructorHelpers::FObjectFinder<UCurveFloat> nCurve((TEXT("%s"), *fullPath));
-	if (nCurve.Succeeded()) { return nCurve.Object; }
+	if (nCurve.Succeeded())
+	{
+		return nCurve.Object;
+	}
 	return nullptr;
 }
 
@@ -128,7 +131,10 @@ void AHeroBase::PlayTimeline(UObject* targetObject, UCurveFloat* curve, FName fu
 	}
 }
 
-void AHeroBase::StopTimeline() { CurveTimeline.Stop(); }
+void AHeroBase::StopTimeline()
+{
+	CurveTimeline.Stop();
+}
 
 //
 void AHeroBase::EndState()
@@ -153,7 +159,10 @@ void AHeroBase::StopSprinting()
 	Sprinting = false;
 }
 
-void AHeroBase::SprintPowReducing() { GetHeroStats()->AddStamina(-0.01f); }
+void AHeroBase::SprintPowReducing()
+{
+	GetHeroStats()->AddStamina(-0.01f);
+}
 
 void AHeroBase::Dash(FVector fwVector)
 {
@@ -227,7 +236,10 @@ void AHeroBase::Move()
 		}
 
 		AddMovementInput(MoveVector, MovementScale);
-		if (MoveVector != FVector::ZeroVector) { SetRotation(IsMovingRight()); }
+		if (MoveVector != FVector::ZeroVector)
+		{
+			SetRotation(IsMovingRight());
+		}
 	}
 }
 
@@ -259,7 +271,10 @@ void AHeroBase::UpdateAnim()
 	}
 	case EBaseStates::Jumping:
 	{
-		if (velocity.Z > JUMP_ERROR_T) { anim = AnimData->FindRef("JumpUp"); }
+		if (velocity.Z > JUMP_ERROR_T)
+		{
+			anim = AnimData->FindRef("JumpUp");
+		}
 		else if (velocity.Z < -JUMP_ERROR_T)
 		{
 			anim = AnimData->FindRef("JumpDown");
@@ -272,7 +287,10 @@ void AHeroBase::UpdateAnim()
 	}
 	case EBaseStates::Blocking:
 	{
-		if (FMath::IsNearlyZero(GetUnitVelocity().Z, 50.f)) { anim = AnimData->FindRef("Block"); }
+		if (FMath::IsNearlyZero(GetUnitVelocity().Z, 50.f))
+		{
+			anim = AnimData->FindRef("Block");
+		}
 		else
 		{
 			anim = AnimData->FindRef("BlockAir");
@@ -281,7 +299,10 @@ void AHeroBase::UpdateAnim()
 	}
 	case EBaseStates::Fall:
 	{
-		if (GetCharacterMovement()->IsMovingOnGround()) { anim = AnimData->FindRef("FallHold"); }
+		if (GetCharacterMovement()->IsMovingOnGround())
+		{
+			anim = AnimData->FindRef("FallHold");
+		}
 		else if (velocity.Z > 0.f)
 		{
 			anim = AnimData->FindRef("FallUp");
@@ -295,21 +316,30 @@ void AHeroBase::UpdateAnim()
 
 	} // End Switch
 
-	if (anim) { GetSprite()->SetFlipbook(anim); }
+	if (anim)
+	{
+		GetSprite()->SetFlipbook(anim);
+	}
 
 } // End Function
 
 void AHeroBase::OnCompHit(
 	UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (OtherComp->ComponentHasTag("Wall")) { LockMovement(Hit.ImpactPoint); }
+	if (OtherComp->ComponentHasTag("Wall"))
+	{
+		LockMovement(Hit.ImpactPoint);
+	}
 }
 
 void AHeroBase::LockMovement(FVector Point)
 {
 	Point = GetActorLocation() - Point;
 
-	if (Point.Y > 5.f) { LockUp = true; }
+	if (Point.Y > 5.f)
+	{
+		LockUp = true;
+	}
 	else if (Point.Y < -5.f)
 	{
 		LockDown = true;
@@ -432,11 +462,17 @@ void AHeroBase::SetCameraViewA(FVector CameraLocation, float Duration, ECameraMo
 	SET_TIMER(CamActionTimer, this, &AHeroBase::DisableCameraViewA, FMath::Max(Duration, 0.2f));
 }
 
-void AHeroBase::DisableCameraViewA() { CameraMode = CameraLastMode; }
+void AHeroBase::DisableCameraViewA()
+{
+	CameraMode = CameraLastMode;
+}
 
 void AHeroBase::SetCameraTarget(AUnitBase* target, float dist)
 {
-	if (target == nullptr || target == this) { CameraTargetActor = nullptr; }
+	if (target == nullptr || target == this)
+	{
+		CameraTargetActor = nullptr;
+	}
 	else
 	{
 		CameraTargetActor = target;
@@ -481,7 +517,10 @@ void AHeroBase::Block()
 void AHeroBase::BlockStop()
 {
 	PAUSE_TIMER(BlockTimer);
-	if (GetState() == EBaseStates::Blocking) { EndStateDeferred(cTime(0.1f)); }
+	if (GetState() == EBaseStates::Blocking)
+	{
+		EndStateDeferred(cTime(0.1f));
+	}
 }
 
 void AHeroBase::PowCharge()
@@ -549,7 +588,10 @@ void AHeroBase::SkillDisable()
 	HeroSkillDeactivated();
 }
 
-void AHeroBase::SkillCanceled() { PAUSE_TIMER(skillEnTimer); }
+void AHeroBase::SkillCanceled()
+{
+	PAUSE_TIMER(skillEnTimer);
+}
 
 // End Actions //================================------------------------------
 
@@ -563,9 +605,15 @@ void AHeroBase::Combo(float time)
 	}
 }
 
-void AHeroBase::ComboI() { ComboSuccess = true; }
+void AHeroBase::ComboI()
+{
+	ComboSuccess = true;
+}
 
-void AHeroBase::addKey(EComboKey key) { ComboKeys.Add(key); }
+void AHeroBase::addKey(EComboKey key)
+{
+	ComboKeys.Add(key);
+}
 
 void AHeroBase::ResetKeys()
 {
@@ -577,7 +625,10 @@ void AHeroBase::ResetKeys()
 EComboKey AHeroBase::getNextKey()
 {
 	++KeyIndex;
-	if (ComboKeys.Num() > KeyIndex) { return ComboKeys[KeyIndex]; }
+	if (ComboKeys.Num() > KeyIndex)
+	{
+		return ComboKeys[KeyIndex];
+	}
 	else
 	{
 		return EComboKey::CK_None;
@@ -588,7 +639,8 @@ EComboKey AHeroBase::getNextKey()
 //---------------------------------------------// Teleport
 bool AHeroBase::Teleport()
 {
-	if (IsImmortal()) return false;
+	if (IsImmortal())
+		return false;
 
 	if (! GetHeroStats()->checkStamina(1.f / GetHeroStats()->getTeleportCost(), false))
 	{
@@ -596,9 +648,11 @@ bool AHeroBase::Teleport()
 		return false;
 	}
 
-	if (MoveVector == FVector::ZeroVector || CheckState(EBaseStates::Fall) || CheckState(EBaseStates::Teleport) || IsDead()) return false;
+	if (MoveVector == FVector::ZeroVector || CheckState(EBaseStates::Fall) || CheckState(EBaseStates::Teleport) || IsDead())
+		return false;
 
-	if (BlockAttackType != EBlockType::None && ! isComboTime()) return false;
+	if (BlockAttackType != EBlockType::None && ! isComboTime())
+		return false;
 
 	tp_initialLocation = GetActorLocation();
 	tp_Vector		   = MoveVector;
@@ -628,13 +682,17 @@ bool AHeroBase::Teleport()
 }
 void AHeroBase::Teleport(FVector nLocation)
 {
-	if (IsImmortal()) return;
+	if (IsImmortal())
+		return;
 
-	if (! GetHeroStats()->checkStamina(1.f / GetHeroStats()->getTeleportCost(), false)) return;
+	if (! GetHeroStats()->checkStamina(1.f / GetHeroStats()->getTeleportCost(), false))
+		return;
 
-	if (CheckState(EBaseStates::Fall) || CheckState(EBaseStates::Teleport) || IsDead()) return;
+	if (CheckState(EBaseStates::Fall) || CheckState(EBaseStates::Teleport) || IsDead())
+		return;
 
-	if (BlockAttackType != EBlockType::None && ! isComboTime()) return;
+	if (BlockAttackType != EBlockType::None && ! isComboTime())
+		return;
 
 	tp_initialLocation	  = GetActorLocation();
 	nLocation.Z			  = tp_initialLocation.Z;
@@ -692,11 +750,17 @@ void AHeroBase::ChangeForm(FName formName)
 	GetHeroStats()->SetForm(formName);
 	GetCharacterMovement()->MaxWalkSpeed = GetHeroStats()->getWalkSpeed();
 }
-void AHeroBase::InitForm(FName formName, FVector stats) { GetHeroStats()->AddForms(formName, stats); }
+void AHeroBase::InitForm(FName formName, FVector stats)
+{
+	GetHeroStats()->AddForms(formName, stats);
+}
 // End
 
 //---------------------------------------------// Hero Inputs
-void AHeroBase::BtnSetMovement_Implementation(FVector Value) { SetMoveVector(Value); }
+void AHeroBase::BtnSetMovement_Implementation(FVector Value)
+{
+	SetMoveVector(Value);
+}
 
 void AHeroBase::BtnAction_Implementation(EInputActionType action, bool btnReleased)
 {
@@ -813,7 +877,10 @@ void AHeroBase::BtnDash_Implementation(FVector forwardVector, bool Released)
 
 		if (FVector::PointsAreNear(BtnDashVector, forwardVector, 0.25f))
 		{
-			if (! CheckState(EBaseStates::Stand)) { Dash(BtnDashVector); }
+			if (! CheckState(EBaseStates::Stand))
+			{
+				Dash(BtnDashVector);
+			}
 		}
 		else
 		{
@@ -830,15 +897,17 @@ void AHeroBase::BtnDash_Implementation(FVector forwardVector, bool Released)
 	}
 }
 
-void AHeroBase::BtnTeleport_Implementation() { Teleport(); }
+void AHeroBase::BtnTeleport_Implementation()
+{
+	Teleport();
+}
 
 //----------------------------------------------// Unit Interface Implementation
 
-uint8 AHeroBase::GetUnitTeam_Implementation() { return GetTeam(); }
-
-bool AHeroBase::IsItHero_Implementation() { return true; }
-
-bool AHeroBase::IsAlive_Implementation() { return ! IsDead(); }
+bool AHeroBase::IsItHero_Implementation()
+{
+	return true;
+}
 
 bool AHeroBase::AddHealth_Implementation(float Value)
 {
@@ -850,4 +919,27 @@ bool AHeroBase::AddPower_Implementation(float Value)
 {
 	GetHeroStats()->AddPower(Value);
 	return true;
+}
+
+bool AHeroBase::AddExp_Implementation(int32 Value)
+{
+	GetHeroStats()->AddExp(Value);
+	return true;
+}
+
+void AHeroBase::UseLevelPoints_Implementation()
+{
+	uint8	Points = GetHeroStats()->GetLevelScore();
+	FVector Stats  = FVector::ZeroVector;
+	for (Points; Points > 0; Points--)
+	{
+		uint8 Rand = FMath::RandRange(0, 2);
+		switch (Rand)
+		{
+		case 0: Stats += FVector(1.f, 0.f, 0.f); break;
+		case 1: Stats += FVector(0.f, 1.f, 0.f); break;
+		case 2: Stats += FVector(0.f, 0.f, 1.f); break;
+		}
+	}
+	GetHeroStats()->AddStats(Stats, false);
 }

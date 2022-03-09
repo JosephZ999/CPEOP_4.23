@@ -149,7 +149,10 @@ void AIchigo::BeginPlay()
 
 void AIchigo::Landed(const FHitResult& Hit)
 {
-	if (CheckState(EIchigoState::Ichi_Attack_Air)) { EndState(); }
+	if (CheckState(EIchigoState::Ichi_Attack_Air))
+	{
+		EndState();
+	}
 	Super::Landed(Hit);
 }
 
@@ -158,7 +161,10 @@ void AIchigo::Attack()
 {
 	Super::Attack();
 
-	if (GET_STATS->FormName == SHIKAI_NAME) { sh_InputA(); }
+	if (GET_STATS->FormName == SHIKAI_NAME)
+	{
+		sh_InputA();
+	}
 	else if (GET_STATS->FormName == BANKAI_NAME)
 	{
 		b_InputA();
@@ -169,7 +175,10 @@ void AIchigo::AttackBack()
 {
 	Super::AttackBack();
 
-	if (GET_STATS->FormName == SHIKAI_NAME) { sh_InputB(); }
+	if (GET_STATS->FormName == SHIKAI_NAME)
+	{
+		sh_InputB();
+	}
 	else if (GET_STATS->FormName == BANKAI_NAME)
 	{
 		b_InputB();
@@ -180,7 +189,10 @@ void AIchigo::AttackForward()
 {
 	Super::AttackForward();
 
-	if (GET_STATS->FormName == SHIKAI_NAME) { sh_InputFW(); }
+	if (GET_STATS->FormName == SHIKAI_NAME)
+	{
+		sh_InputFW();
+	}
 	else if (GET_STATS->FormName == BANKAI_NAME)
 	{
 		b_InputFW();
@@ -189,7 +201,10 @@ void AIchigo::AttackForward()
 
 void AIchigo::AttackDown()
 {
-	if (GET_STATS->FormName == SHIKAI_NAME) { sh_InputD(); }
+	if (GET_STATS->FormName == SHIKAI_NAME)
+	{
+		sh_InputD();
+	}
 	else if (GET_STATS->FormName == BANKAI_NAME)
 	{
 		b_InputD();
@@ -203,7 +218,10 @@ void AIchigo::ComboI()
 
 	FName form = GetHeroStats()->FormName;
 
-	if (form == SHIKAI_NAME) { ShikaiComboI(); }
+	if (form == SHIKAI_NAME)
+	{
+		ShikaiComboI();
+	}
 	else if (form == BANKAI_NAME)
 	{
 		BankaiComboI();

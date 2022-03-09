@@ -8,7 +8,10 @@
 
 ARenji::ARenji()
 {
-	if (GetHeroStats()) { InitForm(R_SHIKAI_NAME, {4, 3, 3}); }
+	if (GetHeroStats())
+	{
+		InitForm(R_SHIKAI_NAME, {4, 3, 3});
+	}
 
 	AnimData = &AnimList;
 
@@ -38,13 +41,25 @@ void ARenji::BeginPlay()
 }
 
 //---------------------------------------------// Inputs
-void ARenji::Attack() { Super::Attack(); }
+void ARenji::Attack()
+{
+	Super::Attack();
+}
 
-void ARenji::AttackBack() { Super::AttackBack(); }
+void ARenji::AttackBack()
+{
+	Super::AttackBack();
+}
 
-void ARenji::AttackForward() { Super::AttackForward(); }
+void ARenji::AttackForward()
+{
+	Super::AttackForward();
+}
 
 //---------------------------------------------// Actions
 
 //---------------------------------------------// Combinations
-void ARenji::ComboI() { Super::ComboI(); }
+void ARenji::ComboI()
+{
+	Super::ComboI();
+}

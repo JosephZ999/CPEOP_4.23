@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "ShadowComponent.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
@@ -60,7 +59,6 @@ void UShadowComponent::BeginPlay()
 	}
 }
 
-
 // Called every frame
 void UShadowComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
@@ -69,10 +67,9 @@ void UShadowComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	if (ShadowObj)
 	{
 		FVector nLoc = Owner->GetActorLocation();
-		nLoc.Z = 0.f;
+		nLoc.Z		 = 0.f;
 		ShadowObj->SetActorLocation(nLoc);
 	}
-	
 
 	// ...
 }

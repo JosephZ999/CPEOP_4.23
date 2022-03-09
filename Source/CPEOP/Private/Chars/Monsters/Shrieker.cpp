@@ -22,7 +22,10 @@ AShrieker::AShrieker()
 
 //--------------------------------------//
 
-void AShrieker::BeginPlay() { Super::BeginPlay(); }
+void AShrieker::BeginPlay()
+{
+	Super::BeginPlay();
+}
 
 // Animation
 
@@ -30,7 +33,10 @@ void AShrieker::AnimUpdate()
 {
 	if (CheckState(EBaseStates::Stand))
 	{
-		if (MoveVector.IsNearlyZero(0.1f) || FMath::IsNearlyZero(GetUnitVelocity().X, 1.f)) { SetAnim(FName("Stand"), false); }
+		if (MoveVector.IsNearlyZero(0.1f) || FMath::IsNearlyZero(GetUnitVelocity().X, 1.f))
+		{
+			SetAnim(FName("Stand"), false);
+		}
 		else
 		{
 			SetAnim(FName("Walk"), false);
@@ -63,7 +69,10 @@ void AShrieker::EndState()
 
 void AShrieker::Landed(const FHitResult& Hit)
 {
-	if (CheckState(EBaseStates::Hit)) { GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying); }
+	if (CheckState(EBaseStates::Hit))
+	{
+		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
+	}
 }
 
 //--------------------------------------//
@@ -105,4 +114,7 @@ AShriekerSummon* AShrieker::SpawnSummon(TSubclassOf<class AShriekerSummon> Class
 	return nullptr;
 }
 
-void AShrieker::SetSummonsNum(uint8 Num) { SummonsNum = Num; }
+void AShrieker::SetSummonsNum(uint8 Num)
+{
+	SummonsNum = Num;
+}

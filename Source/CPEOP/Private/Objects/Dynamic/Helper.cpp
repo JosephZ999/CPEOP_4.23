@@ -30,6 +30,9 @@ AHelper::AHelper(const FObjectInitializer& ObjectInitializer)
 }
 
 // Called when the game starts or when spawned
-void AHelper::BeginPlay() { Super::BeginPlay(); }
+void AHelper::BeginPlay()
+{
+	Super::BeginPlay();
+}
 
 void AHelper::OnOwnerStateChanged() {}

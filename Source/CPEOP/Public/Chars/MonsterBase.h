@@ -2,9 +2,8 @@
 
 #pragma once
 
-#include "Chars/Components/MonsterStats.h"
-
 #include "CoreMinimal.h"
+#include "Chars/Components/MonsterStats.h"
 #include "Chars/UnitBase.h"
 #include "MonsterBase.generated.h"
 
@@ -90,4 +89,12 @@ private:
 	void		 AttackSuccess();
 	FTimerHandle AttackEndTimer;
 	bool		 IsAttacking;
+
+	//------------------------------------------// Unit Interface
+public:
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Hero"))
+	bool IsItHero();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "GetExp"))
+	int32 GetExpForKill();
 };

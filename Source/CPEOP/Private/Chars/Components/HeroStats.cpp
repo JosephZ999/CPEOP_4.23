@@ -6,7 +6,7 @@
 #include "TimerManager.h"
 #include "Engine/World.h"
 
-#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "Sys/Interfaces/GameIns.h"
 
 // Consts per stat
 #define HEALTH			2.f
@@ -26,7 +26,13 @@
 #define BASE_HEALTH		10.F
 #define BASE_POWER		10.F
 
-void UHeroStats::BeginPlay() { Super::BeginPlay(); }
+#define HP_RESTORE		0.25f // Percent
+#define MP_RESTORE		0.25f // Percent
+
+void UHeroStats::BeginPlay()
+{
+	Super::BeginPlay();
+}
 
 void UHeroStats::Init()
 {
@@ -94,7 +100,8 @@ void UHeroStats::Init()
 // Transformation //=============================------------------------------
 void UHeroStats::AddForms(FName name, FVector stats)
 {
-	if (FormName == "None") FormName = name;
+	if (FormName == "None")
+		FormName = name;
 
 	HeroForms.Add(name, FFormStats(stats.X, stats.Y, stats.Z));
 }
@@ -115,7 +122,8 @@ void UHeroStats::AddExp(int32 exp)
 	exp = (float)exp * ExpMultiplier;
 	Exp += exp;
 
-	if (Exp < MaxExp) return;
+	if (Exp < MaxExp)
+		return;
 
 	FTimerHandle levelingTimer;
 	while (Exp >= MaxExp)
@@ -129,19 +137,15 @@ void UHeroStats::AddExp(int32 exp)
 		SavedStats.exp	  = Exp;
 		SavedStats.maxExp = MaxExp;
 
-		// Через таймер сообщить контроллеру
 		GetWorld()->GetTimerManager().SetTimer(levelingTimer, this, &UHeroStats::LevelUp, 0.2f);
 	}
 }
 
 void UHeroStats::LevelUp()
 {
-	AMyPlayerController* controller = Cast<AMyPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
-	if (controller) { controller->CharLevelUp(GetOwner()); }
-	else
-	{
-		UE_LOG(LogTemp, Fatal, TEXT("Couldn't find PlayerController"));
-	}
+	AddHealth(GetMaxHealth() * HP_RESTORE);
+	AddPower(GetMaxPower() * MP_RESTORE);
+	IGameIns::Execute_OnHeroLevelUp(GetWorld()->GetGameInstance(), GetOwner());
 }
 
 bool UHeroStats::AddStats(FVector stats, bool force)
@@ -179,9 +183,11 @@ void UHeroStats::AddStamina(float value, float time, bool skill, int desiredStat
 {
 	Super::AddStamina(value, time, skill, desiredState);
 
-	if (time > 0.f) return;
+	if (time > 0.f)
+		return;
 
-	if (desiredState >= 0 && AddStaminaCanceled()) return;
+	if (desiredState >= 0 && AddStaminaCanceled())
+		return;
 
 	if (skill)
 	{
@@ -199,27 +205,45 @@ void UHeroStats::RestoreStamina()
 {
 	Super::RestoreStamina();
 
-	if (RestoreStaminaCondition()) { Stamina = FMath::Min(Stamina + StaminaRestoreSpeed, 1.f); }
+	if (RestoreStaminaCondition())
+	{
+		Stamina = FMath::Min(Stamina + StaminaRestoreSpeed, 1.f);
+	}
 }
 
 bool UHeroStats::checkStamina(float value, bool skill) const
 {
-	if (skill) { return (value / SkillReducer) < Stamina; }
+	if (skill)
+	{
+		return (value / SkillReducer) < Stamina;
+	}
 	else
 	{
 		return value <= Stamina;
 	}
 }
 
-bool UHeroStats::checkPower(float value) const { return value <= Power; }
+bool UHeroStats::checkPower(float value) const
+{
+	return value <= Power;
+}
 
-void UHeroStats::AddHealth(float value) { Health = FMath::Clamp(Health + value, 0.1f, MaxHealth); }
+void UHeroStats::AddHealth(float value)
+{
+	Health = FMath::Clamp(Health + value, 0.1f, MaxHealth);
+}
 
-void UHeroStats::AddPower(float value) { Power = FMath::Clamp(Power + value, 0.1f, MaxPower); }
+void UHeroStats::AddPower(float value)
+{
+	Power = FMath::Clamp(Power + value, 0.1f, MaxPower);
+}
 
 void UHeroStats::SetSkill(FName skillName, bool value)
 {
-	if (SavedStats.Skills.Contains(skillName)) { SavedStats.Skills[skillName] = value; }
+	if (SavedStats.Skills.Contains(skillName))
+	{
+		SavedStats.Skills[skillName] = value;
+	}
 	else
 	{
 		SavedStats.Skills.Add(skillName, value);
@@ -228,7 +252,10 @@ void UHeroStats::SetSkill(FName skillName, bool value)
 
 bool UHeroStats::CheckSkill(FName key)
 {
-	if (SavedStats.Skills.Contains(key)) { return SavedStats.Skills[key]; }
+	if (SavedStats.Skills.Contains(key))
+	{
+		return SavedStats.Skills[key];
+	}
 	else
 	{
 		return false;

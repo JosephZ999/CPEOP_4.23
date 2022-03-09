@@ -42,26 +42,19 @@ void AShriekerAI::AIBody()
 
 	switch (Action)
 	{
-	case EActionType::Attack:
-	{
-		ActionMode();
-		break;
-	}
-	case EActionType::GetDistance:
-	{
-		GetDistanceMode();
-		break;
-	}
-	case EActionType::Summon:
-	{
-		Summon();
-		break;
-	}
+	case EActionType::Attack: ActionMode(); break;
+
+	case EActionType::GetDistance: GetDistanceMode(); break;
+
+	case EActionType::Summon: Summon(); break;
 
 	} // Switch End
 }
 
-void AShriekerAI::StopMoving() { OwnerRef->SetMoveVector(FVector(0.f)); }
+void AShriekerAI::StopMoving()
+{
+	OwnerRef->SetMoveVector(FVector(0.f));
+}
 
 // Actions
 
@@ -87,7 +80,10 @@ void AShriekerAI::ActionMode()
 
 void AShriekerAI::GetDistanceMode()
 {
-	if (CanOwnerMoveAway()) { DesiredLocation = getEnemyLocation(DistanceMax); }
+	if (CanOwnerMoveAway())
+	{
+		DesiredLocation = getEnemyLocation(DistanceMax);
+	}
 
 	DesiredLocation.Z = 150.f;
 
@@ -111,7 +107,10 @@ void AShriekerAI::GetDistanceMode()
 		{
 			MoveAwayProgress = FMath::Max(MoveAwayProgress - 0.1f, 0.f);
 
-			if (MoveAwayProgress <= 1.f) { IsMovingAway = false; }
+			if (MoveAwayProgress <= 1.f)
+			{
+				IsMovingAway = false;
+			}
 		}
 	}
 	else
@@ -121,7 +120,10 @@ void AShriekerAI::GetDistanceMode()
 		MoveAwayProgress = 0.f;
 		IsMovingAway	 = false;
 
-		if (OwnerRef->SummonsNum == 0) { Action = EActionType::Attack; }
+		if (OwnerRef->SummonsNum == 0)
+		{
+			Action = EActionType::Attack;
+		}
 		else
 		{
 			Action = EActionType::Summon;
@@ -135,7 +137,10 @@ void AShriekerAI::GetDistanceMode()
 
 void AShriekerAI::Summon()
 {
-	if (CanOwnerMoveAway()) { DesiredLocation = getEnemyLocation(DistanceMax); }
+	if (CanOwnerMoveAway())
+	{
+		DesiredLocation = getEnemyLocation(DistanceMax);
+	}
 
 	DesiredLocation.Z = 150.f;
 
@@ -159,7 +164,10 @@ void AShriekerAI::Summon()
 		{
 			MoveAwayProgress = FMath::Max(MoveAwayProgress - 0.1f, 0.f);
 
-			if (MoveAwayProgress <= 1.f) { IsMovingAway = false; }
+			if (MoveAwayProgress <= 1.f)
+			{
+				IsMovingAway = false;
+			}
 		}
 	}
 	else

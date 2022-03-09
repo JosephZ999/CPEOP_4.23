@@ -3,9 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PaperCharacter.h"
-#include "Sys/Interfaces/AIEvents.h"
 #include "TimerManager.h"
+#include "Sys/Interfaces/UnitInterface.h"
+#include "Sys/Interfaces/AIEvents.h"
+#include "PaperCharacter.h"
 #include "UnitBase.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnStateChanged);
@@ -116,7 +117,7 @@ enum class EDangerType : uint8
 };
 
 UCLASS()
-class CPEOP_API AUnitBase : public APaperCharacter, public IAIEvents
+class CPEOP_API AUnitBase : public APaperCharacter, public IAIEvents, public IUnitInterface
 {
 	GENERATED_BODY()
 
@@ -343,4 +344,12 @@ protected:
 
 public:
 	EDangerType GetDangerType() { return DangerNoticeType; }
+
+	//------------------------------------------// Unit Interface
+public:
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Alive"))
+	bool IsAlive();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Team"))
+	uint8 GetUnitTeam();
 };

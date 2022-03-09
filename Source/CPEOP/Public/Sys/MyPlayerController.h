@@ -23,9 +23,6 @@ public:
 	void HideInputWidget();
 
 	// Character Calls
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void CharLevelUp(AActor* Hero);
-
 	UFUNCTION(BlueprintImplementableEvent)
 	void HeroSkillActivated();
 

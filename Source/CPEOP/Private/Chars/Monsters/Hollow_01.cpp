@@ -48,7 +48,10 @@ void AHollow_01::AnimUpdate()
 	{
 		FVector2D Speed = {GetVelocity().X, GetVelocity().Y};
 
-		if (GetCharacterMovement()->IsMovingOnGround() && ! Speed.IsNearlyZero(10.f)) { SetAnim(FName("Walk"), false); }
+		if (GetCharacterMovement()->IsMovingOnGround() && ! Speed.IsNearlyZero(10.f))
+		{
+			SetAnim(FName("Walk"), false);
+		}
 		else
 		{
 			SetAnim(FName("Stand"), false);

@@ -22,13 +22,22 @@ AUnitAIBase::AUnitAIBase()
 	_SearchEnemyStepNum	 = 10;
 }
 
-FVector AUnitAIBase::getPawnLocation() const { return GetPawn()->GetActorLocation(); }
+FVector AUnitAIBase::getPawnLocation() const
+{
+	return GetPawn()->GetActorLocation();
+}
 
-FVector AUnitAIBase::getEnemyLocation() const { return getEnemy()->GetActorLocation(); }
+FVector AUnitAIBase::getEnemyLocation() const
+{
+	return getEnemy()->GetActorLocation();
+}
 
 FVector AUnitAIBase::getEnemyLocation(float dist) const
 {
-	if (getPawnLocation().X > getEnemyLocation().X) { return getEnemyLocation() + FVector(dist, 1.f, 0.f); }
+	if (getPawnLocation().X > getEnemyLocation().X)
+	{
+		return getEnemyLocation() + FVector(dist, 1.f, 0.f);
+	}
 	else
 	{
 		return getEnemyLocation() - FVector(dist, 1.f, 0.f);
@@ -59,18 +68,27 @@ FVector AUnitAIBase::getForwardVector(const FVector& A, const FVector& B)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-void AUnitAIBase::BeginPlay() { Super::BeginPlay(); }
+void AUnitAIBase::BeginPlay()
+{
+	Super::BeginPlay();
+}
 
 void AUnitAIBase::SetAIEnabled_Implementation(bool Enable)
 {
-	if (Enable) { GetWorldTimerManager().SetTimer(_AITick, this, &AUnitAIBase::AIBody, 0.05f, true); }
+	if (Enable)
+	{
+		GetWorldTimerManager().SetTimer(_AITick, this, &AUnitAIBase::AIBody, 0.05f, true);
+	}
 	else
 	{
 		GetWorldTimerManager().PauseTimer(_AITick);
 	}
 }
 
-void AUnitAIBase::SetEnemy_Implementation(AUnitBase* ObjectRef) { _Enemy = ObjectRef; }
+void AUnitAIBase::SetEnemy_Implementation(AUnitBase* ObjectRef)
+{
+	_Enemy = ObjectRef;
+}
 
 void AUnitAIBase::Wait(float time)
 {
@@ -78,7 +96,10 @@ void AUnitAIBase::Wait(float time)
 	GetWorldTimerManager().SetTimer(_AITick, this, &AUnitAIBase::ResumeAI, FMath::Max(time, 0.1f));
 }
 
-void AUnitAIBase::ResumeAI() { GetWorldTimerManager().SetTimer(_AITick, this, &AUnitAIBase::AIBody, 0.05f, true); }
+void AUnitAIBase::ResumeAI()
+{
+	GetWorldTimerManager().SetTimer(_AITick, this, &AUnitAIBase::AIBody, 0.05f, true);
+}
 
 void AUnitAIBase::OnDangerDetected_Implementation(FDangerArg& DangerInfo)
 {
@@ -104,7 +125,8 @@ bool AUnitAIBase::IsInsideADangerBox()
 
 bool AUnitAIBase::SearchEnemy(uint8 team)
 {
-	if (! CanSearch) return false;
+	if (! CanSearch)
+		return false;
 
 	// Reload
 	CanSearch = false;
@@ -124,11 +146,15 @@ bool AUnitAIBase::SearchEnemy(uint8 team)
 		{
 			AUnitBase* unit = Cast<AUnitBase>(elem);
 
-			if (unit->IsDead() || elem == GetPawn()) continue;
+			if (unit->IsDead() || elem == GetPawn())
+				continue;
 
 			if (unit->CheckTeam(team))
 			{
-				if (! GetAlly()) { _Ally = unit; }
+				if (! GetAlly())
+				{
+					_Ally = unit;
+				}
 				continue;
 			}
 			else
@@ -142,7 +168,10 @@ bool AUnitAIBase::SearchEnemy(uint8 team)
 	return false;
 }
 
-void AUnitAIBase::EnableSearching() { CanSearch = true; }
+void AUnitAIBase::EnableSearching()
+{
+	CanSearch = true;
+}
 
 AUnitBase* AUnitAIBase::GetAlly()
 {

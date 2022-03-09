@@ -41,7 +41,8 @@ void AShriekerSummon::AnimUpdate()
 
 void AShriekerSummon::LandAttack()
 {
-	if (! IsOnGround() || ! CheckState(EBaseStates::Stand)) return;
+	if (! IsOnGround() || ! CheckState(EBaseStates::Stand))
+		return;
 
 	FState nState;
 	nState.State	 = EMonsterStates::M_Attack_1;
@@ -53,9 +54,11 @@ void AShriekerSummon::LandAttack()
 
 void AShriekerSummon::JumpAttack()
 {
-	if (IsOnGround() || ! CheckState(EBaseStates::Jumping)) return;
+	if (IsOnGround() || ! CheckState(EBaseStates::Jumping))
+		return;
 
-	if (GetUnitVelocity().Z < 50.f) return;
+	if (GetUnitVelocity().Z < 50.f)
+		return;
 
 	FState nState;
 	nState.State	 = EMonsterStates::M_Attack_2;
@@ -67,7 +70,8 @@ void AShriekerSummon::JumpAttack()
 
 void AShriekerSummon::JumpTo(FVector forwardVector)
 {
-	if (! IsOnGround() || ! CheckState(EBaseStates::Stand)) return;
+	if (! IsOnGround() || ! CheckState(EBaseStates::Stand))
+		return;
 
 	FState nState;
 	nState.State	 = EBaseStates::Dash;

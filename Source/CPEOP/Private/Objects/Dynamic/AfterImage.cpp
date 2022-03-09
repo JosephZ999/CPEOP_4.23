@@ -10,14 +10,13 @@
 AAfterImage::AAfterImage()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	Sprite = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("Sprite"));
-	RootComponent = Sprite;
+	Sprite						  = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("Sprite"));
+	RootComponent				  = Sprite;
 	Sprite->SetRelativeScale3D(FVector(1.f, 1.f, 1.1f));
 	Sprite->SetTranslucentSortPriority(2);
-	//Sprite->Stop();
-	//Sprite->SetLooping(false);
+	// Sprite->Stop();
+	// Sprite->SetLooping(false);
 
-	
 	ConstructorHelpers::FObjectFinder<UCurveFloat> nCurveFloat(TEXT(FADE_CURVE_TIMEL));
 	if (nCurveFloat.Succeeded())
 	{
@@ -29,10 +28,9 @@ AAfterImage::AAfterImage()
 	{
 		FadeColorCurve = nCurveColor.Object;
 	}
-
 }
 
-void AAfterImage::Init(UPaperFlipbook * Anim, int8 Frame, bool OneFrame, bool LoopAnim)
+void AAfterImage::Init(UPaperFlipbook* Anim, int8 Frame, bool OneFrame, bool LoopAnim)
 {
 	Sprite->SetFlipbook(Anim);
 	Sprite->SetPlaybackPositionInFrames(Frame, false);
@@ -52,19 +50,17 @@ void AAfterImage::Tick(float delta)
 {
 	Super::Tick(delta);
 	CurveTimeline.TickTimeline(delta);
-	
 }
 
 void AAfterImage::Fade(float value)
 {
 	Sprite->SetSpriteColor(FadeColorCurve->GetLinearColorValue(value));
-	
+
 	if (CurveTimeline.GetPlaybackPosition() == CurveTimeline.GetTimelineLength())
 	{
 		CurveTimeline.Stop();
 		Destroy();
 	}
-
 }
 
 void AAfterImage::BeginPlay()

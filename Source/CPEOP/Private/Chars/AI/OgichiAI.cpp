@@ -15,7 +15,10 @@
 
 DEFINE_LOG_CATEGORY_STATIC(OgichiAI, All, All);
 
-AOgichiAI::AOgichiAI() { SetSearchOptions(100.f, 10); }
+AOgichiAI::AOgichiAI()
+{
+	SetSearchOptions(100.f, 10);
+}
 
 void AOgichiAI::tpReload(float time)
 {
@@ -23,14 +26,18 @@ void AOgichiAI::tpReload(float time)
 	SET_TIMER(tpReloadTimer, this, &AOgichiAI::tpReset, time);
 }
 
-void AOgichiAI::tpReset() { canTeleport = true; }
+void AOgichiAI::tpReset()
+{
+	canTeleport = true;
+}
 
-void AOgichiAI::BeginPlay() { Super::BeginPlay(); }
+void AOgichiAI::BeginPlay()
+{
+	Super::BeginPlay();
+}
 
 void AOgichiAI::AIBody()
 {
-	UE_LOG(LogTemp, Warning, TEXT("AI Body"));
-
 	if (! OgichiRef)
 	{
 		OgichiRef = Cast<AOgichi>(GetPawn());
@@ -125,13 +132,19 @@ void AOgichiAI::AIBody()
 
 	case EBaseStates::Fall:
 	{
-		if (OgichiRef->GetVelocity().Z > 20.f) { OgichiRef->StandUp(); }
+		if (OgichiRef->GetVelocity().Z > 20.f)
+		{
+			OgichiRef->StandUp();
+		}
 		return;
 	}
 
 	case EOgichiState::Ogi_Attack_1:
 	{
-		if (! OgichiRef->isComboTime()) { return; }
+		if (! OgichiRef->isComboTime())
+		{
+			return;
+		}
 
 		if (getDistanceY() < MAX_DIST_Y)
 		{
@@ -157,9 +170,11 @@ void AOgichiAI::AIBody()
 
 	case EOgichiState::Ogi_Attack_2:
 	{
-		if (! OgichiRef->isComboTime()) return;
+		if (! OgichiRef->isComboTime())
+			return;
 
-		if (getDistanceY() > MAX_DIST_Y) return;
+		if (getDistanceY() > MAX_DIST_Y)
+			return;
 
 		// Sword Twist
 		if (getDistanceX() > MAX_DIST_X)
@@ -202,7 +217,8 @@ void AOgichiAI::AIBody()
 			return;
 		}
 
-		if (getDistanceY() > MAX_DIST_Y) return;
+		if (getDistanceY() > MAX_DIST_Y)
+			return;
 
 		// Ogi_Getsuga
 		if (getDistanceX() > MAX_DIST_X && getDistanceX() < MAX_DIST_X * 4 && UKismetMathLibrary::RandomBoolWithWeight(0.2f) &&
@@ -302,8 +318,10 @@ void AOgichiAI::A_Stand()
 
 void AOgichiAI::CheckDanger()
 {
-	if (GetDangerInfo().Priority == EDangerPriority::None) return;
-	if (! IsInsideADangerBox()) return;
+	if (GetDangerInfo().Priority == EDangerPriority::None)
+		return;
+	if (! IsInsideADangerBox())
+		return;
 
 	// Consts
 	const float dangerLocationX	  = GetDangerInfo().DangerPosition.X;
@@ -383,7 +401,6 @@ void AOgichiAI::A_Block(bool LookRight)
 	const FVector MVector = {(LookRight ? 1.f : -1.f), 0.f, 0.f};
 	OgichiRef->SetMoveVector(MVector);
 	OgichiRef->Block();
-	UE_LOG(LogTemp, Warning, TEXT("isBlocking"));
 	Wait(0.2f);
 }
 

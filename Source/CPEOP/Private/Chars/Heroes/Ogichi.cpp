@@ -128,7 +128,10 @@ void AOgichi::Attack()
 		}
 		case EOgichiState::Ogi_Attack_1:
 		{
-			if (isComboTime()) { sh_Attack_2(); }
+			if (isComboTime())
+			{
+				sh_Attack_2();
+			}
 			break;
 		}
 
@@ -145,7 +148,10 @@ void AOgichi::AttackBack()
 		{
 		case EBaseStates::Stand:
 		{
-			if (IsSkillActive()) { sh_SwordTwist(); }
+			if (IsSkillActive())
+			{
+				sh_SwordTwist();
+			}
 			else
 			{
 				sh_AttackB();
@@ -168,7 +174,10 @@ void AOgichi::AttackBack()
 		}
 		case EOgichiState::Ogi_Attack_2:
 		{
-			if (isComboTime()) { sh_SwordTwist(); }
+			if (isComboTime())
+			{
+				sh_SwordTwist();
+			}
 			break;
 		}
 		case EBaseStates::PowChargeLoop:
@@ -199,7 +208,10 @@ void AOgichi::AttackForward()
 		}
 		case EOgichiState::Ogi_SwordTwistLoop:
 		{
-			if (IsSkillActive()) { sh_Getsuga(); }
+			if (IsSkillActive())
+			{
+				sh_Getsuga();
+			}
 			else
 			{
 				sh_SwordThrow();
@@ -208,7 +220,10 @@ void AOgichi::AttackForward()
 		}
 		case EOgichiState::Ogi_Attack_2:
 		{
-			if (isComboTime()) { sh_AttackFW(); }
+			if (isComboTime())
+			{
+				sh_AttackFW();
+			}
 			break;
 		}
 		case EBaseStates::PowChargeLoop:
@@ -228,7 +243,10 @@ void AOgichi::AttackDown()
 		{
 		case EBaseStates::Stand:
 		{
-			if (IsSkillActive()) { sh_Bankai(); }
+			if (IsSkillActive())
+			{
+				sh_Bankai();
+			}
 			break;
 		}
 		case EBaseStates::PowChargeLoop:
@@ -380,7 +398,8 @@ void AOgichi::sh_Getsuga()
 // Ogi_Bankai
 void AOgichi::sh_Bankai()
 {
-	if (! GetHeroStats()->CheckSkill("Bankai")) return;
+	if (! GetHeroStats()->CheckSkill("Bankai"))
+		return;
 
 	FState nState;
 	nState.State	 = EOgichiState::Ogi_Bankai;
@@ -400,7 +419,10 @@ void AOgichi::ComboI()
 
 	FName form = GetHeroStats()->FormName;
 
-	if (form == SHIKAI_NAME) { ShikaiComboI(); }
+	if (form == SHIKAI_NAME)
+	{
+		ShikaiComboI();
+	}
 	else if (form == BANKAI_NAME)
 	{
 		BankaiComboI();
@@ -416,7 +438,10 @@ void AOgichi::ShikaiComboI()
 
 	case EOgichiState::Ogi_Attack_1:
 	{
-		if (key == EComboKey::CK_Attack) { sh_Attack_2(); }
+		if (key == EComboKey::CK_Attack)
+		{
+			sh_Attack_2();
+		}
 		break;
 	}
 	case EOgichiState::Ogi_Attack_2:

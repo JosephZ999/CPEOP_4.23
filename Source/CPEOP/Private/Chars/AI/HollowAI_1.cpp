@@ -1,14 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Chars/AI/HollowAI_1.h"
 #include "Chars/MonsterBase.h"
 
-void AHollowAI_1::SetAIOptions_Implementation(const FAIOptions & Options)
+void AHollowAI_1::SetAIOptions_Implementation(const FAIOptions& Options)
 {
 	MinDistX = Options.MinDist;
-	MaxDistX = Options.MaxDist,
-	AttackVelScale = Options.AttackVel;
+	MaxDistX = Options.MaxDist, AttackVelScale = Options.AttackVel;
 	HType = (MinDistX < 100.f) ? EHollowType::Melee : EHollowType::Ranged;
 }
 
@@ -16,16 +14,16 @@ void AHollowAI_1::AIBody()
 {
 	Super::AIBody();
 
-	if (!OwnerRef)
+	if (! OwnerRef)
 	{
 		OwnerRef = Cast<AMonsterBase>(GetPawn());
 		return;
 	}
 
 	// Search Enemy
-	if (!getEnemy())
+	if (! getEnemy())
 	{
-		if (!SearchEnemy(OwnerRef->GetTeam()))
+		if (! SearchEnemy(OwnerRef->GetTeam()))
 		{
 			OwnerRef->SetMoveVector(FVector::ZeroVector);
 			Wait(1.f);
@@ -35,11 +33,18 @@ void AHollowAI_1::AIBody()
 
 	switch (HType)
 	{
-	case EHollowType::Melee:    { AITypeDef();      break; }
-	case EHollowType::Ranged:   { AITypeRanged();   break; }
+	case EHollowType::Melee:
+	{
+		AITypeDef();
+		break;
+	}
+	case EHollowType::Ranged:
+	{
+		AITypeRanged();
+		break;
+	}
 
 	} // Switch End
-
 }
 
 void AHollowAI_1::AITypeDef()
@@ -69,7 +74,7 @@ void AHollowAI_1::AITypeDef()
 		// Lose sight of the enemy
 		if (getEnemy()->CheckState(EBaseStates::Teleport) && getDistance() < 120.f)
 		{
-			if (!(OwnerRef->IsLookingRight() == isEnemyOnRight()))
+			if (! (OwnerRef->IsLookingRight() == isEnemyOnRight()))
 				return;
 
 			StopMoving();
@@ -117,7 +122,7 @@ void AHollowAI_1::AITypeRanged()
 			OwnerRef->Attack();
 			if (OwnerRef->GetState() == EMonsterStates::M_Attack_1)
 			{
-				FVector vel{ 0.f, 0.f, 20.f };
+				FVector vel{0.f, 0.f, 20.f};
 				vel.Y = getDistanceY() * 5 * ((getEnemyLocation().Y > getPawnLocation().Y) ? 1.f : -1.f);
 				OwnerRef->AddImpulse(vel * AttackVelScale);
 			}
@@ -142,7 +147,6 @@ void AHollowAI_1::AITypeRanged()
 	}
 
 	} // Switch End
-
 }
 
 void AHollowAI_1::StopMoving()

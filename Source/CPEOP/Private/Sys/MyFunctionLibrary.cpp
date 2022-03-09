@@ -1,18 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Sys/MyFunctionLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 
 int UMyFunctionLibrary::RotationDivide(FVector2D pointA, FVector2D pointB)
 {
-	float Rotation = UKismetMathLibrary::FindLookAtRotation(
-		FVector(pointA.X, pointA.Y, 0.f),
-		FVector(pointB.X, pointB.Y, 0.f)
-	).Yaw + 225.f;
+	float Rotation = UKismetMathLibrary::FindLookAtRotation(FVector(pointA.X, pointA.Y, 0.f), FVector(pointB.X, pointB.Y, 0.f)).Yaw + 225.f;
 
 	float remainder;
-	int outValue = UKismetMathLibrary::FMod(Rotation, 90.f, remainder);
+	int	  outValue = UKismetMathLibrary::FMod(Rotation, 90.f, remainder);
 	return (outValue == 0) ? 4 : outValue;
 }
 
@@ -20,14 +16,12 @@ int UMyFunctionLibrary::RotationDivide2(FVector2D pointA, FVector2D pointB, uint
 {
 	if (divisionNum != 0)
 	{
-		angle = 360.f / divisionNum;
-		float Rotation = UKismetMathLibrary::FindLookAtRotation(
-			FVector(pointA.X, pointA.Y, 0.f),
-			FVector(pointB.X, pointB.Y, 0.f)
-		).Yaw + 180.f + angle / 2.f;
+		angle		   = 360.f / divisionNum;
+		float Rotation = UKismetMathLibrary::FindLookAtRotation(FVector(pointA.X, pointA.Y, 0.f), FVector(pointB.X, pointB.Y, 0.f)).Yaw +
+						 180.f + angle / 2.f;
 		float remainder;
-		int outValue = UKismetMathLibrary::FMod(Rotation, angle, remainder);
-	
+		int	  outValue = UKismetMathLibrary::FMod(Rotation, angle, remainder);
+
 		if (outValue == 0)
 		{
 			outValue = divisionNum;
@@ -49,7 +43,7 @@ float UMyFunctionLibrary::PercentDivision(float percent, uint8 divisionNum)
 		float div = 1.f / divisionNum;
 		float remainder;
 		float outValue = UKismetMathLibrary::FMod(percent + div / 2.f, div, remainder);
-		outValue = outValue / divisionNum;
+		outValue	   = outValue / divisionNum;
 		return outValue;
 	}
 	return percent;
@@ -58,7 +52,7 @@ float UMyFunctionLibrary::PercentDivision(float percent, uint8 divisionNum)
 FString UMyFunctionLibrary::FindObjectName(FString objectPath)
 {
 	FString ObjectName;
-	int32 charIndex = objectPath.Len();
+	int32	charIndex = objectPath.Len();
 	while (true)
 	{
 		charIndex--;

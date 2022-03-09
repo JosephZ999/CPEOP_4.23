@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "HelperMovement.h"
 #include "GameFramework/Actor.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -14,12 +13,11 @@ UHelperMovement::UHelperMovement()
 
 	// ...
 
-	IsEnabled = false;
-	Speed = 250.f;
-	MoveVector = FVector(1.f, 0.f, 0.f);
+	IsEnabled	  = false;
+	Speed		  = 250.f;
+	MoveVector	  = FVector(1.f, 0.f, 0.f);
 	UpdatedVector = FVector(0.f);
 }
-
 
 // Called when the game starts
 void UHelperMovement::BeginPlay()
@@ -45,17 +43,16 @@ void UHelperMovement::SetEnabled(bool value)
 
 void UHelperMovement::SetMoveVector(FVector FWVector)
 {
-	MoveVector = FWVector;
+	MoveVector	  = FWVector;
 	UpdatedVector = Owner->GetActorRotation().RotateVector(MoveVector);
 }
-
 
 // Called every frame
 void UHelperMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (!IsEnabled)
+	if (! IsEnabled)
 		return;
 
 	// ...
@@ -69,4 +66,3 @@ void UHelperMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	nLocation = Owner->GetActorLocation() + UpdatedVector * (Speed * DeltaTime);
 	Owner->SetActorLocation(nLocation, true);
 }
-

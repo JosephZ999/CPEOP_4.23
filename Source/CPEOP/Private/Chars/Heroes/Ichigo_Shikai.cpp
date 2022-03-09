@@ -9,37 +9,25 @@ void AIchigo::sh_InputA()
 {
 	switch (GetState())
 	{
-	case EBaseStates::Stand:
-	{
-		sh_Attack_1();
-		break;
-	}
-	case EBaseStates::Jumping:
-	{
-		sh_Attack_Air();
-		break;
-	}
+	case EBaseStates::Stand: sh_Attack_1(); break;
+
+	case EBaseStates::Jumping: sh_Attack_Air(); break;
+
 	case EIchigoState::Ichi_Attack_1:
-	{
-		if (isComboTime()) { sh_Attack_2(); }
+		if (isComboTime())
+		{
+			sh_Attack_2();
+		}
 		break;
-	}
-	case EIchigoState::Ichi_Attack_FW:
-	{
-		SkillEnable();
-		break;
-	}
-	case EIchigoState::Ichi_Attack_B:
-	{
-		SkillEnable();
-		break;
-	}
+
+	case EIchigoState::Ichi_Attack_FW: SkillEnable(); break;
+
+	case EIchigoState::Ichi_Attack_B: SkillEnable(); break;
+
 	case EIchigoState::Ichi_SwordTwistLoop:
-	{
 		SET_TIMER(sh_STwistEndTimer, this, &AIchigo::sh_SwordTwistEnd, cTime(1.f));
 		GET_STATS->AddStamina(0.07);
 		break;
-	}
 	} // End Switch
 }
 
@@ -48,7 +36,6 @@ void AIchigo::sh_InputB()
 	switch (GetState())
 	{
 	case EBaseStates::Stand:
-	{
 		if (IsSkillActive())
 		{
 			sh_SwordTwist();
@@ -59,19 +46,17 @@ void AIchigo::sh_InputB()
 			sh_Attack_B();
 		}
 		break;
-	}
+
 	case EIchigoState::Ichi_Attack_2:
-	{
-		if (isComboTime()) { sh_Attack_B(); }
+		if (isComboTime())
+		{
+			sh_Attack_B();
+		}
 		break;
-	}
-	case EBaseStates::PowChargeLoop:
-	{
-		sh_SwordTwist();
-		break;
-	}
+
+	case EBaseStates::PowChargeLoop: sh_SwordTwist(); break;
+
 	case EIchigoState::Ichi_SwordTwistLoop:
-	{
 		if (IsSkillActive())
 		{
 			sh_RExplosion();
@@ -82,7 +67,7 @@ void AIchigo::sh_InputB()
 			sh_Attack_B();
 		}
 		break;
-	}
+
 	} // End Switch
 }
 
@@ -91,33 +76,32 @@ void AIchigo::sh_InputFW()
 	switch (GetState())
 	{
 	case EBaseStates::Stand:
-	{
-		if (IsSkillActive()) { sh_GetsugaStart(); }
+		if (IsSkillActive())
+		{
+			sh_GetsugaStart();
+		}
 		else
 		{
 			sh_Attack_FW();
 		}
 		break;
-	}
+
 	case EIchigoState::Ichi_Attack_2:
-	{
-		if (isComboTime()) { sh_Attack_FW(); }
+		if (isComboTime())
+		{
+			sh_Attack_FW();
+		}
 		break;
-	}
-	case EBaseStates::PowChargeLoop:
-	{
-		sh_GetsugaStart();
-		break;
-	}
+
+	case EBaseStates::PowChargeLoop: sh_GetsugaStart(); break;
+
 	case EIchigoState::Ichi_SwordTwistLoop:
-	{
 		if (IsSkillActive()) {}
 		else
 		{
 			sh_SwordThrow();
 		}
 		break;
-	}
 	} // End Switch
 }
 
@@ -126,15 +110,13 @@ void AIchigo::sh_InputD()
 	switch (GetState())
 	{
 	case EBaseStates::Stand:
-	{
-		if (IsSkillActive()) { sh_Bankai(); }
+		if (IsSkillActive())
+		{
+			sh_Bankai();
+		}
 		break;
-	}
-	case EBaseStates::PowChargeLoop:
-	{
-		sh_Bankai();
-		break;
-	}
+
+	case EBaseStates::PowChargeLoop: sh_Bankai(); break;
 	}
 }
 
@@ -216,9 +198,11 @@ void AIchigo::sh_Attack_FW()
 
 void AIchigo::sh_GetsugaFW()
 {
-	if (! CheckState(EIchigoState::Ichi_Attack_FW)) return;
+	if (! CheckState(EIchigoState::Ichi_Attack_FW))
+		return;
 
-	if (! GetHeroStats()->CheckSkill("Getsuga")) return;
+	if (! GetHeroStats()->CheckSkill("Getsuga"))
+		return;
 
 	if (IsSkillActive())
 	{
@@ -233,7 +217,10 @@ void AIchigo::sh_GetsugaFW()
 			NotEnoughPower();
 			Return = true;
 		}
-		if (Return) { return; }
+		if (Return)
+		{
+			return;
+		}
 
 		GET_STATS->AddStamina(GETSUGA_COST, 0.f, true);
 		SpawnHelperDeferred("sh_GetsugaFWHelper");
@@ -265,9 +252,11 @@ void AIchigo::sh_Attack_B()
 
 void AIchigo::sh_GetsugaB()
 {
-	if (! CheckState(EIchigoState::Ichi_Attack_B)) return;
+	if (! CheckState(EIchigoState::Ichi_Attack_B))
+		return;
 
-	if (! GetHeroStats()->CheckSkill("Getsuga")) return;
+	if (! GetHeroStats()->CheckSkill("Getsuga"))
+		return;
 
 	if (IsSkillActive())
 	{
@@ -282,7 +271,10 @@ void AIchigo::sh_GetsugaB()
 			NotEnoughPower();
 			Return = true;
 		}
-		if (Return) { return; }
+		if (Return)
+		{
+			return;
+		}
 
 		GET_STATS->AddStamina(GETSUGA_COST, 0.f, true);
 		SpawnHelperDeferred("sh_GetsugaFWHelper", 0.f, FRotator(45.f, 0.f, 0.f));
@@ -292,7 +284,8 @@ void AIchigo::sh_GetsugaB()
 
 void AIchigo::sh_SwordTwist()
 {
-	if (! GetHeroStats()->CheckSkill("SwordTwist")) return;
+	if (! GetHeroStats()->CheckSkill("SwordTwist"))
+		return;
 
 	FState nState;
 	nState.State	 = EIchigoState::Ichi_SwordTwist;
@@ -338,7 +331,8 @@ void AIchigo::sh_SwordTwistEnd()
 
 void AIchigo::sh_SwordThrow()
 {
-	if (! GetHeroStats()->CheckSkill("SwordThrow")) return;
+	if (! GetHeroStats()->CheckSkill("SwordThrow"))
+		return;
 
 	ResetKeys();
 
@@ -374,7 +368,10 @@ void AIchigo::sh_GetsugaStart()
 		NotEnoughPower();
 		Return = true;
 	}
-	if (Return) { return; }
+	if (Return)
+	{
+		return;
+	}
 
 	FState nState;
 	nState.State	 = EIchigoState::Ichi_GetsugaStart;
@@ -408,7 +405,8 @@ void AIchigo::sh_GetsugaSlash()
 
 void AIchigo::sh_RExplosion()
 {
-	if (! GetHeroStats()->CheckSkill("RExplosion")) return;
+	if (! GetHeroStats()->CheckSkill("RExplosion"))
+		return;
 
 	bool Return{false};
 	if (! GetHeroStats()->checkStamina(-(EXPLOSION_COST)))
@@ -421,7 +419,10 @@ void AIchigo::sh_RExplosion()
 		NotEnoughPower();
 		Return = true;
 	}
-	if (Return) { return; }
+	if (Return)
+	{
+		return;
+	}
 
 	FState nState;
 	nState.State	 = EIchigoState::Ichi_RExplosion;
@@ -441,7 +442,8 @@ void AIchigo::sh_RExplosion()
 
 void AIchigo::sh_Bankai()
 {
-	if (! GetHeroStats()->CheckSkill("Bankai")) return;
+	if (! GetHeroStats()->CheckSkill("Bankai"))
+		return;
 
 	FState nState;
 	nState.State = EIchigoState::Ichi_Bankai;
@@ -477,7 +479,7 @@ void AIchigo::sh_Bankai()
 	GET_STATS->AddStamina(2.f);
 	if (! GET_STATS->checkPower(-(BANKAI_COST)))
 	{
-		float hpReducer = (GET_STATS->getPower() + BANKAI_COST) * 0.5f;
+		float hpReducer = (GET_STATS->GetPower() + BANKAI_COST) * 0.5f;
 		GET_STATS->AddHealth(hpReducer);
 	}
 	GET_STATS->AddPower(-3.f);

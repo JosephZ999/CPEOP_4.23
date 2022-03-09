@@ -18,7 +18,10 @@ ADangerBox::ADangerBox()
 	PrimaryActorTick.bCanEverTick = true;
 
 	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("RootComp"));
-	if (SceneRoot) { RootComponent = SceneRoot; }
+	if (SceneRoot)
+	{
+		RootComponent = SceneRoot;
+	}
 
 	Box = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
 	if (Box)
@@ -48,11 +51,17 @@ ADangerBox::ADangerBox()
 
 		ConstructorHelpers::FObjectFinder<UMaterialInterface> BoxMat(
 			TEXT("MaterialInstanceConstant'/Game/Materials/DangerRegion/M_Danger_Box.M_Danger_Box'"));
-		if (BoxMat.Succeeded()) { _BoxMaterial = BoxMat.Object; }
+		if (BoxMat.Succeeded())
+		{
+			_BoxMaterial = BoxMat.Object;
+		}
 
 		ConstructorHelpers::FObjectFinder<UMaterialInterface> SphereMat(
 			TEXT("MaterialInstanceConstant'/Game/Materials/DangerRegion/M_Danger_Sphere.M_Danger_Sphere'"));
-		if (SphereMat.Succeeded()) { _SphereMaterial = SphereMat.Object; }
+		if (SphereMat.Succeeded())
+		{
+			_SphereMaterial = SphereMat.Object;
+		}
 
 		Plane->SetMaterial(0, _BoxMaterial);
 		Plane->TranslucencySortPriority = 3;
@@ -60,10 +69,16 @@ ADangerBox::ADangerBox()
 		// Init Fading Curve
 
 		ConstructorHelpers::FObjectFinder<UCurveFloat> nCurve(TEXT("CurveFloat'/Game/Materials/DangerRegion/FadeIn.FadeIn'"));
-		if (nCurve.Succeeded()) { _CurveFadeIn = nCurve.Object; }
+		if (nCurve.Succeeded())
+		{
+			_CurveFadeIn = nCurve.Object;
+		}
 
 		ConstructorHelpers::FObjectFinder<UCurveFloat> nCurve2(TEXT("CurveFloat'/Game/Materials/DangerRegion/FadeOut.FadeOut'"));
-		if (nCurve.Succeeded()) { _CurveFadeOut = nCurve2.Object; }
+		if (nCurve.Succeeded())
+		{
+			_CurveFadeOut = nCurve2.Object;
+		}
 	}
 
 	OnActorBeginOverlap.AddDynamic(this, &ADangerBox::BeginOverlap);
@@ -129,8 +144,10 @@ void ADangerBox::BeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
 {
 	AUnitBase* OtherUnit = Cast<AUnitBase>(OtherActor);
 
-	if (! OtherUnit) return;
-	if (OtherUnit->GetTeam() == _Team) return;
+	if (! OtherUnit)
+		return;
+	if (OtherUnit->GetTeam() == _Team)
+		return;
 
 	FDangerArg nDanger;
 
@@ -172,17 +189,27 @@ void ADangerBox::BeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
 
 void ADangerBox::OnOwnerStateChanged()
 {
-	if (Box) { Box->SetActive(false); }
-	if (GetAttachParentActor()) { DetachFromActor(FDetachmentTransformRules(EDetachmentRule::KeepWorld, false)); }
+	if (Box)
+	{
+		Box->SetActive(false);
+	}
+	if (GetAttachParentActor())
+	{
+		DetachFromActor(FDetachmentTransformRules(EDetachmentRule::KeepWorld, false));
+	}
 }
 
 void ADangerBox::FadeOut()
 {
-	if (_IsFading) return;
+	if (_IsFading)
+		return;
 
 	_IsFading = true;
 
-	if (Box) { Box->DestroyComponent(); }
+	if (Box)
+	{
+		Box->DestroyComponent();
+	}
 
 	if (_IsVisible && _CurveFadeOut)
 	{
@@ -192,7 +219,10 @@ void ADangerBox::FadeOut()
 		_CTimeline.SetLooping(false);
 		_CTimeline.PlayFromStart();
 	}
-	if (GetAttachParentActor()) { DetachFromActor(FDetachmentTransformRules(EDetachmentRule::KeepWorld, false)); }
+	if (GetAttachParentActor())
+	{
+		DetachFromActor(FDetachmentTransformRules(EDetachmentRule::KeepWorld, false));
+	}
 	OnStartFade();
 }
 

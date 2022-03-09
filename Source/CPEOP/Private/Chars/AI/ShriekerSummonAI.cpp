@@ -3,7 +3,10 @@
 #include "ShriekerSummonAI.h"
 #include "Chars/Monsters/ShriekerSummon.h"
 
-AShriekerSummonAI::AShriekerSummonAI() { SetSearchOptions(100.f, 10); }
+AShriekerSummonAI::AShriekerSummonAI()
+{
+	SetSearchOptions(100.f, 10);
+}
 
 void AShriekerSummonAI::AIBody()
 {
@@ -15,7 +18,8 @@ void AShriekerSummonAI::AIBody()
 		return;
 	}
 
-	if (OwnerRef->IsDead()) return;
+	if (OwnerRef->IsDead())
+		return;
 
 	if (! getEnemy())
 	{
@@ -87,4 +91,7 @@ void AShriekerSummonAI::AIBody()
 	} // Switch end
 }
 
-void AShriekerSummonAI::AttackSuccessReset() { AttackSuccess = false; }
+void AShriekerSummonAI::AttackSuccessReset()
+{
+	AttackSuccess = false;
+}

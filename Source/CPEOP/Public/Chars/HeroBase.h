@@ -6,7 +6,6 @@
 #include "Chars/Components/HeroStats.h"
 #include "Components/TimelineComponent.h"
 #include "sys/Interfaces/HeroInput.h"
-#include "Sys/Interfaces/UnitInterface.h"
 #include "Chars/UnitBase.h"
 #include "HeroBase.generated.h"
 
@@ -40,7 +39,7 @@ enum EComboKey
  *
  */
 UCLASS()
-class CPEOP_API AHeroBase : public AUnitBase, /* Interfaces: */ public IHeroInput, public IUnitInterface
+class CPEOP_API AHeroBase : public AUnitBase, /* Interfaces: */ public IHeroInput
 {
 	GENERATED_BODY()
 
@@ -267,18 +266,18 @@ public:
 	//------------------------------------------// Unit Interface
 
 public:
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Team"))
-	uint8 GetUnitTeam();
-
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Hero"))
 	bool IsItHero();
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Alive"))
-	bool IsAlive();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Add"))
 	bool AddHealth(float Value);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Add"))
 	bool AddPower(float Value);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Add"))
+	bool AddExp(int32 Value);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Add"))
+	void UseLevelPoints();
 };

@@ -22,8 +22,15 @@ class CPEOP_API IGameIns
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	//------------------------------------------// Events
+
 	UFUNCTION(BlueprintNativeEvent, Category = "GameIns Events")
 	void OnUnitKilled(class AUnitBase* Killer, class AUnitBase* KilledUnit);
+
+	UFUNCTION(BlueprintNativeEvent, Category = "GameIns Events")
+	void OnHeroLevelUp(AActor* TargetActor);
+
+	//------------------------------------------// Getters
 
 	UFUNCTION(BlueprintNativeEvent, Category = "GameIns Events")
 	class UPaperFlipbook* GetSparkAnimation(uint8 index);

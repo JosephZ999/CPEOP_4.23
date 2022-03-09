@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "AfterImageComponent.h"
 #include "PaperFlipbook.h"
 #include "Objects/Dynamic/AfterImage.h"
@@ -9,15 +8,11 @@
 UAfterImageComponent::UAfterImageComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-
 }
 
-void UAfterImageComponent::InitClass()
-{
+void UAfterImageComponent::InitClass() {}
 
-}
-
-void UAfterImageComponent::Create(FAfterImageStruct & AfterImage, float Time)
+void UAfterImageComponent::Create(FAfterImageStruct& AfterImage, float Time)
 {
 	if (Time > 0.f)
 	{
@@ -35,7 +30,7 @@ void UAfterImageComponent::SpawnDeferred()
 {
 	for (FAfterImageStruct& elem : ImageData)
 	{
-		if (!elem.IsCreated)
+		if (! elem.IsCreated)
 		{
 			elem.IsCreated = true;
 			Spawn(elem);
@@ -44,14 +39,9 @@ void UAfterImageComponent::SpawnDeferred()
 	}
 }
 
-void UAfterImageComponent::Spawn(const FAfterImageStruct & AfterImage)
+void UAfterImageComponent::Spawn(const FAfterImageStruct& AfterImage)
 {
-	FTransform nT
-	{
-		FRotator(0.f, ((AfterImage.Rotation) ? 0.f : 180.f), 0.f),
-		AfterImage.Location,
-		FVector::OneVector
-	};
+	FTransform nT{FRotator(0.f, ((AfterImage.Rotation) ? 0.f : 180.f), 0.f), AfterImage.Location, FVector::OneVector};
 
 	AAfterImage* nImage = GetWorld()->SpawnActorDeferred<AAfterImage>(ClassData.FindRef(AfterImage.ClassName), nT);
 	if (nImage)

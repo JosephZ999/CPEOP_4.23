@@ -37,12 +37,21 @@ void AMonsterBase::BeginPlay()
 	SET_TIMER(AnimUpdateTimer, this, &AMonsterBase::AnimUpdate, AnimUpdateRate, true);
 }
 
-bool AMonsterBase::IsOnGround() { return GetCharacterMovement()->IsMovingOnGround(); }
+bool AMonsterBase::IsOnGround()
+{
+	return GetCharacterMovement()->IsMovingOnGround();
+}
 
 // Animations
-void AMonsterBase::AddAnimation(FName index, UPaperFlipbook* elem) { AnimList.Add(index, elem); }
+void AMonsterBase::AddAnimation(FName index, UPaperFlipbook* elem)
+{
+	AnimList.Add(index, elem);
+}
 
-UPaperFlipbook* AMonsterBase::GetAnimation(FName index) { return nullptr; }
+UPaperFlipbook* AMonsterBase::GetAnimation(FName index)
+{
+	return nullptr;
+}
 
 //
 void AMonsterBase::Appearance()
@@ -88,4 +97,19 @@ void AMonsterBase::AttackDuration(float Duration)
 	}
 }
 
-void AMonsterBase::AttackSuccess() { IsAttacking = false; }
+void AMonsterBase::AttackSuccess()
+{
+	IsAttacking = false;
+}
+
+//----------------------------------------------// Unit Interface
+
+bool AMonsterBase::IsItHero_Implementation()
+{
+	return false;
+}
+
+int32 AMonsterBase::GetExpForKill_Implementation()
+{
+	return GetUnitStats()->GetExpForKill();
+}
