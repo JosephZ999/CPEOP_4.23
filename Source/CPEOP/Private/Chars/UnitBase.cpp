@@ -513,15 +513,15 @@ bool AUnitBase::ApplyDamage(class AUnitBase* damageCauser, FHitOption* damageOpt
 	float damage;
 	if (crit)
 	{
-		damage = GetUnitStats()->TakeDamage(damageOption->damage * 1.5f, block);
+		damage = GetUnitStats()->TakeDamage(damageOption->damage * 1.5f, damageOption->armorPiercing, block);
 	}
 	else
 	{
-		damage = GetUnitStats()->TakeDamage(damageOption->damage, block);
+		damage = GetUnitStats()->TakeDamage(damageOption->damage, damageOption->armorPiercing, block);
 	}
 
 	// Damage Text
-	CreateDamageText(damage, damageCauser->IsLookingRight(), crit);
+	CreateDamageText(damage / GetUnitStats()->GetDamage(), damageCauser->IsLookingRight(), crit);
 
 	// Change State
 	if (! block)

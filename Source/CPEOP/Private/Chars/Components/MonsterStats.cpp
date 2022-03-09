@@ -12,7 +12,7 @@ void UMonsterStats::Init(uint8 level)
 	ExpForKill += (float)ExpForKill * level * 0.2f;
 }
 
-float UMonsterStats::TakeDamage(float damage, bool block)
+float UMonsterStats::TakeDamage(float damage, float armorPiercing, bool block)
 {
 	Health -= damage;
 	return damage;

@@ -34,6 +34,26 @@ void UHeroStats::BeginPlay()
 	Super::BeginPlay();
 }
 
+float UHeroStats::GetHealth() const
+{
+	return Health;
+}
+
+float UHeroStats::GetMaxHealth() const
+{
+	return FMath::Max(0.1f, MaxHealth);
+}
+
+float UHeroStats::GetDamage() const
+{
+	return FMath::Max(0.1f, Damage);
+}
+
+float UHeroStats::GetCritRate() const
+{
+	return CritRate;
+}
+
 void UHeroStats::Init()
 {
 	FFormStats form = HeroForms.FindRef(FormName);
@@ -167,12 +187,12 @@ int32 UHeroStats::GetLevelScore() const
 	return SavedStats.level * 2 - (SavedStats.strength + SavedStats.agility + SavedStats.spirit + 2);
 }
 
-float UHeroStats::TakeDamage(float damage, bool blocked)
+float UHeroStats::TakeDamage(float damage, float armorPiercing, bool blocked)
 {
 	if (blocked)
-		damage = FMath::Max(0.f, damage - Armor * 10);
+		damage = FMath::Max(0.f, damage - Armor * 10 * (1.f - armorPiercing));
 	else
-		damage = FMath::Max(0.f, damage - Armor);
+		damage = FMath::Max(0.f, damage - Armor * (1.f - armorPiercing));
 
 	Health -= damage;
 	return damage;

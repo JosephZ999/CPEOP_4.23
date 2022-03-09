@@ -108,6 +108,12 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	//------------------------------------------// Getters
+	virtual float GetHealth() const override;
+	virtual float GetMaxHealth() const override;
+	virtual float GetDamage() const override;
+	virtual float GetCritRate() const override;
+
 	/** Добавляет форму для персонажа как Банкай
 	 * Вызывается в конструкторе персонажа */
 	void AddForms(FName name, FVector stats);
@@ -116,12 +122,6 @@ public:
 	void SetForm(FName name);
 
 	void SetExpMultiplier(float value) { ExpMultiplier = value; }
-
-	// Get
-	virtual float GetHealth() const override { return Health; }
-	virtual float GetMaxHealth() const override { return MaxHealth; }
-	virtual float GetDamage() const override { return Damage; }
-	virtual float GetCritRate() const override { return CritRate; }
 
 	UFUNCTION(BlueprintCallable)
 	uint8 GetLevel() const { return Level; }
@@ -188,7 +188,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool CheckSkill(FName key);
 
-	virtual float TakeDamage(float damage, bool blocked) override;
+	virtual float TakeDamage(float damage, float armorPiercing, bool blocked) override;
 
 	//---------------------------------------------// Stamina
 public:

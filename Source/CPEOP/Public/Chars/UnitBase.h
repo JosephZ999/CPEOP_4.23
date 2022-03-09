@@ -68,6 +68,10 @@ struct FHitOption
 
 	UPROPERTY(EditDefaultsOnly) float damage;
 	UPROPERTY(EditDefaultsOnly) float critRate;
+
+	UPROPERTY(EditDefaultsOnly, Meta = (ClampMin = 0.f, ClampMax = 1.f))
+	float armorPiercing;
+
 	UPROPERTY(EditDefaultsOnly) FVector2D impulse;
 	UPROPERTY(EditDefaultsOnly) uint8 sparkIndex;
 	UPROPERTY(EditDefaultsOnly) FVector2D sparkScale;
