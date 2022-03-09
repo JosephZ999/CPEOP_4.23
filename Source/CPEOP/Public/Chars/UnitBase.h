@@ -182,7 +182,7 @@ public:
 	FORCEINLINE const uint8& GetTeam() const { return Team; }
 
 	UFUNCTION(BlueprintCallable)
-	virtual class UUnitStatsBase* getStatsComp() const { return nullptr; }
+	virtual class UUnitStatsBase* GetUnitStats() const { return nullptr; }
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE UShadowComponent* getShadow() const { return ShadowComp; }

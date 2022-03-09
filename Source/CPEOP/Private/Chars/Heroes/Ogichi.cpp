@@ -16,7 +16,7 @@
 
 AOgichi::AOgichi()
 {
-	if (getHeroStatsComp())
+	if (GetHeroStats())
 	{
 		InitForm(SHIKAI_NAME, {4, 4, 7}); // 15
 		InitForm(BANKAI_NAME, {6, 11, 9});
@@ -107,7 +107,7 @@ void AOgichi::Attack()
 {
 	Super::Attack();
 
-	if (getHeroStatsComp()->FormName == SHIKAI_NAME)
+	if (GetHeroStats()->FormName == SHIKAI_NAME)
 	{
 		switch (GetState())
 		{
@@ -139,7 +139,7 @@ void AOgichi::AttackBack()
 {
 	Super::AttackBack();
 
-	if (getHeroStatsComp()->FormName == SHIKAI_NAME)
+	if (GetHeroStats()->FormName == SHIKAI_NAME)
 	{
 		switch (GetState())
 		{
@@ -184,7 +184,7 @@ void AOgichi::AttackForward()
 {
 	Super::AttackForward();
 
-	if (getHeroStatsComp()->FormName == SHIKAI_NAME)
+	if (GetHeroStats()->FormName == SHIKAI_NAME)
 	{
 		switch (GetState())
 		{
@@ -222,7 +222,7 @@ void AOgichi::AttackForward()
 
 void AOgichi::AttackDown()
 {
-	if (getHeroStatsComp()->FormName == SHIKAI_NAME)
+	if (GetHeroStats()->FormName == SHIKAI_NAME)
 	{
 		switch (GetState())
 		{
@@ -281,7 +281,7 @@ void AOgichi::sh_AttackFW()
 
 	SetBlockingAttack(EBlockType::Forward, getFrameTime(5), BLOCK_DURATION);
 
-	if (IsSkillActive() && getHeroStatsComp()->checkStamina(-(GETSUGA_COST)) && getHeroStatsComp()->checkPower(-(GETSUGA_COST)))
+	if (IsSkillActive() && GetHeroStats()->checkStamina(-(GETSUGA_COST)) && GetHeroStats()->checkPower(-(GETSUGA_COST)))
 	{
 		GET_STATS->AddStamina(GETSUGA_COST, getFrameTime(5), true);
 		SpawnHelperDeferred("sh_GetsugaFWHelper", getFrameTime(5));
@@ -362,7 +362,7 @@ void AOgichi::sh_SwordThrow()
 //---------------------------------------------// Ogi_Getsuga Tensho
 void AOgichi::sh_Getsuga()
 {
-	if (getHeroStatsComp()->checkStamina(-(GETSUGA_TENSHOU_COST)) && getHeroStatsComp()->checkPower(-(GETSUGA_TENSHOU_COST)))
+	if (GetHeroStats()->checkStamina(-(GETSUGA_TENSHOU_COST)) && GetHeroStats()->checkPower(-(GETSUGA_TENSHOU_COST)))
 	{
 		FState nState;
 		nState.State	 = EOgichiState::Ogi_Getsuga;
@@ -380,7 +380,7 @@ void AOgichi::sh_Getsuga()
 // Ogi_Bankai
 void AOgichi::sh_Bankai()
 {
-	if (! getHeroStatsComp()->CheckSkill("Bankai")) return;
+	if (! GetHeroStats()->CheckSkill("Bankai")) return;
 
 	FState nState;
 	nState.State	 = EOgichiState::Ogi_Bankai;
@@ -398,7 +398,7 @@ void AOgichi::ComboI()
 {
 	Super::ComboI();
 
-	FName form = getHeroStatsComp()->FormName;
+	FName form = GetHeroStats()->FormName;
 
 	if (form == SHIKAI_NAME) { ShikaiComboI(); }
 	else if (form == BANKAI_NAME)

@@ -332,7 +332,7 @@ void AUnitBase::HelperSpawning(FHelperInfo info)
 		OnStateChanged.AddUObject(nHelper, &AHelper::OnOwnerStateChanged);
 
 		// Sets default values
-		if (nHelper->Type == EHelperType::HitBox) { nHelper->Init(this, getStatsComp()->GetDamage(), getStatsComp()->GetCritRate()); }
+		if (nHelper->Type == EHelperType::HitBox) { nHelper->Init(this, GetUnitStats()->GetDamage(), GetUnitStats()->GetCritRate()); }
 
 		if (nHelper->bAttachRotation)
 		{
@@ -452,7 +452,7 @@ bool AUnitBase::ApplyDamage(class AUnitBase* damageCauser, FHitOption* damageOpt
 
 	if (block)
 	{
-		getStatsComp()->AddStamina(0.05f);
+		GetUnitStats()->AddStamina(0.05f);
 
 		// Block Spark
 		FRotator SparkRot = {FRotator::ZeroRotator};
@@ -470,10 +470,10 @@ bool AUnitBase::ApplyDamage(class AUnitBase* damageCauser, FHitOption* damageOpt
 
 	// Taking Damage
 	float damage;
-	if (crit) { damage = getStatsComp()->TakeDamage(damageOption->damage * 1.5f, block); }
+	if (crit) { damage = GetUnitStats()->TakeDamage(damageOption->damage * 1.5f, block); }
 	else
 	{
-		damage = getStatsComp()->TakeDamage(damageOption->damage, block);
+		damage = GetUnitStats()->TakeDamage(damageOption->damage, block);
 	}
 
 	// Damage Text
@@ -483,9 +483,9 @@ bool AUnitBase::ApplyDamage(class AUnitBase* damageCauser, FHitOption* damageOpt
 	if (! block)
 	{
 		Blocked = false;
-		Dead	= getStatsComp()->GetHealth() < 0.f;
+		Dead	= GetUnitStats()->GetHealth() < 0.f;
 
-		if (damage > getStatsComp()->GetMaxHealth() * 0.05f || Dead)
+		if (damage > GetUnitStats()->GetMaxHealth() * 0.05f || Dead)
 		{
 			FState nState;
 			nState.State	 = EBaseStates::Hit;

@@ -218,17 +218,17 @@ void AIchigo::sh_GetsugaFW()
 {
 	if (! CheckState(EIchigoState::Ichi_Attack_FW)) return;
 
-	if (! getHeroStatsComp()->CheckSkill("Getsuga")) return;
+	if (! GetHeroStats()->CheckSkill("Getsuga")) return;
 
 	if (IsSkillActive())
 	{
 		bool Return{false};
-		if (! getHeroStatsComp()->checkStamina(-(GETSUGA_COST)))
+		if (! GetHeroStats()->checkStamina(-(GETSUGA_COST)))
 		{
 			NotEnoughStamina();
 			Return = true;
 		}
-		if (! getHeroStatsComp()->checkPower(-(GETSUGA_COST)))
+		if (! GetHeroStats()->checkPower(-(GETSUGA_COST)))
 		{
 			NotEnoughPower();
 			Return = true;
@@ -267,17 +267,17 @@ void AIchigo::sh_GetsugaB()
 {
 	if (! CheckState(EIchigoState::Ichi_Attack_B)) return;
 
-	if (! getHeroStatsComp()->CheckSkill("Getsuga")) return;
+	if (! GetHeroStats()->CheckSkill("Getsuga")) return;
 
 	if (IsSkillActive())
 	{
 		bool Return{false};
-		if (! getHeroStatsComp()->checkStamina(-(GETSUGA_COST)))
+		if (! GetHeroStats()->checkStamina(-(GETSUGA_COST)))
 		{
 			NotEnoughStamina();
 			Return = true;
 		}
-		if (! getHeroStatsComp()->checkPower(-(GETSUGA_COST)))
+		if (! GetHeroStats()->checkPower(-(GETSUGA_COST)))
 		{
 			NotEnoughPower();
 			Return = true;
@@ -292,7 +292,7 @@ void AIchigo::sh_GetsugaB()
 
 void AIchigo::sh_SwordTwist()
 {
-	if (! getHeroStatsComp()->CheckSkill("SwordTwist")) return;
+	if (! GetHeroStats()->CheckSkill("SwordTwist")) return;
 
 	FState nState;
 	nState.State	 = EIchigoState::Ichi_SwordTwist;
@@ -338,7 +338,7 @@ void AIchigo::sh_SwordTwistEnd()
 
 void AIchigo::sh_SwordThrow()
 {
-	if (! getHeroStatsComp()->CheckSkill("SwordThrow")) return;
+	if (! GetHeroStats()->CheckSkill("SwordThrow")) return;
 
 	ResetKeys();
 
@@ -349,7 +349,7 @@ void AIchigo::sh_SwordThrow()
 	Combo(getFrameTime(16));
 
 	// Stamina
-	GET_STATS->AddStamina(-1.f / getHeroStatsComp()->getTeleportCost(), getFrameTime(5), false, EIchigoState::Ichi_SwordThrow);
+	GET_STATS->AddStamina(-1.f / GetHeroStats()->getTeleportCost(), getFrameTime(5), false, EIchigoState::Ichi_SwordThrow);
 
 	AddImpulse(MoveVector * 300, getFrameTime(2));
 	SpawnHelperDeferred("sh_SwordThrow", getFrameTime(5));
@@ -363,13 +363,13 @@ void AIchigo::sh_SwordThrow()
 void AIchigo::sh_GetsugaStart()
 {
 	bool Return{false};
-	if (! getHeroStatsComp()->checkStamina(-(GETSUGA_TENSHOU_COST)))
+	if (! GetHeroStats()->checkStamina(-(GETSUGA_TENSHOU_COST)))
 	{
 		NotEnoughStamina();
 		Return = true;
 	}
 
-	if (! getHeroStatsComp()->checkPower(-(GETSUGA_TENSHOU_COST)))
+	if (! GetHeroStats()->checkPower(-(GETSUGA_TENSHOU_COST)))
 	{
 		NotEnoughPower();
 		Return = true;
@@ -408,15 +408,15 @@ void AIchigo::sh_GetsugaSlash()
 
 void AIchigo::sh_RExplosion()
 {
-	if (! getHeroStatsComp()->CheckSkill("RExplosion")) return;
+	if (! GetHeroStats()->CheckSkill("RExplosion")) return;
 
 	bool Return{false};
-	if (! getHeroStatsComp()->checkStamina(-(EXPLOSION_COST)))
+	if (! GetHeroStats()->checkStamina(-(EXPLOSION_COST)))
 	{
 		NotEnoughStamina();
 		Return = true;
 	}
-	if (! getHeroStatsComp()->checkPower(-(EXPLOSION_COST)))
+	if (! GetHeroStats()->checkPower(-(EXPLOSION_COST)))
 	{
 		NotEnoughPower();
 		Return = true;
@@ -441,12 +441,12 @@ void AIchigo::sh_RExplosion()
 
 void AIchigo::sh_Bankai()
 {
-	if (! getHeroStatsComp()->CheckSkill("Bankai")) return;
+	if (! GetHeroStats()->CheckSkill("Bankai")) return;
 
 	FState nState;
 	nState.State = EIchigoState::Ichi_Bankai;
 
-	if (getHeroStatsComp()->CheckSkill("FastBankai"))
+	if (GetHeroStats()->CheckSkill("FastBankai"))
 	{
 		nState.Animation = "FastBankai";
 		NewState(nState);

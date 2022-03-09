@@ -69,7 +69,7 @@ void AOgichiAI::AIBody()
 
 	if (Intro)
 	{
-		if (! OgichiRef->getHeroStatsComp()->CheckSkill("Bankai"))
+		if (! OgichiRef->GetHeroStats()->CheckSkill("Bankai"))
 		{
 			Intro = false;
 			return;
@@ -88,7 +88,7 @@ void AOgichiAI::AIBody()
 		else
 		{
 			Intro = false;
-			Cast<AHeroBase>(getEnemy())->getHeroStatsComp()->SetSkill("Bankai", false);
+			Cast<AHeroBase>(getEnemy())->GetHeroStats()->SetSkill("Bankai", false);
 		}
 		return;
 	}
@@ -206,8 +206,8 @@ void AOgichiAI::AIBody()
 
 		// Ogi_Getsuga
 		if (getDistanceX() > MAX_DIST_X && getDistanceX() < MAX_DIST_X * 4 && UKismetMathLibrary::RandomBoolWithWeight(0.2f) &&
-			OgichiRef->getHeroStatsComp()->checkStamina(-(GETSUGA_TENSHOU_COST)) &&
-			OgichiRef->getHeroStatsComp()->checkPower(-(GETSUGA_TENSHOU_COST)))
+			OgichiRef->GetHeroStats()->checkStamina(-(GETSUGA_TENSHOU_COST)) &&
+			OgichiRef->GetHeroStats()->checkPower(-(GETSUGA_TENSHOU_COST)))
 		{
 			OgichiRef->SetRotation(isEnemyOnRight(), false);
 			OgichiRef->SkillEnable();
@@ -289,8 +289,8 @@ void AOgichiAI::A_Stand()
 		OgichiRef->SetMoveVector(getForwardVector(60));
 
 		// Ogi_Getsuga
-		if (UKismetMathLibrary::RandomBoolWithWeight(0.01f) && OgichiRef->getHeroStatsComp()->checkStamina(-(GETSUGA_COST)) &&
-			OgichiRef->getHeroStatsComp()->checkPower(-(GETSUGA_COST)) && getDistanceY() < MIN_DIST_Y)
+		if (UKismetMathLibrary::RandomBoolWithWeight(0.01f) && OgichiRef->GetHeroStats()->checkStamina(-(GETSUGA_COST)) &&
+			OgichiRef->GetHeroStats()->checkPower(-(GETSUGA_COST)) && getDistanceY() < MIN_DIST_Y)
 		{
 			OgichiRef->SetRotation(isEnemyOnRight(), false);
 			OgichiRef->SkillEnable();

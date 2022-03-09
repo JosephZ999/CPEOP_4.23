@@ -180,7 +180,7 @@ void AIchigo::b_Attack_4()
 
 void AIchigo::b_Attack_FW()
 {
-	if (! GET_STATS->checkStamina(2.f / getHeroStatsComp()->getTeleportCost(), false))
+	if (! GET_STATS->checkStamina(2.f / GetHeroStats()->getTeleportCost(), false))
 	{
 		NotEnoughStamina();
 		return;
@@ -195,7 +195,7 @@ void AIchigo::b_Attack_FW()
 	SpawnHelperDeferred("Teleport", getFrameTime(3), GetActorRotation());
 	SetCameraViewA(GetCameraLocation(), getFrameTime(12));
 
-	GET_STATS->AddStamina(-2.f / getHeroStatsComp()->getTeleportCost(), getFrameTime(4), false, EIchigoState::Ichi_Attack_FW);
+	GET_STATS->AddStamina(-2.f / GetHeroStats()->getTeleportCost(), getFrameTime(4), false, EIchigoState::Ichi_Attack_FW);
 
 	SetBlockingAttack(EBlockType::Forward, getFrameTime(4), BLOCK_DURATION);
 	DangerN(getFrameTime(5), EDangerType::MeleeAttack);
@@ -219,7 +219,7 @@ void AIchigo::b_AttackDash(float value)
 
 void AIchigo::b_Attack_FW_Slash()
 {
-	if (! GET_STATS->checkStamina(1.f / getHeroStatsComp()->getTeleportCost(), false))
+	if (! GET_STATS->checkStamina(1.f / GetHeroStats()->getTeleportCost(), false))
 	{
 		NotEnoughStamina();
 		if (CheckState(EIchigoState::Ichi_Attack_FW_Slash)) { b_Attack_FW_End(); }
@@ -240,7 +240,7 @@ void AIchigo::b_Attack_FW_Slash()
 	nState.State	 = EIchigoState::Ichi_Attack_FW_Slash;
 	NewState(nState);
 
-	GET_STATS->AddStamina(-1.f / getHeroStatsComp()->getTeleportCost());
+	GET_STATS->AddStamina(-1.f / GetHeroStats()->getTeleportCost());
 	SetCameraViewA(GetCameraViewPosition(), 0.2f);
 	getShadow()->HideShadow();
 
@@ -308,15 +308,15 @@ void AIchigo::b_Attack_Air()
 void AIchigo::b_Getsuga()
 {
 
-	if (! getHeroStatsComp()->CheckSkill("Getsuga")) return;
+	if (! GetHeroStats()->CheckSkill("Getsuga")) return;
 
 	bool Return{false};
-	if (! getHeroStatsComp()->checkStamina(-(GETSUGA_COST)))
+	if (! GetHeroStats()->checkStamina(-(GETSUGA_COST)))
 	{
 		NotEnoughStamina();
 		Return = true;
 	}
-	if (! getHeroStatsComp()->checkPower(-(GETSUGA_COST)))
+	if (! GetHeroStats()->checkPower(-(GETSUGA_COST)))
 	{
 		NotEnoughPower();
 		Return = true;
@@ -363,15 +363,15 @@ void AIchigo::b_GetsugaB()
 
 void AIchigo::b_RExplosion()
 {
-	if (! getHeroStatsComp()->CheckSkill("RExplosion")) return;
+	if (! GetHeroStats()->CheckSkill("RExplosion")) return;
 
 	bool Return{false};
-	if (! getHeroStatsComp()->checkStamina(-(EXPLOSION_COST)))
+	if (! GetHeroStats()->checkStamina(-(EXPLOSION_COST)))
 	{
 		NotEnoughStamina();
 		Return = true;
 	}
-	if (! getHeroStatsComp()->checkPower(-(EXPLOSION_COST)))
+	if (! GetHeroStats()->checkPower(-(EXPLOSION_COST)))
 	{
 		NotEnoughPower();
 		Return = true;
@@ -394,7 +394,7 @@ void AIchigo::b_RExplosion()
 
 void AIchigo::b_Shikai()
 {
-	if (! getHeroStatsComp()->CheckSkill("Bankai")) return;
+	if (! GetHeroStats()->CheckSkill("Bankai")) return;
 
 	FState nState;
 	nState.State	 = EIchigoState::Ichi_Shikai;

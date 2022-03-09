@@ -9,7 +9,7 @@
 #include "MonsterBase.generated.h"
 
 /**
- * 
+ *
  */
 
 class UPaperFlipbook;
@@ -40,20 +40,20 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "UnitOptions|Data")
 	TMap<FName, UPaperFlipbook*> AnimList;
-	
-	UPROPERTY(EditDefaultsOnly, Category = "Monster Options")
-	float DeathEffScale { 1.f };
 
 	UPROPERTY(EditDefaultsOnly, Category = "Monster Options")
-	float SpawnEffScale{ 1.f };
+	float DeathEffScale{1.f};
+
+	UPROPERTY(EditDefaultsOnly, Category = "Monster Options")
+	float SpawnEffScale{1.f};
 
 public:
-	FORCEINLINE virtual UUnitStatsBase* getStatsComp() const { return Stats; }
-	FORCEINLINE UMonsterStats* getStats()              const { return Stats; }
+	FORCEINLINE virtual UUnitStatsBase* GetUnitStats() const { return Stats; }
+	FORCEINLINE UMonsterStats* getStats() const { return Stats; }
 
 	bool IsOnGround();
 
-	void AddAnimation(FName index, UPaperFlipbook* elem = nullptr);
+	void			AddAnimation(FName index, UPaperFlipbook* elem = nullptr);
 	UPaperFlipbook* GetAnimation(FName index);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
@@ -66,28 +66,28 @@ private:
 	void Appearance();
 	void Death();
 
-// Animation
+	// Animation
 protected:
 	virtual void AnimUpdate() {}
+
 private:
 	FTimerHandle AnimUpdateTimer;
-	
+
 	UPROPERTY(EditDefaultsOnly)
-	float AnimUpdateRate{ 0.03f };
+	float AnimUpdateRate{0.03f};
 
-
-//---------------------------------------------// Attack / Combo Time
+	//---------------------------------------------// Attack / Combo Time
 public:
-	virtual void Attack();
-	FORCEINLINE bool ComboTime() { return !IsAttacking; }
+	virtual void	 Attack();
+	FORCEINLINE bool ComboTime() { return ! IsAttacking; }
 
 	virtual void EventDead() override;
 
 protected:
 	void AttackDuration(float Duration);
-private:
-	void AttackSuccess();
-	FTimerHandle AttackEndTimer;
-	bool IsAttacking;
 
+private:
+	void		 AttackSuccess();
+	FTimerHandle AttackEndTimer;
+	bool		 IsAttacking;
 };

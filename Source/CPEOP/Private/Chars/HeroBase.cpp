@@ -1,17 +1,19 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Chars/HeroBase.h"
+#include "sys/MyGameInstance.h"
 
+// Components
 #include "Chars/Components/ShadowComponent.h"
 #include "PaperFlipbook.h"
 #include "PaperFlipbookComponent.h"
-#include "sys/MyGameInstance.h"
-
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SceneComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+
+// Function Library
 #include "Kismet/KismetMathLibrary.h"
 #include "Sys/MyFunctionLibrary.h"
 #include "UObject/ConstructorHelpers.h"
@@ -106,8 +108,9 @@ void AHeroBase::Tick(float delta)
 // Timeline
 UCurveFloat* AHeroBase::FindCurveFloat(FString path)
 {
-	FString										   objectName = UMyFunctionLibrary::FindObjectName(path);
-	FString										   fullPath	  = "CurveFloat'/Game/" + path + "." + objectName + "'";
+	FString objectName = UMyFunctionLibrary::FindObjectName(path);
+	FString fullPath   = "CurveFloat'/Game/" + path + "." + objectName + "'";
+
 	ConstructorHelpers::FObjectFinder<UCurveFloat> nCurve((TEXT("%s"), *fullPath));
 	if (nCurve.Succeeded()) { return nCurve.Object; }
 	return nullptr;
@@ -138,19 +141,19 @@ void AHeroBase::EndState()
 // Movement // Sprint // Dash //
 void AHeroBase::Sprint(FVector fwVector)
 {
-	GetCharacterMovement()->MaxWalkSpeed = getHeroStatsComp()->getSprintSpeed();
+	GetCharacterMovement()->MaxWalkSpeed = GetHeroStats()->getSprintSpeed();
 	SET_TIMER(SprintPowReducingTimer, this, &AHeroBase::SprintPowReducing, cTime(0.05f), true);
 	Sprinting = true;
 }
 
 void AHeroBase::StopSprinting()
 {
-	GetCharacterMovement()->MaxWalkSpeed = getHeroStatsComp()->getWalkSpeed();
+	GetCharacterMovement()->MaxWalkSpeed = GetHeroStats()->getWalkSpeed();
 	PAUSE_TIMER(SprintPowReducingTimer);
 	Sprinting = false;
 }
 
-void AHeroBase::SprintPowReducing() { getHeroStatsComp()->AddStamina(-0.01f); }
+void AHeroBase::SprintPowReducing() { GetHeroStats()->AddStamina(-0.01f); }
 
 void AHeroBase::Dash(FVector fwVector)
 {
@@ -513,7 +516,7 @@ void AHeroBase::PowChargeLoop()
 	{
 		SET_TIMER(PowChargeLoopTimer, this, &AHeroBase::PowChargeLoop, cTime(0.05f));
 		// Add Power
-		GET_STATS->AddStamina(0.02f + getHeroStatsComp()->getStamina() / 100.f);
+		GET_STATS->AddStamina(0.02f + GetHeroStats()->getStamina() / 100.f);
 	}
 }
 
@@ -587,7 +590,7 @@ bool AHeroBase::Teleport()
 {
 	if (IsImmortal()) return false;
 
-	if (! getHeroStatsComp()->checkStamina(1.f / getHeroStatsComp()->getTeleportCost(), false))
+	if (! GetHeroStats()->checkStamina(1.f / GetHeroStats()->getTeleportCost(), false))
 	{
 		NotEnoughStamina();
 		return false;
@@ -627,7 +630,7 @@ void AHeroBase::Teleport(FVector nLocation)
 {
 	if (IsImmortal()) return;
 
-	if (! getHeroStatsComp()->checkStamina(1.f / getHeroStatsComp()->getTeleportCost(), false)) return;
+	if (! GetHeroStats()->checkStamina(1.f / GetHeroStats()->getTeleportCost(), false)) return;
 
 	if (CheckState(EBaseStates::Fall) || CheckState(EBaseStates::Teleport) || IsDead()) return;
 
@@ -676,7 +679,7 @@ void AHeroBase::TeleportTick(float delta)
 
 			// Minus stamina
 			float dist		   = FVector::Dist(tp_initialLocation, GetActorLocation());
-			float minusStamina = FMath::Min(1.2f, dist / 100.f) / getHeroStatsComp()->getTeleportCost();
+			float minusStamina = FMath::Min(1.2f, dist / 100.f) / GetHeroStats()->getTeleportCost();
 			GET_STATS->AddStamina(-(minusStamina));
 			getShadow()->ShowShadow();
 		}
@@ -686,10 +689,10 @@ void AHeroBase::TeleportTick(float delta)
 // Transformation
 void AHeroBase::ChangeForm(FName formName)
 {
-	getHeroStatsComp()->SetForm(formName);
-	GetCharacterMovement()->MaxWalkSpeed = getHeroStatsComp()->getWalkSpeed();
+	GetHeroStats()->SetForm(formName);
+	GetCharacterMovement()->MaxWalkSpeed = GetHeroStats()->getWalkSpeed();
 }
-void AHeroBase::InitForm(FName formName, FVector stats) { getHeroStatsComp()->AddForms(formName, stats); }
+void AHeroBase::InitForm(FName formName, FVector stats) { GetHeroStats()->AddForms(formName, stats); }
 // End
 
 //---------------------------------------------// Hero Inputs
@@ -828,4 +831,23 @@ void AHeroBase::BtnDash_Implementation(FVector forwardVector, bool Released)
 }
 
 void AHeroBase::BtnTeleport_Implementation() { Teleport(); }
-// End
+
+//----------------------------------------------// Unit Interface Implementation
+
+uint8 AHeroBase::GetUnitTeam_Implementation() { return GetTeam(); }
+
+bool AHeroBase::IsItHero_Implementation() { return true; }
+
+bool AHeroBase::IsAlive_Implementation() { return ! IsDead(); }
+
+bool AHeroBase::AddHealth_Implementation(float Value)
+{
+	GetHeroStats()->AddHealth(Value);
+	return true;
+}
+
+bool AHeroBase::AddPower_Implementation(float Value)
+{
+	GetHeroStats()->AddPower(Value);
+	return true;
+}

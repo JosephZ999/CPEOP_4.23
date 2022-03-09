@@ -3,18 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/TimelineComponent.h"
 #include "Chars/Components/HeroStats.h"
+#include "Components/TimelineComponent.h"
 #include "sys/Interfaces/HeroInput.h"
+#include "Sys/Interfaces/UnitInterface.h"
 #include "Chars/UnitBase.h"
 #include "HeroBase.generated.h"
 
-#define GET_STATS getHeroStatsComp()
+#define GET_STATS GetHeroStats()
 
-/**
- *
- */
-
+class USceneComponent;
+class USpringArmComponent;
+class UCameraComponent;
+class UHeroStats;
 class UCurveFloat;
 
 UENUM()
@@ -35,8 +36,11 @@ enum EComboKey
 	CK_Dash
 };
 
+/**
+ *
+ */
 UCLASS()
-class CPEOP_API AHeroBase : public AUnitBase, public IHeroInput
+class CPEOP_API AHeroBase : public AUnitBase, /* Interfaces: */ public IHeroInput, public IUnitInterface
 {
 	GENERATED_BODY()
 
@@ -51,23 +55,23 @@ private:
 private:
 	/** Точка к которой будет двигаться камера с интерполяцтей */
 	UPROPERTY(Category = Camera, VisibleAnywhere, Meta = (AllowPrivateAccess = "true"))
-	class USceneComponent* CameraSceneComp;
+	USceneComponent* CameraSceneComp;
 
 	/** Точка к которой будет двигаться камера с интерполяцтей */
 	UPROPERTY(Category = Camera, VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* ArmComp;
+	USpringArmComponent* ArmComp;
 
 	/** Камера компонент */
 	UPROPERTY(Category = Camera, VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* CameraComp;
+	UCameraComponent* CameraComp;
 
 	/** Характеристики персонажа */
 	UPROPERTY(Category = Components, VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
-	class UHeroStats* HeroStatsComp;
+	UHeroStats* HeroStatsComp;
 
 public:
-	FORCEINLINE virtual class UUnitStatsBase* getStatsComp() const { return HeroStatsComp; }
-	FORCEINLINE class UHeroStats*			  getHeroStatsComp() const { return HeroStatsComp; }
+	FORCEINLINE virtual UUnitStatsBase* GetUnitStats() const { return HeroStatsComp; }
+	FORCEINLINE class UHeroStats*		GetHeroStats() const { return HeroStatsComp; }
 
 	FVector GetCameraLocation();
 
@@ -83,19 +87,20 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void NotEnoughStamina();
 
-	//---------------------------------------------// Timeline
+	//------------------------------------------// Timeline
 protected:
 	UCurveFloat* FindCurveFloat(FString path);
 	void		 PlayTimeline(UObject* targetObject, UCurveFloat* curve, FName functionName, bool looping);
 	void		 StopTimeline();
 	FTimeline	 CurveTimeline;
 
-	//---------------------------------------------// Movement // Sprint // Dash //
+	//------------------------------------------// Movement // Sprint // Dash //
 public:
-	void			 Sprint(FVector fwVector);
-	void			 StopSprinting();
-	void			 Dash(FVector fwVector);
-	void			 DoDash();
+	void Sprint(FVector fwVector);
+	void StopSprinting();
+	void Dash(FVector fwVector);
+	void DoDash();
+
 	FORCEINLINE bool isSprinting() { return Sprinting; }
 
 private:
@@ -103,9 +108,8 @@ private:
 	bool		 Sprinting;
 	FTimerHandle SprintPowReducingTimer;
 	void		 SprintPowReducing();
-	//---------------------------------------------// End
 
-	//---------------------------------------------// Blocking Movement
+	//------------------------------------------// Blocking Movement
 private:
 	virtual void	 Move() override;
 	FORCEINLINE void UpdateAnim();
@@ -122,9 +126,8 @@ private:
 	bool LockDown	 = false;
 	bool LockForward = false;
 	bool LockBack	 = false;
-	//---------------------------------------------// End
 
-	//---------------------------------------------// Camera Behaviour
+	//------------------------------------------// Camera Behaviour
 private:
 	ECameraMode CameraMode = ECameraMode::Free;
 
@@ -173,9 +176,7 @@ private:
 	AUnitBase* CameraTargetActor;
 	float	   CameraTargetDist;
 
-	//---------------------------------------------// End
-
-	//---------------------------------------------// Actions
+	//------------------------------------------// Actions
 public:
 	virtual void Attack();
 	virtual void AttackHold();
@@ -210,9 +211,8 @@ private:
 	FTimerHandle skillEnTimer;
 	FTimerHandle skillDisTimer;
 	bool		 Skill;
-	//---------------------------------------------// End
 
-	//---------------------------------------------// Actions Combination
+	//------------------------------------------// Actions Combination
 private:
 	FTimerHandle	  ComboTimer;
 	TArray<EComboKey> ComboKeys;
@@ -231,9 +231,8 @@ public:
 
 protected:
 	EComboKey getNextKey();
-	//---------------------------------------------// End
 
-	//---------------------------------------------// Teleport
+	//------------------------------------------// Teleport
 public:
 	bool Teleport();
 	void Teleport(FVector nLocation);
@@ -244,16 +243,14 @@ private:
 	FVector tp_Vector;
 	float	tp_DistPassed;
 	float	tp_MaxDist;
-	//---------------------------------------------// End
 
-	//---------------------------------------------// Transformation
+	//------------------------------------------// Transformation
 public:
 	UFUNCTION(BlueprintCallable)
 	void ChangeForm(FName formName);
 	void InitForm(FName formName, FVector stats);
-	//---------------------------------------------// End
 
-	//---------------------------------------------// Hero Inputs
+	//------------------------------------------// Hero Inputs
 public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Hero Commands")
 	void BtnSetMovement(FVector Value);
@@ -267,5 +264,21 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Hero Comnnads")
 	void BtnTeleport();
 
-	//---------------------------------------------// End
+	//------------------------------------------// Unit Interface
+
+public:
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Team"))
+	uint8 GetUnitTeam();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Hero"))
+	bool IsItHero();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Alive"))
+	bool IsAlive();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Add"))
+	bool AddHealth(float Value);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Add"))
+	bool AddPower(float Value);
 };
