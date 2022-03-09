@@ -22,6 +22,8 @@ class CPEOP_API IGameIns
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "GameIns Interface")
+	void PauseGame();
 	//------------------------------------------// Events
 
 	UFUNCTION(BlueprintNativeEvent, Category = "GameIns Events")
