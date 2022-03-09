@@ -521,7 +521,7 @@ bool AUnitBase::ApplyDamage(class AUnitBase* damageCauser, FHitOption* damageOpt
 	}
 
 	// Damage Text
-	CreateDamageText(damage / GetUnitStats()->GetDamage(), damageCauser->IsLookingRight(), crit);
+	CreateDamageText(damage / damageCauser->GetUnitStats()->GetDamage(), damageCauser->IsLookingRight(), crit);
 
 	// Change State
 	if (! block)
