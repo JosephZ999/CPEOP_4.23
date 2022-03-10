@@ -16,10 +16,12 @@
 
 AOgichi::AOgichi()
 {
+	SetHeroName("Ogichi");
+
 	if (GetHeroStats())
 	{
-		InitForm(SHIKAI_NAME, {4, 4, 7}); // 15
-		InitForm(BANKAI_NAME, {6, 11, 9});
+		InitForm(SHIKAI_NAME, {5, 5, 5}); // 15
+		InitForm(BANKAI_NAME, {7, 12, 7});
 	}
 
 	// Hit Boxes

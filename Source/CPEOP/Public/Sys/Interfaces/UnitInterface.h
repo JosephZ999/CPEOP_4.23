@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Chars/Components/HeroStats.h"
+#include "Chars/Components/MonsterStats.h"
 #include "UObject/Interface.h"
 #include "UnitInterface.generated.h"
 
@@ -29,17 +31,19 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Get"))
 	int32 GetExpForKill();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Get"))
+	FName GetUnitName();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Get"))
+	FName GetFormName();
+
 	// Components
-	/*
-		UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Get"))
-		class UUnitStats* GetUnitStats();
 
-		UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Get"))
-		class UHeroStats* GetHeroStats();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Get"))
+	class UHeroStats* GetHeroStatsI();
 
-		UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Get"))
-		class UMonsterStats* GetMonsterStats();
-	*/
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Get"))
+	class UMonsterStats* GetMonsterStatsI();
 
 	// State
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "IsA"))

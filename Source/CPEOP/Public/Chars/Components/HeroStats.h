@@ -140,20 +140,30 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	int32 GetLevelScore() const;
-
 	/*
-	UFUNCTION(BlueprintCallable)
-	void getStats(uint8& Lv, uint8& Str, uint8& Agi, uint8& Spi, float& Dmg, float& Arm, float& Crit)const
-	{
-		Lv	= Level;
-		Str = Strength;
-		Agi = Agility;
-		Spi = Spirit;
-		Dmg = Damage;
-		Arm = Armor;
-		Crit = CritRate;
-	}
+		UFUNCTION(BlueprintCallable)
+		void GetAllStats(uint8& Lv, uint8& Str, uint8& Agi, uint8& Spi, float& Dmg, float& Arm, float& Crit)const
+		{
+			Lv	= Level;
+			Str = Strength;
+			Agi = Agility;
+			Spi = Spirit;
+			Dmg = Damage;
+			Arm = Armor;
+			Crit = CritRate;
+		}
 	*/
+
+	UFUNCTION(BlueprintCallable)
+	void GetAllStats(float& Dmg, float& Arm, float& Crit, float& Speed, float& TpCos, float& SkillReduce)
+	{
+		Dmg			= Damage;
+		Arm			= Armor;
+		Crit		= CritRate;
+		Speed		= WalkSpeed;
+		TpCos		= TeleportCost;
+		SkillReduce = SkillReducer;
+	}
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE float getStamina() const { return Stamina; }

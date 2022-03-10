@@ -105,6 +105,11 @@ void AHeroBase::Tick(float delta)
 	CurveTimeline.TickTimeline(delta);
 }
 
+void AHeroBase::SetHeroName(FName NewName)
+{
+	HeroName = NewName;
+}
+
 // Timeline
 UCurveFloat* AHeroBase::FindCurveFloat(FString path)
 {
@@ -903,6 +908,20 @@ void AHeroBase::BtnTeleport_Implementation()
 }
 
 //----------------------------------------------// Unit Interface Implementation
+class UHeroStats* AHeroBase::GetHeroStatsI_Implementation()
+{
+	return GetHeroStats();
+}
+
+FName AHeroBase::GetUnitName_Implementation()
+{
+	return HeroName;
+}
+
+FName AHeroBase::GetFormName_Implementation()
+{
+	return GetHeroStats()->FormName;
+}
 
 bool AHeroBase::IsItHero_Implementation()
 {

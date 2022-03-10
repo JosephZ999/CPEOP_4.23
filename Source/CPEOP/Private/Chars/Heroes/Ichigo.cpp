@@ -20,6 +20,8 @@
 
 AIchigo::AIchigo()
 {
+	SetHeroName("Ichigo");
+
 	AfterImage = CreateDefaultSubobject<UAfterImageComponent>(TEXT("AfterImageComp"));
 
 	if (GetHeroStats())

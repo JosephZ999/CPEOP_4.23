@@ -50,6 +50,7 @@ private:
 	static FName ArmCompName;
 	static FName CameraCompName;
 	static FName HeroStatsCompName;
+	FName		 HeroName;
 
 private:
 	/** Точка к которой будет двигаться камера с интерполяцтей */
@@ -85,6 +86,8 @@ public:
 	void NotEnoughPower();
 	UFUNCTION(BlueprintImplementableEvent)
 	void NotEnoughStamina();
+
+	void SetHeroName(FName NewName);
 
 	//------------------------------------------// Timeline
 protected:
@@ -266,6 +269,18 @@ public:
 	//------------------------------------------// Unit Interface
 
 public:
+	// UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Get"))
+	// UUnitStats* GetUnitStatsI();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Get"))
+	UHeroStats* GetHeroStatsI();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Get"))
+	FName GetUnitName();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Get"))
+	FName GetFormName();
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Hero"))
 	bool IsItHero();
 
