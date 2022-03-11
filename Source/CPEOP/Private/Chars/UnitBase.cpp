@@ -44,7 +44,7 @@ void AUnitBase::BeginPlay()
 
 	const FVector spriteScale = GetSprite()->GetComponentScale();
 	GetSprite()->SetRelativeScale3D(FVector(spriteScale.X, spriteScale.Y, spriteScale.Z * 1.1f));
-	EndState();
+	EndStateDeferred(0.1f);
 }
 
 void AUnitBase::Tick(float delta)
