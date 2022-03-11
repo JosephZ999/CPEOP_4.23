@@ -51,14 +51,7 @@ void AOgichiAI::AIBody()
 	{
 		if (! SearchEnemy(OgichiRef->GetTeam()))
 		{
-			if (GetAlly() && getDistance(GetAlly()->GetActorLocation()) > 100.f)
-			{
-				OgichiRef->SetMoveVector(getForwardVector(GetAlly()->GetActorLocation()));
-			}
-			else
-			{
-				OgichiRef->SetMoveVector(FVector::ZeroVector);
-			}
+			MoveToAlly();
 			return;
 		}
 		else
@@ -126,6 +119,7 @@ void AOgichiAI::AIBody()
 			tpReload(0.5f);
 			return;
 		}
+		SearchEnemy(OgichiRef->GetTeam());
 		Wait(0.1f);
 		return;
 	}
@@ -269,28 +263,6 @@ void AOgichiAI::A_Stand()
 
 	if (getDistanceX() < MAX_DIST_X && getDistanceY() < MAX_DIST_Y)
 	{
-		// Block
-		/*
-			if (getEnemy()->GetDangerType() == EDangerType::MeleeAttack &&
-				((isEnemyOnRight() && ! getEnemy()->IsLookingRight()) || (! isEnemyOnRight() && getEnemy()->IsLookingRight())))
-			{
-				OgichiRef->SetMoveVector(getForwardVector());
-				OgichiRef->Block();
-				Wait(0.2f);
-				return;
-			}
-		*/
-
-		// Teleprot to behind of enemy
-		/*
-			if (UKismetMathLibrary::RandomBoolWithWeight(TP_CHANCE) && canTeleport)
-			{
-				OgichiRef->Teleport(getEnemyLocation() + ((isEnemyOnRight()) ? FVector(50.f, 0.f, 0.f) : FVector(-50.f, 0.f, 0.f)));
-				tpReload(0.5f);
-				return;
-			}
-		*/
-
 		// Attack enemy
 		OgichiRef->SetMoveVector((getDistanceX() < MIN_DIST_X) ? FVector::ZeroVector : getForwardVector());
 		OgichiRef->SetRotation(isEnemyOnRight(), false);
@@ -383,7 +355,7 @@ void AOgichiAI::CheckDanger()
 	{
 		FVector tp_Position = getPawnLocation();
 
-		tp_Position.X = pawnLocationX + (SetLookingToRight) ? (-100.f) : 100.f;
+		tp_Position.X = pawnLocationX + ((SetLookingToRight) ? (-100.f) : 100.f);
 		if (A_Teleport(tp_Position))
 		{
 			ClearDangerInfo();

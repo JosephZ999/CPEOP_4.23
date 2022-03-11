@@ -22,6 +22,18 @@ AUnitAIBase::AUnitAIBase()
 	_SearchEnemyStepNum	 = 10;
 }
 
+FORCEINLINE class AUnitBase* AUnitAIBase::GetOwnerChar()
+{
+	if (_OwnerChar)
+	{
+		return _OwnerChar;
+	}
+	else
+	{
+		return (_OwnerChar = Cast<AUnitBase>(GetPawn()));
+	}
+}
+
 FVector AUnitAIBase::getPawnLocation() const
 {
 	return GetPawn()->GetActorLocation();
@@ -177,4 +189,19 @@ AUnitBase* AUnitAIBase::GetAlly()
 {
 	//...
 	return (IsValid(_Ally) && ! _Ally->IsDead()) ? _Ally : nullptr;
+}
+
+void AUnitAIBase::MoveToAlly()
+{
+	if (GetAlly())
+	{
+		if (getDistance(_Ally->GetActorLocation()) > 100.f)
+		{
+			GetOwnerChar()->SetMoveVector(getForwardVector(GetAlly()->GetActorLocation()));
+		}
+		else if (FMath::IsNearlyZero(_Ally->GetVelocity().X))
+		{
+			GetOwnerChar()->SetMoveVector(FVector::ZeroVector);
+		}
+	}
 }

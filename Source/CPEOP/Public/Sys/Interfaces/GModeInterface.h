@@ -59,4 +59,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GM Interface")
 	void LevelUp(AActor* Hero);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GM Interface")
+	bool CanShakeCamera(AActor* OwnerUnit, AActor* DamagedUnit);
 };

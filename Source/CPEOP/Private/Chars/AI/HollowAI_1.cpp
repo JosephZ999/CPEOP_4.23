@@ -21,7 +21,7 @@ void AHollowAI_1::AIBody()
 	}
 
 	// Search Enemy
-	if (! getEnemy())
+	if (! IsValid(getEnemy()))
 	{
 		if (! SearchEnemy(OwnerRef->GetTeam()))
 		{
@@ -29,6 +29,12 @@ void AHollowAI_1::AIBody()
 			Wait(1.f);
 			return;
 		}
+	}
+	else if (getEnemy()->IsDead())
+	{
+		ClearEnemy();
+		Wait(1.f);
+		return;
 	}
 
 	switch (HType)
@@ -97,6 +103,7 @@ void AHollowAI_1::AITypeDef()
 	case EBaseStates::Hit:
 	{
 		StopMoving();
+		ClearEnemy();
 		Wait(0.8f + FMath::FRandRange(0.f, 0.5f));
 		break;
 	}
@@ -142,6 +149,7 @@ void AHollowAI_1::AITypeRanged()
 	case EBaseStates::Hit:
 	{
 		StopMoving();
+		ClearEnemy();
 		Wait(0.5f + FMath::FRandRange(0.f, 0.5f));
 		break;
 	}

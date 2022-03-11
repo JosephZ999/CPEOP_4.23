@@ -32,6 +32,9 @@ private:
 	UPROPERTY()
 	AUnitBase* _Ally;
 
+	UPROPERTY()
+	AUnitBase* _OwnerChar;
+
 	float _SearchEnemyStepSize;
 	uint8 _SearchEnemyStepNum;
 
@@ -41,6 +44,7 @@ private:
 
 protected:
 	FORCEINLINE class AUnitBase* getEnemy() const { return _Enemy; }
+	FORCEINLINE class AUnitBase* GetOwnerChar();
 
 	FVector getPawnLocation() const;
 	FVector getEnemyLocation() const;
@@ -113,9 +117,12 @@ public:
 	void ClearEnemy() { _Enemy = nullptr; }
 
 	// Ally
+public:
 	AUnitBase* GetAlly();
+	void	   MoveToAlly();
 
 	// Danger
+public:
 	UFUNCTION(BlueprintNativeEvent, Category = "AI Interface") void OnDangerDetected(FDangerArg& DangerInfo);
 
 	void ClearDangerInfo();
