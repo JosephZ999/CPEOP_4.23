@@ -3,6 +3,7 @@
 #include "Chars/Heroes/Ogichi.h"
 #include "TimerManager.h"
 #include "PaperFlipbook.h"
+#include "Chars/AI/OgichiAI.h"
 
 #define OGI_ANIM_LOC   "Texture/Chars/Ogichi/FBook/"
 #define OGI_ANIM_LOC_2 "Texture/Chars/Ogichi_Bankai/Anim/"
@@ -17,6 +18,7 @@
 AOgichi::AOgichi()
 {
 	SetHeroName("Ogichi");
+	AIControllerClass = AOgichiAI::StaticClass();
 
 	if (GetHeroStats())
 	{

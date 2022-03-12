@@ -159,9 +159,6 @@ protected:
 	// AI
 public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AI Interface")
-	void SetAIEnabled(bool Enable);
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AI Interface")
 	void SetEnemy(class AUnitBase* ObjectRef);
 
 	UFUNCTION(BlueprintNativeEvent, Category = "AI Interface")

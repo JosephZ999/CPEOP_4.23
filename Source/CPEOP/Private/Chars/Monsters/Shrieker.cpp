@@ -3,11 +3,13 @@
 #include "Shrieker.h"
 #include "ShriekerSummon.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
+#include "chars/AI/ShriekerAI.h"
 
 AShrieker::AShrieker()
 {
+	AIControllerClass = AShriekerAI::StaticClass();
+
 	AddAnimation(FName("Stand"), nullptr);
 	AddAnimation(FName("Walk"), nullptr);
 	AddAnimation(FName("Attack"), nullptr);
@@ -106,7 +108,7 @@ AShriekerSummon* AShrieker::SpawnSummon(TSubclassOf<class AShriekerSummon> Class
 		AShriekerSummon* nSummon = GetWorld()->SpawnActorDeferred<AShriekerSummon>(Class, nTransform);
 		if (nSummon)
 		{
-			UGameplayStatics::FinishSpawningActor(nSummon, nTransform);
+			nSummon->FinishSpawning(nTransform);
 			--SummonsNum;
 			return nSummon;
 		}

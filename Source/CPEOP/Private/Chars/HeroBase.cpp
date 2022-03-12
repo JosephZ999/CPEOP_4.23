@@ -2,6 +2,7 @@
 
 #include "Chars/HeroBase.h"
 #include "sys/MyGameInstance.h"
+#include "GameFramework/Controller.h"
 
 // Components
 #include "Chars/Components/ShadowComponent.h"
@@ -759,7 +760,17 @@ void AHeroBase::InitForm(FName formName, FVector stats)
 {
 	GetHeroStats()->AddForms(formName, stats);
 }
-// End
+
+//----------------------------------------------// AI Interface
+
+void AHeroBase::SetAIEnabled_Implementation(bool Enable)
+{
+	if (GetController() && GetController()->GetClass()->ImplementsInterface(UAIEvents::StaticClass()))
+	{
+		IAIEvents::Execute_SetAIEnabled(GetController(), Enable);
+		ResetKeys();
+	}
+}
 
 //---------------------------------------------// Hero Inputs
 void AHeroBase::BtnSetMovement_Implementation(FVector Value)

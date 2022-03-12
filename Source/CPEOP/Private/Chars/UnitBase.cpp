@@ -30,6 +30,7 @@ AUnitBase::AUnitBase()
 	GetCharacterMovement()->MaxWalkSpeed		  = 150.f;
 	GetCharacterMovement()->GravityScale		  = 1.2f;
 
+	AutoPossessAI	 = EAutoPossessAI::PlacedInWorldOrSpawned;
 	DangerNoticeType = EDangerType::None;
 	Dead			 = false;
 
@@ -54,13 +55,6 @@ void AUnitBase::Tick(float delta)
 }
 
 // AI
-void AUnitBase::SetAIEnabled_Implementation(bool Enable)
-{
-	if (GetController() && GetController()->GetClass()->ImplementsInterface(UAIEvents::StaticClass()))
-	{
-		IAIEvents::Execute_SetAIEnabled(GetController(), Enable);
-	}
-}
 
 void AUnitBase::SetEnemy_Implementation(AUnitBase* ObjectRef)
 {

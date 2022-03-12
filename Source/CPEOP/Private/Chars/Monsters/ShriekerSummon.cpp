@@ -1,9 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ShriekerSummon.h"
+#include "Chars/AI/ShriekerSummonAI.h"
 
 AShriekerSummon::AShriekerSummon()
 {
+	AIControllerClass = AShriekerSummonAI::StaticClass();
+
 	AddAnimation(FName("Stand"), nullptr);
 	AddAnimation(FName("Jumping"), nullptr);
 	AddAnimation(FName("Attack_1"), nullptr);

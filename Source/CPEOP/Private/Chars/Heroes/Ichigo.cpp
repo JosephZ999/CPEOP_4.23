@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Chars/Heroes/Ichigo.h"
+#include "Chars/AI/IchigoAI.h"
 
 #define ICHI_ANIM_LOC	"Texture/Chars/Ichigo/FBook/"
 #define ICHI_ANIM_LOC_B "Texture/Chars/Ichigo_Bankai/FBook/"
@@ -21,6 +22,7 @@
 AIchigo::AIchigo()
 {
 	SetHeroName("Ichigo");
+	AIControllerClass = AIchigoAI::StaticClass();
 
 	AfterImage = CreateDefaultSubobject<UAfterImageComponent>(TEXT("AfterImageComp"));
 

@@ -97,4 +97,9 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "GetExp"))
 	int32 GetExpForKill();
+
+	//------------------------------------------// AI Interface
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AI Interface")
+	void SetAIEnabled(bool Enable);
 };

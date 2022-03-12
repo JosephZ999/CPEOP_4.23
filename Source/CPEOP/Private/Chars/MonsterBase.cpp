@@ -5,6 +5,7 @@
 #include "Chars/Components/ShadowComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/Controller.h"
 
 #define APPEARANCE_TIME 0.5f
 #define DEATH_TIME		1.f
@@ -15,6 +16,14 @@ AMonsterBase::AMonsterBase()
 
 	Stats = CreateDefaultSubobject<UMonsterStats>(TEXT("MonsterStats"));
 	InitHelper("DeathEffect", "Blueprint/Objects/Dynamic/MonsterDeathEffect");
+}
+
+void AMonsterBase::SetAIEnabled_Implementation(bool Enable)
+{
+	if (GetController() && GetController()->GetClass()->ImplementsInterface(UAIEvents::StaticClass()))
+	{
+		IAIEvents::Execute_SetAIEnabled(GetController(), Enable);
+	}
 }
 
 void AMonsterBase::BeginPlay()

@@ -4,9 +4,12 @@
 #include "PaperFlipbook.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "PaperFlipbookComponent.h"
+#include "Chars/AI/HollowAI_1.h"
 
 AHollow_01::AHollow_01()
 {
+	AIControllerClass = AHollowAI_1::StaticClass();
+
 	AddAnimation(FName("Stand"), nullptr);
 	AddAnimation(FName("Walk"), nullptr);
 	AddAnimation(FName("Attack"), nullptr);

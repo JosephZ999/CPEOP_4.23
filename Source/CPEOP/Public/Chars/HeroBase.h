@@ -252,6 +252,11 @@ public:
 	void ChangeForm(FName formName);
 	void InitForm(FName formName, FVector stats);
 
+	//------------------------------------------// AI Interface
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "AI Interface")
+	void SetAIEnabled(bool Enable);
+
 	//------------------------------------------// Hero Inputs
 public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Hero Commands")

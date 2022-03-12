@@ -51,15 +51,31 @@ class CPEOP_API IGModeInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	// Actions
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GM Interface")
+	AHeroBase* SpawnAHero(TSubclassOf<AHeroBase> HeroClass, FTransform SpawnTransform, uint8 Team, bool Possess);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GM Interface")
+	bool PossessToHero(AHeroBase* Hero);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GM Interface")
+	void StartBattle();
+
+	// Stats
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GM Interface")
 	FGameResults GetGameResults();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GM Interface")
+	AHeroBase* GetPlayerHero();
+
+	// Events
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GM Interface")
 	void Kill(AActor* Killer, AActor* Killed);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GM Interface")
 	void LevelUp(AActor* Hero);
 
+	// Conditions
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GM Interface")
 	bool CanShakeCamera(AActor* OwnerUnit, AActor* DamagedUnit);
 };
