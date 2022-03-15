@@ -191,7 +191,7 @@ public:
 
 	// Conditions //
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	bool IsDead() const { return Dead; }
+	FORCEINLINE bool IsDead() const { return Dead; }
 
 	FORCEINLINE bool IsImmortal() { return Immortal; }
 
@@ -206,6 +206,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE bool IsFalling() const { return State == EBaseStates::Fall; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE bool IsOnGround() const;
 
 public: // Functions
 	void			FindHelper(FString objectPath, TSubclassOf<class AHelper>& Class);

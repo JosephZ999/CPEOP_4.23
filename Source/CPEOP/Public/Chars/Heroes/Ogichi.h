@@ -6,11 +6,11 @@
 #include "Chars/HeroBase.h"
 #include "Ogichi.generated.h"
 
-#define SHIKAI_NAME "Shikai"
-#define BANKAI_NAME "Bankai"
+#define SHIKAI_NAME			 "Shikai"
+#define BANKAI_NAME			 "Bankai"
 
 // Skills
-#define GETSUGA_COST -2.f
+#define GETSUGA_COST		 -2.f
 #define GETSUGA_TENSHOU_COST -4.f
 
 /* */
@@ -44,25 +44,31 @@ private:
 	// Animations
 	TMap<FName, class UPaperFlipbook*> ShikaiAnim;
 	TMap<FName, class UPaperFlipbook*> BankaiAnim;
-protected:
-	virtual void BeginPlay() override;
 
 public:
 	AOgichi();
 
 	// Input Actions
-	virtual void Attack()			override;
-	virtual void AttackBack()		override;
-	virtual void AttackForward()	override;
-	virtual void ComboI()			override;
-	virtual void AttackDown()		override;
+	virtual void Attack() override;
+	virtual void AttackBack() override;
+	virtual void AttackForward() override;
+	virtual void ComboI() override;
+	virtual void AttackDown() override;
 
 	FORCEINLINE void ShikaiComboI();
 	FORCEINLINE void BankaiComboI();
 
 	// Actions
-	void Shikai() { ChangeForm(SHIKAI_NAME);	AnimData = &ShikaiAnim; }
-	void Bankai() { ChangeForm(BANKAI_NAME);	AnimData = &BankaiAnim; }
+	void Shikai()
+	{
+		ChangeForm(SHIKAI_NAME);
+		AnimData = &ShikaiAnim;
+	}
+	void Bankai()
+	{
+		ChangeForm(BANKAI_NAME);
+		AnimData = &BankaiAnim;
+	}
 
 	// Ichi_Shikai Actions
 	void sh_Attack_1();
@@ -70,9 +76,9 @@ public:
 	void sh_AttackFW();
 	void sh_AttackB();
 
-	void sh_SwordTwist();
-	void sh_SwordTwistLoop();
-	void sh_SwordTwistEnd();
+	void		 sh_SwordTwist();
+	void		 sh_SwordTwistLoop();
+	void		 sh_SwordTwistEnd();
 	FTimerHandle sh_STwistEndTimer;
 
 	void sh_SwordThrow();

@@ -8,6 +8,7 @@
 #include "MyGameModeBase.generated.h"
 
 class AHeroBase;
+class AMyPlayerController;
 
 /**
  *
@@ -18,18 +19,22 @@ class CPEOP_API AMyGameModeBase : public AGameModeBase, public IGModeInterface
 {
 	GENERATED_BODY()
 
+private:
+	AHeroBase*			 PlayerHero;
+	AMyPlayerController* PlayerController;
+
 public:
-	UPROPERTY(BlueprintReadWrite, Category = "Game Mode")
-	AHeroBase* PlayerHero;
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE AMyPlayerController* GetController() const { return PlayerController; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE AHeroBase* GetPlayerHero() const { return PlayerHero; }
 
 public:
 	//------------------------------------------// Game Mode Interface
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GM Interface")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	AHeroBase* SpawnAHero(TSubclassOf<AHeroBase> HeroClass, FTransform SpawnTransform, uint8 Team, bool Possess);
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GM Interface")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	bool PossessToHero(AHeroBase* Hero);
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GM Interface")
-	AHeroBase* GetPlayerHero();
 };

@@ -2,20 +2,11 @@
 
 #include "Sys/MyGameModeBase.h"
 #include "Sys/Interfaces/AIEvents.h"
-#include "GameFramework/Controller.h"
+#include "Sys/MyPlayerController.h"
 #include "Engine/World.h"
 #include "Chars/HeroBase.h"
 
 #define PLAYER_INDEX 0
-
-AHeroBase* AMyGameModeBase::GetPlayerHero_Implementation()
-{
-	if (IsValid(PlayerHero))
-	{
-		return PlayerHero;
-	}
-	return nullptr;
-}
 
 //----------------------------------------------// Game Mode Interface
 
@@ -46,11 +37,12 @@ bool AMyGameModeBase::PossessToHero_Implementation(AHeroBase* Hero)
 		uint32	Index = 0;
 		for (FConstPlayerControllerIterator Iterator = World->GetPlayerControllerIterator(); Iterator; ++Iterator)
 		{
-			APlayerController* PlayerController = Iterator->Get();
+			APlayerController* nController = Iterator->Get();
 			if (Index == PLAYER_INDEX)
 			{
-				PlayerController->Possess(Hero);
-				PlayerHero = Hero;
+				nController->Possess(Hero);
+				PlayerHero		 = Hero;
+				PlayerController = Cast<AMyPlayerController>(nController);
 				return true;
 			}
 			Index++;

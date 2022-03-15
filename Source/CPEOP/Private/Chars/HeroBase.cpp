@@ -94,6 +94,7 @@ void AHeroBase::BeginPlay()
 {
 	Super::BeginPlay();
 	GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &AHeroBase::OnCompHit);
+	ChangeForm(GetHeroStats()->FormName);
 }
 
 void AHeroBase::Tick(float delta)
@@ -540,7 +541,14 @@ void AHeroBase::PowCharge()
 		nState.EndState	 = false;
 		NewState(nState);
 
-		SET_TIMER(PowChargeLoopTimer, this, &AHeroBase::PowCharge, AnimElemTime(GetAnim(nState.Animation)->GetNumFrames()));
+		if (GetAnim(nState.Animation))
+		{
+			SET_TIMER(PowChargeLoopTimer, this, &AHeroBase::PowCharge, AnimElemTime(GetAnim(nState.Animation)->GetNumFrames()));
+		}
+		else
+		{
+			EndState();
+		}
 	}
 	else if (CheckState(EBaseStates::PowCharge))
 	{

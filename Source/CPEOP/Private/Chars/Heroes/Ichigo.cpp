@@ -145,12 +145,6 @@ AIchigo::AIchigo()
 	b_AttackDashCurve = FindCurveFloat("Blueprint/Chars/Ichigo/Bankai/DashAttackVel");
 }
 
-void AIchigo::BeginPlay()
-{
-	Super::BeginPlay();
-	ChangeForm(SHIKAI_NAME);
-}
-
 void AIchigo::Landed(const FHitResult& Hit)
 {
 	if (CheckState(EIchigoState::Ichi_Attack_Air))
@@ -163,8 +157,6 @@ void AIchigo::Landed(const FHitResult& Hit)
 //---------------------------------------------// Inputs
 void AIchigo::Attack()
 {
-	Super::Attack();
-
 	if (GET_STATS->FormName == SHIKAI_NAME)
 	{
 		sh_InputA();
@@ -177,8 +169,6 @@ void AIchigo::Attack()
 
 void AIchigo::AttackBack()
 {
-	Super::AttackBack();
-
 	if (GET_STATS->FormName == SHIKAI_NAME)
 	{
 		sh_InputB();
@@ -191,8 +181,6 @@ void AIchigo::AttackBack()
 
 void AIchigo::AttackForward()
 {
-	Super::AttackForward();
-
 	if (GET_STATS->FormName == SHIKAI_NAME)
 	{
 		sh_InputFW();

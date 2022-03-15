@@ -8,19 +8,19 @@
 
 #include "Ichigo.generated.h"
 
-#define SHIKAI_NAME "Shikai"
-#define BANKAI_NAME "Bankai"
+#define SHIKAI_NAME			 "Shikai"
+#define BANKAI_NAME			 "Bankai"
 
 /* Attack Options */
-#define BASE_VELOCITY	(MoveVector + GetActorForwardVector()) * 150
-#define SP_VELOCITY		(MoveVector + GetActorForwardVector()) * 200
-#define BLOCK_DURATION  cTime(0.2f)
+#define BASE_VELOCITY		 (MoveVector + GetActorForwardVector()) * 150
+#define SP_VELOCITY			 (MoveVector + GetActorForwardVector()) * 200
+#define BLOCK_DURATION		 cTime(0.2f)
 
 // Skills
-#define GETSUGA_COST			-2.f
-#define GETSUGA_TENSHOU_COST	-4.f
-#define EXPLOSION_COST			-4.f
-#define BANKAI_COST				-3.f
+#define GETSUGA_COST		 -2.f
+#define GETSUGA_TENSHOU_COST -4.f
+#define EXPLOSION_COST		 -4.f
+#define BANKAI_COST			 -3.f
 
 /* */
 UENUM()
@@ -68,17 +68,17 @@ private:
 	// Animations
 	TMap<FName, class UPaperFlipbook*> ShikaiAnim;
 	TMap<FName, class UPaperFlipbook*> BankaiAnim;
+
 protected:
-	virtual void BeginPlay() override;
 	virtual void Landed(const FHitResult& Hit) override;
 
 public:
 	// Input Actions
-	virtual void Attack()			override;
-	virtual void AttackBack()		override;
-	virtual void AttackForward()	override;
-	virtual void AttackDown()       override;
-	virtual void ComboI()			override;
+	virtual void Attack() override;
+	virtual void AttackBack() override;
+	virtual void AttackForward() override;
+	virtual void AttackDown() override;
+	virtual void ComboI() override;
 
 	FORCEINLINE void sh_InputA();
 	FORCEINLINE void sh_InputB();
@@ -93,9 +93,16 @@ public:
 	FORCEINLINE void ShikaiComboI();
 	FORCEINLINE void BankaiComboI();
 
-
-	void Shikai() { ChangeForm(SHIKAI_NAME);	AnimData = &ShikaiAnim; }
-	void Bankai() {	ChangeForm(BANKAI_NAME);	AnimData = &BankaiAnim;	}
+	void Shikai()
+	{
+		ChangeForm(SHIKAI_NAME);
+		AnimData = &ShikaiAnim;
+	}
+	void Bankai()
+	{
+		ChangeForm(BANKAI_NAME);
+		AnimData = &BankaiAnim;
+	}
 
 	// Shikai
 	void sh_Attack_1();
@@ -108,11 +115,11 @@ public:
 	void sh_GetsugaB();
 	void sh_RExplosion();
 
-	void sh_SwordTwist();
-	void sh_SwordTwistLoop();
-	void sh_SwordTwistEnd();
+	void		 sh_SwordTwist();
+	void		 sh_SwordTwistLoop();
+	void		 sh_SwordTwistEnd();
 	FTimerHandle sh_STwistEndTimer;
-	void sh_SwordThrow();
+	void		 sh_SwordThrow();
 
 	void sh_GetsugaStart();
 	void sh_GetsugaSlash();
@@ -120,16 +127,16 @@ public:
 	void sh_Bankai();
 
 	// Bankai
-	void b_Attack_1();
-	void b_Attack_2();
-	void b_Attack_3();
-	void b_Attack_4();
-	void b_Attack_FW();
-	void b_Attack_FW_Slash();
+	void	b_Attack_1();
+	void	b_Attack_2();
+	void	b_Attack_3();
+	void	b_Attack_4();
+	void	b_Attack_FW();
+	void	b_Attack_FW_Slash();
 	FVector b_SlashLocation;
-	void b_Attack_FW_End();
-	void b_Attack_B();
-	void b_Attack_Air();
+	void	b_Attack_FW_End();
+	void	b_Attack_B();
+	void	b_Attack_Air();
 
 	void b_Getsuga();
 	void b_GetsugaFW();
@@ -139,13 +146,13 @@ public:
 	void b_Shikai();
 
 	UPROPERTY(BlueprintReadOnly)
-	bool IsUsedBankai{ false };
-	
+	bool IsUsedBankai{false};
+
 	// Timeline Movement // Dash
 protected:
 	UFUNCTION()
 	void b_AttackDash(float value); // Timeline
 private:
 	UCurveFloat* b_AttackDashCurve;
-	FVector DashStartLoc;
+	FVector		 DashStartLoc;
 };

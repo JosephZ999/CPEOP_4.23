@@ -11,7 +11,7 @@
 // Consts per stat
 #define HEALTH			2.f
 #define DAMAGE			0.5f
-#define ARMOR			0.1F
+#define ARMOR			0.15f
 
 #define WALK_SPEED		5.f
 #define RUN_SPEED		20.f
@@ -124,6 +124,7 @@ void UHeroStats::AddForms(FName name, FVector stats)
 		FormName = name;
 
 	HeroForms.Add(name, FFormStats(stats.X, stats.Y, stats.Z));
+	HeroForms.begin();
 }
 
 void UHeroStats::SetForm(FName name)

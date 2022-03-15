@@ -100,12 +100,6 @@ AOgichi::AOgichi()
 	AnimData = &ShikaiAnim;
 }
 
-void AOgichi::BeginPlay()
-{
-	Super::BeginPlay();
-	ChangeForm(SHIKAI_NAME);
-}
-
 //---------------------------------------------// Inputs
 void AOgichi::Attack()
 {

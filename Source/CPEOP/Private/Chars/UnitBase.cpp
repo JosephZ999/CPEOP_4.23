@@ -51,7 +51,15 @@ void AUnitBase::BeginPlay()
 void AUnitBase::Tick(float delta)
 {
 	Super::Tick(delta);
-	Move();
+	if (! IsDead())
+	{
+		Move();
+	}
+}
+
+FORCEINLINE bool AUnitBase::IsOnGround() const
+{
+	return GetMovementComponent()->IsMovingOnGround();
 }
 
 // AI
@@ -250,7 +258,14 @@ void AUnitBase::EventJump()
 		NewState(nState);
 
 		FTimerHandle nTimer;
-		SET_TIMER(nTimer, this, &AUnitBase::Jumping, AnimElemTime(GetAnim(nState.Animation)->GetNumFrames()));
+		if (GetAnim(nState.Animation))
+		{
+			SET_TIMER(nTimer, this, &AUnitBase::Jumping, AnimElemTime(GetAnim(nState.Animation)->GetNumFrames()));
+		}
+		else
+		{
+			Jumping();
+		}
 	}
 	else if (State == EBaseStates::Fall)
 	{
@@ -521,7 +536,7 @@ bool AUnitBase::ApplyDamage(class AUnitBase* damageCauser, FHitOption* damageOpt
 	if (! block)
 	{
 		Blocked = false;
-		Dead	= GetUnitStats()->GetHealth() < 0.f;
+		Dead	= GetUnitStats()->GetHealth() <= 0.f;
 
 		if (damage > GetUnitStats()->GetMaxHealth() * 0.05f || Dead)
 		{
