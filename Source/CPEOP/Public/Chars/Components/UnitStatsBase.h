@@ -15,9 +15,17 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	int32 ExpForKill;
 
+	UPROPERTY(EditDefaultsOnly, Meta = (ClampMin = 0, ClampMax = 100))
+	uint8 Level = 0;
+
 public:
 	// Sets default values for this component's properties
 	UUnitStatsBase();
+
+	virtual void Init() {}
+
+	UFUNCTION(BlueprintCallable)
+	virtual void SetLevel(uint8 NewLevel);
 
 	UFUNCTION(BlueprintCallable)
 	virtual float GetHealth() const { return 0.f; };

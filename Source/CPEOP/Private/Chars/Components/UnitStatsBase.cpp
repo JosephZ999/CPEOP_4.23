@@ -19,6 +19,12 @@ UUnitStatsBase::UUnitStatsBase()
 	// ...
 }
 
+void UUnitStatsBase::SetLevel(uint8 NewLevel)
+{
+	Level = FMath::Clamp((int32)NewLevel, 1, 100);
+	Init();
+}
+
 // Called when the game starts
 void UUnitStatsBase::BeginPlay()
 {

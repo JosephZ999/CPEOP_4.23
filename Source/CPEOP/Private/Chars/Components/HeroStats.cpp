@@ -60,7 +60,7 @@ void UHeroStats::Init()
 
 	if (! form.isValid())
 	{
-		UE_LOG(LogTemp, Fatal, TEXT("Initialization stats error, HeroFormName: %s"), *FormName.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("Initialization stats error, HeroFormName: %s"), *FormName.ToString());
 		return;
 	}
 
@@ -115,6 +115,12 @@ void UHeroStats::Init()
 	}
 	SkillReducer		= 1.f + Spirit * SKILL_REDUCER;
 	StaminaRestoreSpeed = STAMINA_REGEN;
+}
+
+void UHeroStats::SetLevel(uint8 NewLevel)
+{
+	SavedStats.level = NewLevel;
+	Init();
 }
 
 // Transformation //=============================------------------------------

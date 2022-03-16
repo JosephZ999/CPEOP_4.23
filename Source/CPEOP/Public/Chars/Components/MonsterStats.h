@@ -15,13 +15,9 @@ class CPEOP_API UMonsterStats : public UUnitStatsBase
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable)
-	void Init(uint8 level);
+	virtual void Init() override;
 
 private:
-	UPROPERTY(EditDefaultsOnly, Meta = (ClampMin = 1, ClampMax = 100))
-	uint8 Level{1};
-
 	float Health;
 	UPROPERTY(EditDefaultsOnly)
 	float MaxHealth;

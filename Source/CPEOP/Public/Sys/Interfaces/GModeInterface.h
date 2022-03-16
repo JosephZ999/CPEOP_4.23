@@ -7,7 +7,7 @@
 #include "GModeInterface.generated.h"
 
 UENUM(BlueprintType)
-enum EGameResultType
+enum class EGameResultType : uint8
 {
 	Win,
 	Greate,
@@ -26,7 +26,7 @@ struct FGameResults
 	FText Title;
 
 	UPROPERTY(BlueprintReadWrite)
-	TEnumAsByte<EGameResultType> Result{EGameResultType::Win};
+	EGameResultType Result{EGameResultType::Win};
 
 	UPROPERTY(BlueprintReadWrite)
 	int32 Time{0};

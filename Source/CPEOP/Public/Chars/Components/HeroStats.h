@@ -68,10 +68,9 @@ public:
 
 private:
 	// Base Stats
-	int8  Level{0}; // 000000000000
-	int8  Strength;
-	int8  Agility;
-	int8  Spirit;
+	uint8 Strength;
+	uint8 Agility;
+	uint8 Spirit;
 	int32 MaxExp{0};
 	int32 Exp{0};
 
@@ -108,7 +107,8 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	//------------------------------------------// Getters
+	virtual void SetLevel(uint8 NewLevel) override;
+
 	virtual float GetHealth() const override;
 	virtual float GetMaxHealth() const override;
 	virtual float GetDamage() const override;
@@ -178,7 +178,7 @@ public:
 
 	// Set
 public:
-	void Init();
+	virtual void Init() override;
 
 	virtual void AddExp(int32 exp) override;
 	void		 LevelUp();
