@@ -94,6 +94,7 @@ void AUnitAIBase::SetAIEnabled_Implementation(bool Enable)
 	else
 	{
 		GetWorldTimerManager().PauseTimer(_AITick);
+		GetOwnerChar()->SetMoveVector(FVector::ZeroVector);
 	}
 }
 
