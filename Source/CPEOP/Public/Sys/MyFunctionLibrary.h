@@ -7,13 +7,13 @@
 #include "MyFunctionLibrary.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class CPEOP_API UMyFunctionLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
-	
+
 public:
 	UFUNCTION(BlueprintCallable)
 	static int RotationDivide(FVector2D pointA, FVector2D pointB);
@@ -23,4 +23,6 @@ public:
 	static float PercentDivision(float percent, uint8 divisionNum);
 
 	static FString FindObjectName(FString objectPath);
+
+	static FVector FindRandomLocation(AActor* ActorInCenter, float DistMin, float DistMax);
 };

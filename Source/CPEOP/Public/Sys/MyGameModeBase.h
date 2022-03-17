@@ -8,18 +8,50 @@
 #include "GameFramework/GameModeBase.h"
 #include "MyGameModeBase.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStartBattle);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFinishBattle, EGameResultType, Results);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUnitDead, class AUnitBase*, Unit);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHeroLevelUp, class AHeroBase*, Hero);
-
-// DECLARE_DYNAMIC_DELEGATE(FOnStartBattle);
-
 class AUnitBase;
 class AHeroBase;
 class AMonsterBase;
 class AMyPlayerController;
 class APickUpBase;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStartBattle);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFinishBattle, EGameResultType, Results);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUnitDead, AUnitBase*, Unit);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHeroLevelUp, AHeroBase*, Hero);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWavePassed);
+
+USTRUCT(BlueprintType)
+struct FSpawnParams
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	FTransform Transform;
+
+	UPROPERTY(BlueprintReadWrite)
+	uint8 Team;
+
+	UPROPERTY(BlueprintReadWrite)
+	uint8 Level = 1;
+};
+
+USTRUCT(BlueprintType)
+struct FWaveMonster
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	TSubclassOf<AMonsterBase> MonsterClass;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 Number;
+
+	UPROPERTY(BlueprintReadWrite)
+	uint8 Level;
+
+	UPROPERTY(BlueprintReadWrite)
+	uint8 LevelAdd;
+};
 
 /**
  *
@@ -30,20 +62,35 @@ class CPEOP_API AMyGameModeBase : public AGameModeBase, public IGModeInterface
 	GENERATED_BODY()
 
 private:
+	UPROPERTY()
 	AHeroBase*			 _PlayerHero;
 	AMyPlayerController* _PlayerController;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AActor> _HeroSpawnEffect;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AActor> _MonsterSpawnEffect;
+
 	// Game Timer
-	int32		 _GameTime = 0;
-	FTimerHandle _GameTimer;
-	inline void	 GameTimeSec() { ++_GameTime; }
+	int32			 _GameTime = 0;
+	FTimerHandle	 _GameTimer;
+	FORCEINLINE void GameTimeSec() { ++_GameTime; }
 
 	// Player Kills
-	int32		_PlayerKills = 0;
-	inline void AddKill() { ++_PlayerKills; }
+	int32			 _PlayerKills = 0;
+	FORCEINLINE void AddKill() { ++_PlayerKills; }
+
+	// Monsters Waves
+	TArray<FWaveMonster> _CurrentWave;
+	int32				 _WavesPassed;
+	int32				 _MonstersInLevel;
+	int32				 _MaxMonstersInLevel;
+	int32				 _MonsterIndex;
 
 public:
-	UFUNCTION(BlueprintCallable) FORCEINLINE AMyPlayerController* GetController() const { return _PlayerController; }
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE AMyPlayerController* GetController() const { return _PlayerController; }
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE AHeroBase* GetPlayerHero() const { return _PlayerHero; }
@@ -53,6 +100,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE int32 GetPlayerKills() const { return _PlayerKills; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE int32 GetWavesNum() const { return _WavesPassed; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE int32 GetMonstersNum() const { return _MonstersInLevel; }
 
 	// Delegates
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "My Delegates")
@@ -67,16 +120,24 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "My Delegates")
 	FOnHeroLevelUp OnHeroLevelUp;
 
+	UPROPERTY(BlueprintAssignable, Category = "My Delegates")
+	FOnWavePassed OnWavePassed;
+
 public:
 	//------------------------------------------// Functional
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	AHeroBase* SpawnAHero(TSubclassOf<AHeroBase> HeroClass, FTransform SpawnTransform, uint8 Team, uint8 Level = 1, bool Possess = false);
+	UFUNCTION(BlueprintCallable)
+	AHeroBase* SpawnAHero(TSubclassOf<AHeroBase> HeroClass, FSpawnParams Params, bool Possess = false, bool Effect = false);
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	AMonsterBase* SpawnAMonster(TSubclassOf<AMonsterBase> MonsterClass, FTransform SpawnTransform, uint8 Team, uint8 Level = 1);
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	UFUNCTION(BlueprintCallable)
 	bool PossessToHero(AHeroBase* Hero);
+
+	UFUNCTION(BlueprintCallable)
+	AMonsterBase* SpawnAMonster(TSubclassOf<AMonsterBase> MonsterClass, FSpawnParams Params, bool Effect = true);
+
+	UFUNCTION(BlueprintCallable)
+	int32 SpawnAWave(TArray<FWaveMonster> Monsters, int32 MaxInLevel, bool Shuffle = true);
+	void  SpawnNextDeferred(float Delay);
+	void  SpawnNext();
 
 	UFUNCTION(BlueprintCallable)
 	void SpawnPickUp(TSubclassOf<APickUpBase> Class, AHeroBase* OwnerHero, FPickUpParams Params);

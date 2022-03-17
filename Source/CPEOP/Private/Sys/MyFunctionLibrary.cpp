@@ -2,6 +2,10 @@
 
 #include "Sys/MyFunctionLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Engine/World.h"
+// #include "Engine/EngineTypes.h"
+
+#define CHANNEL_WALL ECC_GameTraceChannel3
 
 int UMyFunctionLibrary::RotationDivide(FVector2D pointA, FVector2D pointB)
 {
@@ -74,4 +78,23 @@ FString UMyFunctionLibrary::FindObjectName(FString objectPath)
 		}
 	}
 	return ObjectName;
+}
+
+FVector UMyFunctionLibrary::FindRandomLocation(AActor* ActorInCenter, float DistMin, float DistMax)
+{
+	if (! ActorInCenter)
+		return FVector::ZeroVector;
+
+	UWorld*		  nWorld	 = ActorInCenter->GetWorld();
+	const FVector TraceStart = ActorInCenter->GetActorLocation();
+	const FVector RandVector = FVector(FRotator(0.f, FMath::FRandRange(0.f, 360.f), 0.f).Vector());
+	const FVector TraceEnd	 = TraceStart + RandVector * FMath::FRandRange(DistMin, DistMax);
+
+	FCollisionQueryParams QueryParams(TEXT("Wall"), false, ActorInCenter);
+	FHitResult			  Hit;
+	if (nWorld->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, CHANNEL_WALL, QueryParams, ECollisionResponse::ECR_Block))
+	{
+		return Hit.ImpactPoint;
+	}
+	return TraceEnd;
 }

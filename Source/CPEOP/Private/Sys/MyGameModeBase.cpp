@@ -3,6 +3,7 @@
 #include "Sys/MyGameModeBase.h"
 #include "Sys/Interfaces/AIEvents.h"
 #include "Sys/MyPlayerController.h"
+#include "sys/MyFunctionLibrary.h"
 #include "TimerManager.h"
 #include "Engine/World.h"
 
@@ -12,15 +13,25 @@
 #define PLAYER_INDEX 0
 
 //----------------------------------------------// Functional
-AHeroBase* AMyGameModeBase::SpawnAHero_Implementation(
-	TSubclassOf<AHeroBase> HeroClass, FTransform SpawnTransform, uint8 Team, uint8 Level, bool Possess)
+AHeroBase* AMyGameModeBase::SpawnAHero(TSubclassOf<AHeroBase> HeroClass, FSpawnParams Params, bool Possess, bool Effect)
 {
-	AHeroBase* Hero = GetWorld()->SpawnActorDeferred<AHeroBase>(HeroClass, SpawnTransform);
+	AHeroBase* Hero = GetWorld()->SpawnActorDeferred<AHeroBase>(HeroClass, Params.Transform);
 	if (Hero)
 	{
-		Hero->SetTeam(Team);
-		Hero->GetHeroStats()->SetLevel(Level);
-		Hero->FinishSpawning(SpawnTransform);
+		Hero->SetTeam(Params.Team);
+		Hero->GetHeroStats()->SetLevel(Params.Level);
+		Hero->FinishSpawning(Params.Transform);
+
+		if (Effect && _HeroSpawnEffect)
+		{
+			FVector EffLocation = Hero->GetActorLocation();
+			EffLocation.Y += 25.f;
+			EffLocation.Z = 0.f;
+			Params.Transform.SetLocation(EffLocation);
+			Params.Transform.SetScale3D(Hero->GetActorScale3D());
+			GetWorld()->SpawnActor<AActor>(_MonsterSpawnEffect, Params.Transform);
+		}
+
 		if (Possess)
 		{
 			PossessToHero(Hero);
@@ -30,42 +41,133 @@ AHeroBase* AMyGameModeBase::SpawnAHero_Implementation(
 	return nullptr;
 }
 
-bool AMyGameModeBase::PossessToHero_Implementation(AHeroBase* Hero)
+bool AMyGameModeBase::PossessToHero(AHeroBase* Hero)
 {
-	if (IsValid(Hero) && Hero->GetClass()->ImplementsInterface(UAIEvents::StaticClass()))
+	if (! IsValid(Hero))
 	{
-		IAIEvents::Execute_SetAIEnabled(Hero, false);
+		return false;
+	}
 
-		UWorld* World = Hero->GetWorld();
-		uint32	Index = 0;
-		for (FConstPlayerControllerIterator Iterator = World->GetPlayerControllerIterator(); Iterator; ++Iterator)
+	UWorld* World = Hero->GetWorld();
+	uint32	Index = 0;
+	for (FConstPlayerControllerIterator Iterator = World->GetPlayerControllerIterator(); Iterator; ++Iterator)
+	{
+		APlayerController* nController = Iterator->Get();
+		if (Index == PLAYER_INDEX)
 		{
-			APlayerController* nController = Iterator->Get();
-			if (Index == PLAYER_INDEX)
+			IAIEvents::Execute_SetAIEnabled(Hero, false);
+			nController->Possess(Hero);
+
+			if (IsValid(_PlayerHero))
 			{
-				nController->Possess(Hero);
-				_PlayerHero		  = Hero;
-				_PlayerController = Cast<AMyPlayerController>(nController);
-				return true;
+				IAIEvents::Execute_SetAIEnabled(_PlayerHero, true);
 			}
-			Index++;
+			_PlayerHero = Hero;
+
+			if (! _PlayerController)
+			{
+				_PlayerController = Cast<AMyPlayerController>(nController);
+			}
+			return true;
 		}
+		Index++;
 	}
 	return false;
 }
 
-AMonsterBase* AMyGameModeBase::SpawnAMonster_Implementation(
-	TSubclassOf<AMonsterBase> MonsterClass, FTransform SpawnTransform, uint8 Team, uint8 Level)
+AMonsterBase* AMyGameModeBase::SpawnAMonster(TSubclassOf<AMonsterBase> MonsterClass, FSpawnParams Params, bool Effect)
 {
-	AMonsterBase* Monster = GetWorld()->SpawnActorDeferred<AMonsterBase>(MonsterClass, SpawnTransform);
+	AMonsterBase* Monster = GetWorld()->SpawnActorDeferred<AMonsterBase>(MonsterClass, Params.Transform);
 	if (Monster)
 	{
-		Monster->SetTeam(Team);
-		Monster->GetUnitStats()->SetLevel(Level);
-		Monster->FinishSpawning(SpawnTransform);
+		Monster->SetTeam(Params.Team);
+		Monster->GetUnitStats()->SetLevel(Params.Level);
+		Monster->FinishSpawning(Params.Transform);
+		++_MonstersInLevel;
+
+		if (Effect && _MonsterSpawnEffect)
+		{
+			FVector EffLocation = Monster->GetActorLocation();
+			EffLocation.Y += 25.f;
+			EffLocation.Z = 0.f;
+			Params.Transform.SetLocation(EffLocation);
+			Params.Transform.SetScale3D(Monster->GetActorScale3D());
+			GetWorld()->SpawnActor<AActor>(_MonsterSpawnEffect, Params.Transform);
+		}
 		return Monster;
 	}
 	return nullptr;
+}
+
+int32 AMyGameModeBase::SpawnAWave(TArray<FWaveMonster> Monsters, int32 MaxInLevel, bool Shuffle)
+{
+	_CurrentWave.Empty();
+	_MaxMonstersInLevel = MaxInLevel;
+	_MonsterIndex		= 0;
+
+	for (const FWaveMonster& Element : Monsters)
+	{
+		if (! Element.MonsterClass)
+		{
+			continue;
+		}
+
+		for (int32 i = Element.Number; i > 0; i--)
+		{
+			_CurrentWave.Add(Element);
+		}
+	}
+
+	if (Shuffle)
+	{
+		for (int32 i = 0; i < _CurrentWave.Num(); i++)
+		{
+			_CurrentWave.Swap(i, FMath::RandRange(0, _CurrentWave.Num() - 1));
+		}
+	}
+
+	int32 SpawnNum = _MaxMonstersInLevel - _MonstersInLevel;
+	while (SpawnNum > 0)
+	{
+		SpawnNextDeferred(0.5f);
+		--SpawnNum;
+	}
+	return _CurrentWave.Num();
+}
+
+void AMyGameModeBase::SpawnNextDeferred(float Delay)
+{
+	Delay = FMath::FRandRange(0.1f, Delay);
+	FTimerHandle nTimer;
+	GetWorldTimerManager().SetTimer(nTimer, this, &AMyGameModeBase::SpawnNext, Delay);
+}
+
+void AMyGameModeBase::SpawnNext()
+{
+	if (_CurrentWave.Num() == 0)
+		return;
+
+	if (_MonsterIndex < _CurrentWave.Num() && _MonstersInLevel < _MaxMonstersInLevel)
+	{
+		FWaveMonster MonsterInfo = _CurrentWave[_MonsterIndex];
+
+		const FQuat Rotation(FRotator(0.f, ((FMath::RandBool()) ? 0.f : 180.f), 0.f));
+
+		FSpawnParams nParams;
+		nParams.Level = MonsterInfo.Level + FMath::RandRange(0, MonsterInfo.LevelAdd);
+		nParams.Team  = 10;
+
+		nParams.Transform.SetScale3D(FVector::OneVector);
+		nParams.Transform.SetLocation(UMyFunctionLibrary::FindRandomLocation(_PlayerHero, 100.f, 300.f));
+		nParams.Transform.SetRotation(Rotation);
+
+		AMonsterBase* Monster = SpawnAMonster(MonsterInfo.MonsterClass, nParams);
+
+		if (Monster)
+		{
+			++_MonsterIndex;
+		}
+	}
 }
 
 void AMyGameModeBase::SpawnPickUp(TSubclassOf<APickUpBase> Class, AHeroBase* OwnerHero, FPickUpParams Params)
@@ -114,5 +216,17 @@ void AMyGameModeBase::Kill_Implementation(AUnitBase* Killer, AUnitBase* Killed)
 	{
 		AddKill();
 	}
+
+	if (! IUnitInterface::Execute_IsItHero(Killed))
+	{
+		--_MonstersInLevel;
+		SpawnNextDeferred(0.5f);
+
+		if (_MonsterIndex >= _CurrentWave.Num() - 1 && _MonstersInLevel == 0)
+		{
+			OnWavePassed.Broadcast();
+		}
+	}
+
 	OnUnitDead.Broadcast(Killed);
 }
