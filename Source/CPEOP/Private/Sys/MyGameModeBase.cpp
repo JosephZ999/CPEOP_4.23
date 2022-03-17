@@ -3,6 +3,7 @@
 #include "Sys/MyGameModeBase.h"
 #include "Sys/Interfaces/AIEvents.h"
 #include "Sys/MyPlayerController.h"
+#include "TimerManager.h"
 #include "Engine/World.h"
 
 #include "Chars/HeroBase.h"
@@ -10,6 +11,7 @@
 
 #define PLAYER_INDEX 0
 
+//----------------------------------------------// Functional
 AHeroBase* AMyGameModeBase::SpawnAHero_Implementation(
 	TSubclassOf<AHeroBase> HeroClass, FTransform SpawnTransform, uint8 Team, uint8 Level, bool Possess)
 {
@@ -42,8 +44,8 @@ bool AMyGameModeBase::PossessToHero_Implementation(AHeroBase* Hero)
 			if (Index == PLAYER_INDEX)
 			{
 				nController->Possess(Hero);
-				PlayerHero		 = Hero;
-				PlayerController = Cast<AMyPlayerController>(nController);
+				_PlayerHero		  = Hero;
+				_PlayerController = Cast<AMyPlayerController>(nController);
 				return true;
 			}
 			Index++;
@@ -87,10 +89,15 @@ void AMyGameModeBase::SpawnPickUp(TSubclassOf<APickUpBase> Class, AHeroBase* Own
 }
 
 //----------------------------------------------// Events
-void AMyGameModeBase::StartGame_Implementation() {}
+void AMyGameModeBase::StartGame_Implementation()
+{
+	GetWorldTimerManager().SetTimer(_GameTimer, this, &AMyGameModeBase::GameTimeSec, 1.f, true);
+	OnStartBattle.Broadcast();
+}
 
 void AMyGameModeBase::FinishGame_Implementation(const FText& Title, EGameResultType GameResult)
 {
+	GetWorldTimerManager().PauseTimer(_GameTimer);
 	OnFinishBattle.Broadcast(GameResult);
 }
 
@@ -101,8 +108,11 @@ void AMyGameModeBase::LevelUp_Implementation(AActor* Hero)
 	OnHeroLevelUp.Broadcast(HeroRef);
 }
 
-void AMyGameModeBase::Kill_Implementation(AActor* Killer, AActor* Killed)
+void AMyGameModeBase::Kill_Implementation(AUnitBase* Killer, AUnitBase* Killed)
 {
-	AUnitBase* UnitRef = Cast<AUnitBase>(Killed);
-	OnUnitDead.Broadcast(UnitRef);
+	if (Killer == _PlayerHero)
+	{
+		AddKill();
+	}
+	OnUnitDead.Broadcast(Killed);
 }

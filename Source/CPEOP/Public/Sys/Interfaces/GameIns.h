@@ -6,6 +6,8 @@
 #include "UObject/Interface.h"
 #include "GameIns.generated.h"
 
+class AUnitBase;
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UGameIns : public UInterface
@@ -27,7 +29,7 @@ public:
 	//------------------------------------------// Events
 
 	UFUNCTION(BlueprintNativeEvent, Category = "GameIns Events")
-	void OnUnitKilled(class AUnitBase* Killer, class AUnitBase* KilledUnit);
+	void OnUnitKilled(AUnitBase* Killer, AUnitBase* KilledUnit);
 
 	UFUNCTION(BlueprintNativeEvent, Category = "GameIns Events")
 	void OnHeroLevelUp(AActor* TargetActor);

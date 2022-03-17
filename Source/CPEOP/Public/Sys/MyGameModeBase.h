@@ -15,6 +15,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHeroLevelUp, class AHeroBase*, He
 
 // DECLARE_DYNAMIC_DELEGATE(FOnStartBattle);
 
+class AUnitBase;
 class AHeroBase;
 class AMonsterBase;
 class AMyPlayerController;
@@ -29,15 +30,29 @@ class CPEOP_API AMyGameModeBase : public AGameModeBase, public IGModeInterface
 	GENERATED_BODY()
 
 private:
-	AHeroBase*			 PlayerHero;
-	AMyPlayerController* PlayerController;
+	AHeroBase*			 _PlayerHero;
+	AMyPlayerController* _PlayerController;
+
+	// Game Timer
+	int32		 _GameTime = 0;
+	FTimerHandle _GameTimer;
+	inline void	 GameTimeSec() { ++_GameTime; }
+
+	// Player Kills
+	int32		_PlayerKills = 0;
+	inline void AddKill() { ++_PlayerKills; }
 
 public:
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE AMyPlayerController* GetController() const { return PlayerController; }
+	UFUNCTION(BlueprintCallable) FORCEINLINE AMyPlayerController* GetController() const { return _PlayerController; }
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE AHeroBase* GetPlayerHero() const { return PlayerHero; }
+	FORCEINLINE AHeroBase* GetPlayerHero() const { return _PlayerHero; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE int32 GetGameTime() const { return _GameTime; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE int32 GetPlayerKills() const { return _PlayerKills; }
 
 	// Delegates
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "My Delegates")
@@ -67,7 +82,8 @@ public:
 	void SpawnPickUp(TSubclassOf<APickUpBase> Class, AHeroBase* OwnerHero, FPickUpParams Params);
 
 	// Events
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void StartGame();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void StartGame();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void FinishGame(const FText& Title, EGameResultType GameResult);
@@ -77,5 +93,5 @@ public:
 	void LevelUp(AActor* Hero);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GM Interface")
-	void Kill(AActor* Killer, AActor* Killed);
+	void Kill(AUnitBase* Killer, AUnitBase* Killed);
 };

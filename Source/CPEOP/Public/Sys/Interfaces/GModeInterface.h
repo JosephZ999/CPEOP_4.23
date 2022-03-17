@@ -6,6 +6,8 @@
 #include "UObject/Interface.h"
 #include "GModeInterface.generated.h"
 
+class AUnitBase;
+
 UENUM(BlueprintType)
 enum class EGameResultType : uint8
 {
@@ -51,18 +53,13 @@ class CPEOP_API IGModeInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	// Actions
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GM Interface")
-	void StartBattle();
-
 	// Stats
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GM Interface")
 	FGameResults GetGameResults();
 
 	// Events
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GM Interface")
-	void Kill(AActor* Killer, AActor* Killed);
+	void Kill(AUnitBase* Killer, AUnitBase* Killed);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GM Interface")
 	void LevelUp(AActor* Hero);
