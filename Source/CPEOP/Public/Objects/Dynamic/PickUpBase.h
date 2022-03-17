@@ -24,7 +24,7 @@ struct FPickUpParams
 	float Chance;
 };
 
-UCLASS()
+UCLASS(Blueprintable, Abstract)
 class CPEOP_API APickUpBase : public AActor
 {
 	GENERATED_BODY()

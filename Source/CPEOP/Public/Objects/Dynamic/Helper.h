@@ -16,7 +16,7 @@ enum class EHelperType : uint8
 	DmgText,
 };
 
-UCLASS()
+UCLASS(Abstract)
 class CPEOP_API AHelper : public AActor
 {
 	GENERATED_BODY()

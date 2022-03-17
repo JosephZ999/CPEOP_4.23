@@ -120,7 +120,7 @@ enum class EDangerType : uint8
 	DistanceAttack,
 };
 
-UCLASS()
+UCLASS(Abstract)
 class CPEOP_API AUnitBase : public APaperCharacter, public IAIEvents, public IUnitInterface
 {
 	GENERATED_BODY()

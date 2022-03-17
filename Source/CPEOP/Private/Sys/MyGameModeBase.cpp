@@ -25,7 +25,6 @@ AHeroBase* AMyGameModeBase::SpawnAHero_Implementation(
 		}
 		return Hero;
 	}
-
 	return nullptr;
 }
 

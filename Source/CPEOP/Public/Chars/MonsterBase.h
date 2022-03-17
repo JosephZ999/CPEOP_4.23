@@ -24,7 +24,7 @@ enum EMonsterStates
 	M_Super,
 };
 
-UCLASS()
+UCLASS(Abstract)
 class CPEOP_API AMonsterBase : public AUnitBase
 {
 	GENERATED_BODY()

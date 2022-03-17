@@ -38,7 +38,7 @@ enum EComboKey
 /**
  *
  */
-UCLASS()
+UCLASS(Abstract)
 class CPEOP_API AHeroBase : public AUnitBase, /* Interfaces: */ public IHeroInput
 {
 	GENERATED_BODY()

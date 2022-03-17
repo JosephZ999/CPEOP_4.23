@@ -24,7 +24,7 @@ enum class EImpulseType : uint8
 	OwnerLocation,
 };
 
-UCLASS()
+UCLASS(Blueprintable, Abstract)
 class CPEOP_API AHitBoxBase : public AHelper
 {
 	GENERATED_BODY()
