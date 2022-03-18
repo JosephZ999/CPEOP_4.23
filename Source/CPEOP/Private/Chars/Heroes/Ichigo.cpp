@@ -2,6 +2,7 @@
 
 #include "Chars/Heroes/Ichigo.h"
 #include "Chars/AI/IchigoAI.h"
+#include "UObject/ConstructorHelpers.h"
 
 #define ICHI_ANIM_LOC	"Texture/Chars/Ichigo/FBook/"
 #define ICHI_ANIM_LOC_B "Texture/Chars/Ichigo_Bankai/FBook/"
@@ -143,6 +144,24 @@ AIchigo::AIchigo()
 	AnimData = &ShikaiAnim;
 
 	b_AttackDashCurve = FindCurveFloat("Blueprint/Chars/Ichigo/Bankai/DashAttackVel");
+
+	{
+		ConstructorHelpers::FClassFinder<AAfterImage> nObject(
+			(TEXT("Blueprint'/Game/Blueprint/Chars/Ichigo/Bankai/AfterImage_Stand.AfterImage_Stand_C'")));
+		if (nObject.Succeeded())
+		{
+			AfterImage->ClassData.Add("Stand", nObject.Class);
+		}
+	}
+
+	{
+		ConstructorHelpers::FClassFinder<AAfterImage> nObject(
+			(TEXT("Blueprint'/Game/Blueprint/Chars/Ichigo/Bankai/AfterImage_Run.AfterImage_Run_C'")));
+		if (nObject.Succeeded())
+		{
+			AfterImage->ClassData.Add("Run", nObject.Class);
+		}
+	}
 }
 
 void AIchigo::Landed(const FHitResult& Hit)

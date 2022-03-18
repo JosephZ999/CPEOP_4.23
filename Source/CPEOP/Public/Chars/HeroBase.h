@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Sys/Interfaces/PlayerHUD.h"
 #include "Chars/Components/HeroStats.h"
 #include "Components/TimelineComponent.h"
 #include "sys/Interfaces/HeroInput.h"
@@ -81,13 +82,7 @@ protected:
 
 public:
 	virtual void Tick(float delta) override;
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void NotEnoughPower();
-	UFUNCTION(BlueprintImplementableEvent)
-	void NotEnoughStamina();
-
-	void SetHeroName(FName NewName);
+	void		 SetHeroName(FName NewName);
 
 	//------------------------------------------// Timeline
 protected:

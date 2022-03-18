@@ -2,6 +2,7 @@
 
 #include "Chars/Components/HeroStats.h"
 #include "Sys/MyPlayerController.h"
+#include "Sys/Interfaces/PlayerHUD.h"
 
 #include "TimerManager.h"
 #include "Engine/World.h"
@@ -32,6 +33,7 @@
 void UHeroStats::BeginPlay()
 {
 	Super::BeginPlay();
+	OwnerPawn = Cast<APawn>(GetOwner());
 }
 
 float UHeroStats::GetHealth() const
@@ -54,6 +56,38 @@ float UHeroStats::GetCritRate() const
 	return CritRate;
 }
 
+void UHeroStats::NotEnoughPower_Implementation()
+{
+	if (OwnerPawn && OwnerPawn->GetController())
+	{
+		IPlayerHUD::Execute_NotEnoughPower(OwnerPawn->GetController());
+	}
+}
+
+void UHeroStats::NotEnoughStamina_Implementation()
+{
+	if (OwnerPawn && OwnerPawn->GetController())
+	{
+		IPlayerHUD::Execute_NotEnoughStamina(OwnerPawn->GetController());
+	}
+}
+
+void UHeroStats::SkillActivated_Implementation()
+{
+	if (OwnerPawn && OwnerPawn->GetController())
+	{
+		IPlayerHUD::Execute_SkillActivated(OwnerPawn->GetController());
+	}
+}
+
+void UHeroStats::SkillDeactivated_Implementation()
+{
+	if (OwnerPawn && OwnerPawn->GetController())
+	{
+		IPlayerHUD::Execute_SkillDeactivated(OwnerPawn->GetController());
+	}
+}
+
 void UHeroStats::Init()
 {
 	FFormStats form = HeroForms.FindRef(FormName);
@@ -74,20 +108,20 @@ void UHeroStats::Init()
 	if (! MaxExp)
 	{
 		MaxExp = Level * 100;
-		Exp	   = SavedStats.exp;
+		SetExp(SavedStats.exp);
 	}
 
 	// Strength
 	if (firstTime)
 	{
 		MaxHealth = Strength * HEALTH;
-		Health	  = MaxHealth;
+		SetHealth(MaxHealth);
 	}
 	else
 	{
 		float healthPercent = Health / MaxHealth;
 		MaxHealth			= Strength * HEALTH;
-		Health				= MaxHealth * healthPercent;
+		SetHealth(healthPercent * MaxHealth);
 	}
 
 	Damage = Strength * DAMAGE;
@@ -104,14 +138,14 @@ void UHeroStats::Init()
 	if (firstTime)
 	{
 		MaxPower = Spirit * POWER;
-		Power	 = MaxPower;
-		Stamina	 = 1.f;
+		SetPower(MaxPower);
+		Stamina = 1.f;
 	}
 	else
 	{
 		float powerPercent = Power / MaxPower;
 		MaxPower		   = Spirit * POWER;
-		Power			   = MaxPower * powerPercent;
+		SetPower(MaxPower * powerPercent);
 	}
 	SkillReducer		= 1.f + Spirit * SKILL_REDUCER;
 	StaminaRestoreSpeed = STAMINA_REGEN;
@@ -149,22 +183,34 @@ void UHeroStats::AddExp(int32 exp)
 	exp = (float)exp * ExpMultiplier;
 	Exp += exp;
 
-	if (Exp < MaxExp)
-		return;
-
-	FTimerHandle levelingTimer;
-	while (Exp >= MaxExp)
+	if (Exp > MaxExp)
 	{
-		++Level;
-		Exp -= MaxExp;
-		MaxExp = Level * 100;
+		FTimerHandle levelingTimer;
+		while (Exp >= MaxExp)
+		{
+			++Level;
+			Exp -= MaxExp;
+			MaxExp = Level * 100;
 
-		// Saving changes
-		SavedStats.level  = Level;
-		SavedStats.exp	  = Exp;
-		SavedStats.maxExp = MaxExp;
+			// Saving changes
+			SavedStats.level  = Level;
+			SavedStats.exp	  = Exp;
+			SavedStats.maxExp = MaxExp;
 
-		GetWorld()->GetTimerManager().SetTimer(levelingTimer, this, &UHeroStats::LevelUp, 0.2f);
+			GetWorld()->GetTimerManager().SetTimer(levelingTimer, this, &UHeroStats::LevelUp, 0.2f);
+		}
+	}
+	if (OwnerPawn && OwnerPawn->GetController())
+	{
+		IPlayerHUD::Execute_UpdateExp(OwnerPawn->GetController(), Exp, MaxExp);
+	}
+}
+
+void UHeroStats::SetExp(int32 value)
+{
+	if (OwnerPawn && OwnerPawn->GetController())
+	{
+		IPlayerHUD::Execute_UpdateExp(OwnerPawn->GetController(), Exp, MaxExp);
 	}
 }
 
@@ -201,7 +247,7 @@ float UHeroStats::TakeDamage(float damage, float armorPiercing, bool blocked)
 	else
 		damage = FMath::Max(0.f, damage - Armor * (1.f - armorPiercing));
 
-	Health -= damage;
+	AddHealth(-damage);
 	return damage;
 }
 
@@ -219,7 +265,7 @@ void UHeroStats::AddStamina(float value, float time, bool skill, int desiredStat
 	if (skill)
 	{
 		Stamina = FMath::Clamp(Stamina + value / SkillReducer, 0.f, 2.f);
-		Power	= FMath::Clamp(Power + value, 0.f, MaxPower);
+		SetPower(FMath::Clamp(Power + value, 0.f, MaxPower));
 		return;
 	}
 	else
@@ -257,12 +303,38 @@ bool UHeroStats::checkPower(float value) const
 
 void UHeroStats::AddHealth(float value)
 {
-	Health = FMath::Clamp(Health + value, 0.1f, MaxHealth);
+	Health = FMath::Clamp(Health + value, 0.f, MaxHealth);
+	if (OwnerPawn && OwnerPawn->GetController())
+	{
+		IPlayerHUD::Execute_UpdateHp(OwnerPawn->GetController(), Health, MaxHealth);
+	}
+}
+
+void UHeroStats::SetHealth(float value)
+{
+	Health = FMath::Clamp(value, 0.f, MaxHealth);
+	if (OwnerPawn && OwnerPawn->GetController())
+	{
+		IPlayerHUD::Execute_UpdateHp(OwnerPawn->GetController(), Health, MaxHealth);
+	}
 }
 
 void UHeroStats::AddPower(float value)
 {
-	Power = FMath::Clamp(Power + value, 0.1f, MaxPower);
+	Power = FMath::Clamp(Power + value, 0.f, MaxPower);
+	if (OwnerPawn && OwnerPawn->GetController())
+	{
+		IPlayerHUD::Execute_UpdateMp(OwnerPawn->GetController(), Power, MaxPower);
+	}
+}
+
+void UHeroStats::SetPower(float value)
+{
+	Power = FMath::Clamp(value, 0.f, MaxPower);
+	if (OwnerPawn && OwnerPawn->GetController())
+	{
+		IPlayerHUD::Execute_UpdateMp(OwnerPawn->GetController(), Power, MaxPower);
+	}
 }
 
 void UHeroStats::SetSkill(FName skillName, bool value)

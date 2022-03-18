@@ -187,7 +187,7 @@ void AIchigo::b_Attack_FW()
 {
 	if (! GET_STATS->checkStamina(2.f / GetHeroStats()->getTeleportCost(), false))
 	{
-		NotEnoughStamina();
+		GET_STATS->NotEnoughStamina();
 		return;
 	}
 
@@ -232,7 +232,7 @@ void AIchigo::b_Attack_FW_Slash()
 {
 	if (! GET_STATS->checkStamina(1.f / GetHeroStats()->getTeleportCost(), false))
 	{
-		NotEnoughStamina();
+		GET_STATS->NotEnoughStamina();
 		if (CheckState(EIchigoState::Ichi_Attack_FW_Slash))
 		{
 			b_Attack_FW_End();
@@ -328,12 +328,12 @@ void AIchigo::b_Getsuga()
 	bool Return{false};
 	if (! GetHeroStats()->checkStamina(-(GETSUGA_COST)))
 	{
-		NotEnoughStamina();
+		GET_STATS->NotEnoughStamina();
 		Return = true;
 	}
 	if (! GetHeroStats()->checkPower(-(GETSUGA_COST)))
 	{
-		NotEnoughPower();
+		GET_STATS->NotEnoughPower();
 		Return = true;
 	}
 	if (Return)
@@ -387,12 +387,12 @@ void AIchigo::b_RExplosion()
 	bool Return{false};
 	if (! GetHeroStats()->checkStamina(-(EXPLOSION_COST)))
 	{
-		NotEnoughStamina();
+		GET_STATS->NotEnoughStamina();
 		Return = true;
 	}
 	if (! GetHeroStats()->checkPower(-(EXPLOSION_COST)))
 	{
-		NotEnoughPower();
+		GET_STATS->NotEnoughPower();
 		Return = true;
 	}
 	if (Return)

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AIController.h"
 #include "Sys/Interfaces/AIEvents.h"
+#include "sys/Interfaces/PlayerHUD.h"
 #include "UnitAIBase.generated.h"
 
 class USphereComponent;
@@ -15,7 +16,7 @@ class AUnitBase;
  */
 
 UCLASS()
-class CPEOP_API AUnitAIBase : public AAIController, public IAIEvents
+class CPEOP_API AUnitAIBase : public AAIController, public IAIEvents, public IPlayerHUD
 {
 	GENERATED_BODY()
 

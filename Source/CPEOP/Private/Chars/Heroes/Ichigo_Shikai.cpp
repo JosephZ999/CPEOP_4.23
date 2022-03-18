@@ -209,12 +209,12 @@ void AIchigo::sh_GetsugaFW()
 		bool Return{false};
 		if (! GetHeroStats()->checkStamina(-(GETSUGA_COST)))
 		{
-			NotEnoughStamina();
+			GET_STATS->NotEnoughStamina();
 			Return = true;
 		}
 		if (! GetHeroStats()->checkPower(-(GETSUGA_COST)))
 		{
-			NotEnoughPower();
+			GET_STATS->NotEnoughPower();
 			Return = true;
 		}
 		if (Return)
@@ -263,12 +263,12 @@ void AIchigo::sh_GetsugaB()
 		bool Return{false};
 		if (! GetHeroStats()->checkStamina(-(GETSUGA_COST)))
 		{
-			NotEnoughStamina();
+			GET_STATS->NotEnoughStamina();
 			Return = true;
 		}
 		if (! GetHeroStats()->checkPower(-(GETSUGA_COST)))
 		{
-			NotEnoughPower();
+			GET_STATS->NotEnoughPower();
 			Return = true;
 		}
 		if (Return)
@@ -359,13 +359,13 @@ void AIchigo::sh_GetsugaStart()
 	bool Return{false};
 	if (! GetHeroStats()->checkStamina(-(GETSUGA_TENSHOU_COST)))
 	{
-		NotEnoughStamina();
+		GET_STATS->NotEnoughStamina();
 		Return = true;
 	}
 
 	if (! GetHeroStats()->checkPower(-(GETSUGA_TENSHOU_COST)))
 	{
-		NotEnoughPower();
+		GET_STATS->NotEnoughPower();
 		Return = true;
 	}
 	if (Return)
@@ -411,12 +411,12 @@ void AIchigo::sh_RExplosion()
 	bool Return{false};
 	if (! GetHeroStats()->checkStamina(-(EXPLOSION_COST)))
 	{
-		NotEnoughStamina();
+		GET_STATS->NotEnoughStamina();
 		Return = true;
 	}
 	if (! GetHeroStats()->checkPower(-(EXPLOSION_COST)))
 	{
-		NotEnoughPower();
+		GET_STATS->NotEnoughPower();
 		Return = true;
 	}
 	if (Return)
@@ -480,7 +480,7 @@ void AIchigo::sh_Bankai()
 	if (! GET_STATS->checkPower(-(BANKAI_COST)))
 	{
 		float hpReducer = (GET_STATS->GetPower() + BANKAI_COST) * 0.5f;
-		GET_STATS->AddHealth(hpReducer);
+		GET_STATS->SetHealth(FMath::Max(GET_STATS->GetHealth() - hpReducer, 1.f));
 	}
 	GET_STATS->AddPower(-3.f);
 	SkillDisable();

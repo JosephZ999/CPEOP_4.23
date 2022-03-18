@@ -2,7 +2,7 @@
 
 #include "Chars/HeroBase.h"
 #include "sys/MyGameInstance.h"
-#include "GameFramework/Controller.h"
+#include "chars/AI/UnitAIBase.h"
 
 // Components
 #include "Chars/Components/ShadowComponent.h"
@@ -658,7 +658,7 @@ bool AHeroBase::Teleport()
 
 	if (! GetHeroStats()->checkStamina(1.f / GetHeroStats()->getTeleportCost(), false))
 	{
-		NotEnoughStamina();
+		GET_STATS->NotEnoughStamina();
 		return false;
 	}
 
@@ -773,10 +773,22 @@ void AHeroBase::InitForm(FName formName, FVector stats)
 
 void AHeroBase::SetAIEnabled_Implementation(bool Enable)
 {
-	if (GetController() && GetController()->GetClass()->ImplementsInterface(UAIEvents::StaticClass()))
+	if (GetController())
 	{
-		IAIEvents::Execute_SetAIEnabled(GetController(), Enable);
-		ResetKeys();
+		if (GetController()->GetClass()->ImplementsInterface(UAIEvents::StaticClass()))
+		{
+			IAIEvents::Execute_SetAIEnabled(GetController(), Enable);
+			ResetKeys();
+		}
+	}
+	else
+	{
+		AUnitAIBase* NewAI = GetWorld()->SpawnActor<AUnitAIBase>(AIControllerClass, FTransform());
+		if (NewAI)
+		{
+			NewAI->Possess(this);
+			IAIEvents::Execute_SetAIEnabled(NewAI, Enable);
+		}
 	}
 }
 

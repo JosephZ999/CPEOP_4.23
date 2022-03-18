@@ -102,6 +102,8 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
 	FSavedStats SavedStats;
 
+	APawn* OwnerPawn;
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -113,6 +115,18 @@ public:
 	virtual float GetMaxHealth() const override;
 	virtual float GetDamage() const override;
 	virtual float GetCritRate() const override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void NotEnoughPower();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void NotEnoughStamina();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void SkillActivated();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void SkillDeactivated();
 
 	/** Добавляет форму для персонажа как Банкай
 	 * Вызывается в конструкторе персонажа */
@@ -180,17 +194,17 @@ public:
 public:
 	virtual void Init() override;
 
-	virtual void AddExp(int32 exp) override;
-	void		 LevelUp();
+	void LevelUp();
 
 	UFUNCTION(BlueprintCallable)
 	bool AddStats(FVector stats, bool force = true);
 
-	UFUNCTION(BlueprintCallable)
 	void AddHealth(float value);
-
-	UFUNCTION(BlueprintCallable)
+	void SetHealth(float value);
 	void AddPower(float value);
+	void SetPower(float value);
+	void AddExp(int32 value);
+	void SetExp(int32 value);
 
 	UFUNCTION(BlueprintCallable)
 	void SetSkill(FName skillName, bool value);

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "sys/Interfaces/PlayerHUD.h"
 #include "GameFramework/PlayerController.h"
 #include "MyPlayerController.generated.h"
 
@@ -11,7 +12,7 @@
  */
 
 UCLASS()
-class CPEOP_API AMyPlayerController : public APlayerController
+class CPEOP_API AMyPlayerController : public APlayerController, public IPlayerHUD
 {
 	GENERATED_BODY()
 

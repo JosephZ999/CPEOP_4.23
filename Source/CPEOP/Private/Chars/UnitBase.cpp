@@ -10,7 +10,7 @@
 #include "Sys/MyFunctionLibrary.h"
 #include "sys/Interfaces/GameIns.h"
 
-#include "GameFramework/Controller.h"
+#include "chars/AI/UnitAIBase.h"
 #include "PaperFlipbookComponent.h"
 #include "PaperFlipbook.h"
 #include "Components/CapsuleComponent.h"
@@ -30,9 +30,10 @@ AUnitBase::AUnitBase()
 	GetCharacterMovement()->MaxWalkSpeed		  = 150.f;
 	GetCharacterMovement()->GravityScale		  = 1.2f;
 
-	AutoPossessAI	 = EAutoPossessAI::PlacedInWorldOrSpawned;
-	DangerNoticeType = EDangerType::None;
-	Dead			 = false;
+	AIControllerClass = AUnitAIBase::StaticClass();
+	AutoPossessAI	  = EAutoPossessAI::PlacedInWorldOrSpawned;
+	DangerNoticeType  = EDangerType::None;
+	Dead			  = false;
 
 	ShadowComp = CreateDefaultSubobject<UShadowComponent>(TEXT("Shadow"));
 

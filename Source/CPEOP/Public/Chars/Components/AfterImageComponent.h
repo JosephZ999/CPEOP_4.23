@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "TimerManager.h"
+#include "Objects/Dynamic/AfterImage.h"
 #include "Components/ActorComponent.h"
 #include "AfterImageComponent.generated.h"
 
@@ -21,38 +22,35 @@ struct FAfterImageStruct
 		, Location(nLoc)
 		, Rotation(nRot)
 		, Frame(nFrame)
-	{}
+	{
+	}
 
 	FAfterImageStruct(FVector nLoc, bool nRot, UPaperFlipbook* nAnim, int8 nFrame)
 		: Location(nLoc)
 		, Rotation(nRot)
 		, Animation(nAnim)
 		, Frame(nFrame)
-	{}
-	
-	FName ClassName;
-	FVector Location{0.f, 0.f, 0.f};
-	bool Rotation{ false };
-	UPaperFlipbook* Animation{ nullptr };
-	int8 Frame{ 0 };
-	bool LoopAnim{ false };
-	bool OneFrame{ true };
-	bool IsCreated{ false };
-
-	inline void SetDistance(float Dist, const FRotator& Rotator)
 	{
-		Location += Rotator.RotateVector(FVector(Dist, 0.f, 0.f));
 	}
 
+	FName			ClassName;
+	FVector			Location{0.f, 0.f, 0.f};
+	bool			Rotation{false};
+	UPaperFlipbook* Animation{nullptr};
+	int8			Frame{0};
+	bool			LoopAnim{false};
+	bool			OneFrame{true};
+	bool			IsCreated{false};
+
+	inline void SetDistance(float Dist, const FRotator& Rotator) { Location += Rotator.RotateVector(FVector(Dist, 0.f, 0.f)); }
 };
 
-
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class CPEOP_API UAfterImageComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	// Sets default values for this component's properties
 	UAfterImageComponent();
 
@@ -74,6 +72,7 @@ private:
 
 	TArray<FAfterImageStruct> ImageData;
 
+public:
 	UPROPERTY(EditDefaultsOnly, Category = "UnitData")
-	TMap<FName, TSubclassOf<class AAfterImage>> ClassData;
+	TMap<FName, TSubclassOf<AAfterImage>> ClassData;
 };
