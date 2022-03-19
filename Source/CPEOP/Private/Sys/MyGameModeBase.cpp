@@ -207,6 +207,12 @@ void AMyGameModeBase::FinishGame_Implementation(const FText& Title, EGameResultT
 void AMyGameModeBase::LevelUp_Implementation(AActor* Hero)
 {
 	AHeroBase* HeroRef = Cast<AHeroBase>(Hero);
+	if (HeroRef == _PlayerHero)
+	{
+		IPlayerHUD::Execute_UpdateLevel(_PlayerController, HeroRef->GetHeroStats()->GetLevel());
+		IPlayerHUD::Execute_ShowWarningNotice(_PlayerController, false);
+	}
+
 	OnHeroLevelUp.Broadcast(HeroRef);
 }
 
@@ -227,6 +233,9 @@ void AMyGameModeBase::Kill_Implementation(AUnitBase* Killer, AUnitBase* Killed)
 			OnWavePassed.Broadcast();
 		}
 	}
+
+	// Exp
+	Killer->GetUnitStats()->AddExp(Killed->GetUnitStats()->GetExpForKill());
 
 	OnUnitDead.Broadcast(Killed);
 }

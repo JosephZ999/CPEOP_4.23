@@ -26,6 +26,9 @@ public:
 	void ShowGameUI(bool Hide);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void UpdateLevel(uint8 Level);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void UpdateHp(float Hp, float MaxHp);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
@@ -36,6 +39,12 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void UpdateStamina(float Value);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void ShowInputUI(bool Hide);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void ShowWarningNotice(bool Hide);
 
 	//-------------------------------------------
 

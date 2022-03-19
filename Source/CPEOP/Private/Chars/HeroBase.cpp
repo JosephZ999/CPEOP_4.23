@@ -3,6 +3,7 @@
 #include "Chars/HeroBase.h"
 #include "sys/MyGameInstance.h"
 #include "chars/AI/UnitAIBase.h"
+#include "Sys/Interfaces/PlayerHUD.h"
 
 // Components
 #include "Chars/Components/ShadowComponent.h"
@@ -592,14 +593,20 @@ void AHeroBase::SkillEnable()
 {
 	Skill = true;
 	SET_TIMER(skillDisTimer, this, &AHeroBase::SkillDisable, cTime(1.f));
-	HeroSkillActivated();
+	if (GetController())
+	{
+		IPlayerHUD::Execute_SkillActivated(GetController());
+	}
 }
 
 void AHeroBase::SkillDisable()
 {
 	Skill = false;
 	PAUSE_TIMER(skillDisTimer);
-	HeroSkillDeactivated();
+	if (GetController())
+	{
+		IPlayerHUD::Execute_SkillDeactivated(GetController());
+	}
 }
 
 void AHeroBase::SkillCanceled()

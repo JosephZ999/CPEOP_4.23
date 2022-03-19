@@ -194,12 +194,6 @@ public:
 	FTimerHandle PowChargeLoopTimer;
 
 	void SkillEnable();
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void HeroSkillActivated();
-	UFUNCTION(BlueprintImplementableEvent)
-	void HeroSkillDeactivated();
-
 	void SkillDisable();
 	void SkillCanceled();
 	bool IsSkillActive() const { return Skill; }

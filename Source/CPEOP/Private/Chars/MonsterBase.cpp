@@ -117,8 +117,3 @@ bool AMonsterBase::IsItHero_Implementation()
 {
 	return false;
 }
-
-int32 AMonsterBase::GetExpForKill_Implementation()
-{
-	return GetUnitStats()->GetExpForKill();
-}

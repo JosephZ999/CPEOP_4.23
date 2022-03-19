@@ -29,9 +29,6 @@ public:
 	uint8 GetUnitTeam();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Get"))
-	int32 GetExpForKill();
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Get"))
 	FName GetUnitName();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Unit Interface", Meta = (Keywords = "Get"))
