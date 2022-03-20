@@ -197,7 +197,7 @@ void AIchigo::b_Attack_FW()
 	NewState(nState);
 
 	SpawnHelperDeferred("b_Attack_FW", getFrameTime(5));
-	SpawnHelperDeferred("Teleport", getFrameTime(3), GetActorRotation());
+	SpawnHelperDeferred("Teleport", getFrameTime(4), GetActorRotation());
 	SetCameraViewA(GetCameraLocation(), getFrameTime(12));
 
 	GET_STATS->AddStamina(-2.f / GetHeroStats()->getTeleportCost(), getFrameTime(4), false, EIchigoState::Ichi_Attack_FW);
@@ -258,8 +258,9 @@ void AIchigo::b_Attack_FW_Slash()
 	SetCameraViewA(GetCameraViewPosition(), 0.2f);
 	getShadow()->HideShadow();
 
-	SpawnHelperDeferred("b_Attack_FW_Slash", 0.05f);
-	SpawnHelperDeferred("b_Attack_FW_Slash", 0.1f);
+	SpawnHelperDeferred("b_Attack_FW_Slash", 0.04f);
+	SpawnHelperDeferred("b_Attack_FW_Slash", 0.08f);
+	SpawnHelperDeferred("b_Attack_FW_Slash", 0.12f);
 
 	SetActorLocation(b_SlashLocation + FVector(120.f * ((IsLookingRight()) ? -1 : 1.f), 0.f, 0.f), true);
 
@@ -275,8 +276,8 @@ void AIchigo::b_Attack_FW_Slash()
 		AfterImage->Create(nImg, i * 0.04f);
 	}
 
-	SetImmortality(0.1f);
-	Combo(0.1f);
+	SetImmortality(0.12f);
+	Combo(0.12f);
 }
 
 void AIchigo::b_Attack_FW_End()
@@ -489,6 +490,21 @@ void AIchigo::BankaiComboI()
 	{
 		switch (key)
 		{
+		case EComboKey::CK_Attack:
+		{
+			b_Attack_4();
+			break;
+		}
+		case EComboKey::CK_ABackward:
+		{
+			b_Attack_B();
+			break;
+		}
+		case EComboKey::CK_AForward:
+		{
+			b_Attack_FW();
+			break;
+		}
 		case EComboKey::CK_Dash:
 		{
 			DoDash();

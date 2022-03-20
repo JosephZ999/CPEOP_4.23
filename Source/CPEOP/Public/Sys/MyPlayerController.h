@@ -17,16 +17,45 @@ class CPEOP_API AMyPlayerController : public APlayerController, public IPlayerHU
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void ShowInputWidget();
+	// HUD Interface
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void ShowGameUI(bool Hide);
 
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void HideInputWidget();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void UpdateLevel(uint8 Level);
 
-	// Character Calls
-	UFUNCTION(BlueprintImplementableEvent)
-	void HeroSkillActivated();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void UpdateHp(float Hp, float MaxHp);
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void HeroSkillDeactivated();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void UpdateMp(float Mp, float MaxMp);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void UpdateExp(float Exp, float MaxExp);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void UpdateStamina(float Value);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void ShowInputUI(bool Hide);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void ShowWarningNotice(bool Hide);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void ShowWaveScore(int32 WaveNum, int32 TotalKills);
+
+	//-------------------------------------------
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void SkillActivated();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void SkillDeactivated();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void NotEnoughPower();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void NotEnoughStamina();
 };

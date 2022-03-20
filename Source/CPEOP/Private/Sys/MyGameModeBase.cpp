@@ -2,6 +2,7 @@
 
 #include "Sys/MyGameModeBase.h"
 #include "Sys/Interfaces/AIEvents.h"
+#include "Sys/Interfaces/PlayerHUD.h"
 #include "Sys/MyPlayerController.h"
 #include "sys/MyFunctionLibrary.h"
 #include "TimerManager.h"
@@ -231,6 +232,10 @@ void AMyGameModeBase::Kill_Implementation(AUnitBase* Killer, AUnitBase* Killed)
 		if (_MonsterIndex >= _CurrentWave.Num() - 1 && _MonstersInLevel == 0)
 		{
 			++_WavesPassed;
+			if (_PlayerController)
+			{
+				IPlayerHUD::Execute_ShowWaveScore(_PlayerController, _WavesPassed, _PlayerKills);
+			}
 			OnWavePassed.Broadcast();
 		}
 	}

@@ -22,7 +22,7 @@ class CPEOP_API IPlayerHUD
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void ShowGameUI(bool Hide);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
@@ -40,11 +40,14 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void UpdateStamina(float Value);
 
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void ShowInputUI(bool Hide);
 
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void ShowWarningNotice(bool Hide);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void ShowWaveScore(int32 WaveNum, int32 TotalKills);
 
 	//-------------------------------------------
 
