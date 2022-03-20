@@ -58,7 +58,7 @@ void AUnitBase::Tick(float delta)
 	}
 }
 
-FORCEINLINE bool AUnitBase::IsOnGround() const
+bool AUnitBase::IsOnGround() const
 {
 	return GetMovementComponent()->IsMovingOnGround();
 }

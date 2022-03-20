@@ -7,7 +7,7 @@ void UMonsterStats::Init()
 	MaxHealth += MaxHealth * Level * 0.2f;
 	Health = MaxHealth;
 	Damage += Damage * Level * 0.2f;
-	ExpForKill += (float)ExpForKill * Level * 0.2f;
+	ExpForKill += (float)ExpForKill * Level * 0.1f;
 }
 
 float UMonsterStats::TakeDamage(float damage, float armorPiercing, bool block)

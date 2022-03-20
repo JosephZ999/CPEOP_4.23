@@ -10,7 +10,7 @@
 #include "Sys/Interfaces/GameIns.h"
 
 // Consts per stat
-#define HEALTH			2.f
+#define HEALTH			1.f
 #define DAMAGE			0.5f
 #define ARMOR			0.15f
 
@@ -19,7 +19,7 @@
 #define CRIT_RATE		0.5f
 #define TP_COST			0.5f // За единицу ловкости можно столько раз телепортироваться
 
-#define POWER			2.f
+#define POWER			1.f
 #define SKILL_REDUCER	0.25f
 #define STAMINA_REGEN	0.01f // Restor duration 10 second
 

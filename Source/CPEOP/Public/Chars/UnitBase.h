@@ -208,7 +208,7 @@ public:
 	FORCEINLINE bool IsFalling() const { return State == EBaseStates::Fall; }
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE bool IsOnGround() const;
+	bool IsOnGround() const;
 
 public: // Functions
 	void			FindHelper(FString objectPath, TSubclassOf<class AHelper>& Class);

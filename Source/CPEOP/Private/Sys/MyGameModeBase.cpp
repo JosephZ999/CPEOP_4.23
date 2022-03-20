@@ -129,7 +129,7 @@ int32 AMyGameModeBase::SpawnAWave(TArray<FWaveMonster> Monsters, int32 MaxInLeve
 	int32 SpawnNum = _MaxMonstersInLevel - _MonstersInLevel;
 	while (SpawnNum > 0)
 	{
-		SpawnNextDeferred(0.5f);
+		SpawnNextDeferred(1.f);
 		--SpawnNum;
 	}
 	return _CurrentWave.Num();
@@ -226,10 +226,11 @@ void AMyGameModeBase::Kill_Implementation(AUnitBase* Killer, AUnitBase* Killed)
 	if (! IUnitInterface::Execute_IsItHero(Killed))
 	{
 		--_MonstersInLevel;
-		SpawnNextDeferred(0.5f);
+		SpawnNextDeferred(1.f);
 
 		if (_MonsterIndex >= _CurrentWave.Num() - 1 && _MonstersInLevel == 0)
 		{
+			++_WavesPassed;
 			OnWavePassed.Broadcast();
 		}
 	}

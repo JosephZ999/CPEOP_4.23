@@ -475,12 +475,12 @@ void AIchigo::sh_Bankai()
 	Bankai();
 	IsUsedBankai = true;
 
-	GET_STATS->SetExpMultiplier(0.5f);
+	GET_STATS->SetExpMultiplier(0.7f);
 	GET_STATS->AddStamina(2.f);
 	if (! GET_STATS->checkPower(-(BANKAI_COST)))
 	{
 		float hpReducer = (GET_STATS->GetPower() + BANKAI_COST) * 0.5f;
-		GET_STATS->SetHealth(FMath::Max(GET_STATS->GetHealth() - hpReducer, 1.f));
+		GET_STATS->SetHealth(FMath::Max(GET_STATS->GetHealth() + hpReducer, GET_STATS->GetMaxHealth() * 0.1f));
 	}
 	GET_STATS->AddPower(-3.f);
 	SkillDisable();
