@@ -552,12 +552,6 @@ bool AUnitBase::ApplyDamage(class AUnitBase* damageCauser, FHitOption* damageOpt
 			AddImpulse(impulse, HIT_TIME);
 		}
 
-		if (Dead)
-		{
-			IGameIns::Execute_OnUnitKilled(GetGameInstance(), damageCauser, this);
-			EventDead();
-		}
-
 		// Falling
 		if (damageOption->fall || Dead)
 		{
@@ -575,6 +569,13 @@ bool AUnitBase::ApplyDamage(class AUnitBase* damageCauser, FHitOption* damageOpt
 		Blocked = true;
 		AddImpulse(impulse, HIT_TIME);
 	}
+
+	if (Dead)
+	{
+		IGameIns::Execute_OnUnitKilled(GetGameInstance(), damageCauser, this);
+		EventDead();
+	}
+
 	return true;
 }
 

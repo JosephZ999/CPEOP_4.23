@@ -11,6 +11,8 @@
 #include "Chars/HeroBase.h"
 #include "Chars/MonsterBase.h"
 
+#include "Engine.h"
+
 #define PLAYER_INDEX 0
 
 //----------------------------------------------// Functional
@@ -78,12 +80,11 @@ bool AMyGameModeBase::PossessToHero(AHeroBase* Hero)
 
 AMonsterBase* AMyGameModeBase::SpawnAMonster(TSubclassOf<AMonsterBase> MonsterClass, FSpawnParams Params, bool Effect)
 {
-	AMonsterBase* Monster = GetWorld()->SpawnActorDeferred<AMonsterBase>(MonsterClass, Params.Transform);
+	AMonsterBase* Monster = GetWorld()->SpawnActor<AMonsterBase>(MonsterClass, Params.Transform);
 	if (Monster)
 	{
 		Monster->SetTeam(Params.Team);
 		Monster->GetUnitStats()->SetLevel(Params.Level);
-		Monster->FinishSpawning(Params.Transform);
 		++_MonstersInLevel;
 
 		if (Effect && _MonsterSpawnEffect)
@@ -102,6 +103,11 @@ AMonsterBase* AMyGameModeBase::SpawnAMonster(TSubclassOf<AMonsterBase> MonsterCl
 
 int32 AMyGameModeBase::SpawnAWave(TArray<FWaveMonster> Monsters, int32 MaxInLevel, bool Shuffle)
 {
+	GEngine->AddOnScreenDebugMessage(0, 10.f, //
+		FColor::Yellow,						  //
+		FString(" Spawn Wave"),				  //
+		true, FVector2D(2.f, 2.f));
+
 	_CurrentWave.Empty();
 	_MaxMonstersInLevel = MaxInLevel;
 	_MonsterIndex		= 0;
@@ -138,7 +144,7 @@ int32 AMyGameModeBase::SpawnAWave(TArray<FWaveMonster> Monsters, int32 MaxInLeve
 
 void AMyGameModeBase::SpawnNextDeferred(float Delay)
 {
-	Delay = FMath::FRandRange(0.1f, Delay);
+	Delay = FMath::FRandRange(0.2f, Delay);
 	FTimerHandle nTimer;
 	GetWorldTimerManager().SetTimer(nTimer, this, &AMyGameModeBase::SpawnNext, Delay);
 }
@@ -229,14 +235,27 @@ void AMyGameModeBase::Kill_Implementation(AUnitBase* Killer, AUnitBase* Killed)
 		--_MonstersInLevel;
 		SpawnNextDeferred(1.f);
 
-		if (_MonsterIndex >= _CurrentWave.Num() - 1 && _MonstersInLevel == 0)
+		if (_MonstersInLevel == 0)
 		{
-			++_WavesPassed;
-			if (_PlayerController)
+			GEngine->AddOnScreenDebugMessage(0, 10.f, //
+				FColor::White,						  //
+				FString("Monsters = 0"),			  //
+				true, FVector2D(2.f, 2.f));
+
+			if (_MonsterIndex >= _CurrentWave.Num() - 1)
 			{
-				IPlayerHUD::Execute_ShowWaveScore(_PlayerController, _WavesPassed, _PlayerKills);
+				GEngine->AddOnScreenDebugMessage(0, 10.f, //
+					FColor::White,						  //
+					FString("NextWave"),				  //
+					true, FVector2D(2.f, 2.f));
+
+				++_WavesPassed;
+				if (_PlayerController)
+				{
+					IPlayerHUD::Execute_ShowWaveScore(_PlayerController, _WavesPassed, _PlayerKills);
+				}
+				OnWavePassed.Broadcast();
 			}
-			OnWavePassed.Broadcast();
 		}
 	}
 

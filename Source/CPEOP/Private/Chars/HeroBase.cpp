@@ -986,9 +986,8 @@ bool AHeroBase::AddExp_Implementation(int32 Value)
 
 void AHeroBase::UseLevelPoints_Implementation()
 {
-	uint8	Points = GetHeroStats()->GetLevelScore();
-	FVector Stats  = FVector::ZeroVector;
-	for (Points; Points > 0; Points--)
+	FVector Stats = FVector::ZeroVector;
+	for (uint8 i = GetHeroStats()->GetLevelScore(); i > 0; i--)
 	{
 		uint8 Rand = FMath::RandRange(0, 2);
 		switch (Rand)
