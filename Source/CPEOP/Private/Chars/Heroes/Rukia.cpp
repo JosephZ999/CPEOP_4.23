@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Rukia.h"
-#include "Chars/AI/RukiaAI.h"
+#include "RukiaAI.h"
 #include "Components/CapsuleComponent.h"
 #include "PaperFlipbookComponent.h"
 

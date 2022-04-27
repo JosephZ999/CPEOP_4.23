@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Chars/MonsterBase.h"
+#include "MonsterBase.h"
+#include "ShadowComponent.h"
 #include "PaperFlipbookComponent.h"
-#include "Chars/Components/ShadowComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"

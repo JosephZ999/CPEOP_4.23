@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Chars/AI/OgichiAI.h"
-#include "Chars/Heroes/Ogichi.h"
+#include "OgichiAI.h"
+#include "Ogichi.h"
 #include "Kismet/KismetMathLibrary.h"
 
 // Options
@@ -216,8 +216,7 @@ void AOgichiAI::AIBody()
 
 		// Ogi_Getsuga
 		if (getDistanceX() > MAX_DIST_X && getDistanceX() < MAX_DIST_X * 4 && UKismetMathLibrary::RandomBoolWithWeight(0.2f) &&
-			OgichiRef->GetHeroStats()->checkStamina(-(GETSUGA_TENSHOU_COST)) &&
-			OgichiRef->GetHeroStats()->checkPower(-(GETSUGA_TENSHOU_COST)))
+			OgichiRef->GetHeroStats()->CheckPower(-(GETSUGA_TENSHOU_COST), -(GETSUGA_TENSHOU_COST), true))
 		{
 			OgichiRef->SetRotation(isEnemyOnRight(), false);
 			OgichiRef->SkillEnable();
@@ -277,8 +276,9 @@ void AOgichiAI::A_Stand()
 		OgichiRef->SetMoveVector(getForwardVector(60));
 
 		// Ogi_Getsuga
-		if (UKismetMathLibrary::RandomBoolWithWeight(0.01f) && OgichiRef->GetHeroStats()->checkStamina(-(GETSUGA_COST)) &&
-			OgichiRef->GetHeroStats()->checkPower(-(GETSUGA_COST)) && getDistanceY() < MIN_DIST_Y)
+		if (UKismetMathLibrary::RandomBoolWithWeight(0.01f)									 //
+			&& OgichiRef->GetHeroStats()->CheckPower(-(GETSUGA_COST), -(GETSUGA_COST), true) //
+			&& getDistanceY() < MIN_DIST_Y)
 		{
 			OgichiRef->SetRotation(isEnemyOnRight(), false);
 			OgichiRef->SkillEnable();

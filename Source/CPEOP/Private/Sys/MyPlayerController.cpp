@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Sys/MyPlayerController.h"
+#include "MyPlayerController.h"
 #include "GameFramework/HUD.h"
 
 void AMyPlayerController::ShowGameUI_Implementation(bool Hide)
@@ -8,29 +8,29 @@ void AMyPlayerController::ShowGameUI_Implementation(bool Hide)
 	IPlayerHUD::Execute_ShowGameUI(MyHUD, Hide);
 }
 
-void AMyPlayerController::UpdateLevel_Implementation(uint8 Level)
+void AMyPlayerController::LevelUpdated_Implementation(uint8 Level)
 {
-	IPlayerHUD::Execute_UpdateLevel(MyHUD, Level);
+	IPlayerHUD::Execute_LevelUpdated(MyHUD, Level);
 }
 
-void AMyPlayerController::UpdateHp_Implementation(float Hp, float MaxHp)
+void AMyPlayerController::HpUpdated_Implementation(float Hp, float MaxHp)
 {
-	IPlayerHUD::Execute_UpdateHp(MyHUD, Hp, MaxHp);
+	IPlayerHUD::Execute_HpUpdated(MyHUD, Hp, MaxHp);
 }
 
-void AMyPlayerController::UpdateMp_Implementation(float Mp, float MaxMp)
+void AMyPlayerController::MpUpdated_Implementation(float Mp, float MaxMp)
 {
-	IPlayerHUD::Execute_UpdateMp(MyHUD, Mp, MaxMp);
+	IPlayerHUD::Execute_MpUpdated(MyHUD, Mp, MaxMp);
 }
 
-void AMyPlayerController::UpdateExp_Implementation(float Exp, float MaxExp)
+void AMyPlayerController::ExpUpdated_Implementation(float Exp, float MaxExp)
 {
-	IPlayerHUD::Execute_UpdateExp(MyHUD, Exp, MaxExp);
+	IPlayerHUD::Execute_ExpUpdated(MyHUD, Exp, MaxExp);
 }
 
-void AMyPlayerController::UpdateStamina_Implementation(float Value)
+void AMyPlayerController::StaminaUpdated_Implementation(float Value)
 {
-	IPlayerHUD::Execute_UpdateStamina(MyHUD, Value);
+	IPlayerHUD::Execute_StaminaUpdated(MyHUD, Value);
 }
 
 void AMyPlayerController::ShowInputUI_Implementation(bool Hide)

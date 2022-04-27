@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Sys/MyGameInstance.h"
+#include "MyGameInstance.h"
 #include "Paper2D/Classes/PaperFlipbook.h"
 
 // Interface Functions

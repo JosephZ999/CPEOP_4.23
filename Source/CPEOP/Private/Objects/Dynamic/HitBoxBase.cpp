@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Objects/Dynamic/HitBoxBase.h"
+#include "HitBoxBase.h"
 
 #include "TimerManager.h"
 #include "Kismet/GameplayStatics.h"

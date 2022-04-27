@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Shrieker.h"
+#include "ShriekerAI.h"
 #include "ShriekerSummon.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/World.h"
-#include "chars/AI/ShriekerAI.h"
 
 AShrieker::AShrieker()
 {

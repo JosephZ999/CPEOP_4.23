@@ -2,7 +2,7 @@
 
 #include "AfterImageComponent.h"
 #include "PaperFlipbook.h"
-#include "Objects/Dynamic/AfterImage.h"
+#include "AfterImage.h"
 #include "Engine/World.h"
 
 UAfterImageComponent::UAfterImageComponent()

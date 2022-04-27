@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ShriekerAI.h"
-#include "Chars/Monsters/Shrieker.h"
+#include "Shrieker.h"
 
 AShriekerAI::AShriekerAI()
 {

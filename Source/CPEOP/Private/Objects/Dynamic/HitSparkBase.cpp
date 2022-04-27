@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Objects/Dynamic/HitSparkBase.h"
+#include "HitSparkBase.h"
 #include "PaperFlipbookComponent.h"
 #include "PaperFlipbook.h"
 #include "TimerManager.h"

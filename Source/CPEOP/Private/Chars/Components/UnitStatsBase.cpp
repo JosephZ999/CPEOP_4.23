@@ -1,22 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Chars/Components/UnitStatsBase.h"
-#include "Engine/World.h"
+#include "UnitStatsBase.h"
+#include "UnitBase.h"
 #include "TimerManager.h"
+#include "Engine/World.h"
 
-#include "Chars/UnitBase.h"
+#define STAMINA_RESTORE_TIME 0.1f
 
-#define STAMINA_RESTORE_TIME 0.1F
-
-// Sets default values for this component's properties
 UUnitStatsBase::UUnitStatsBase()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	AddStaminaValue = {0};
-	// ...
 }
 
 void UUnitStatsBase::SetLevel(uint8 NewLevel)
@@ -25,7 +20,6 @@ void UUnitStatsBase::SetLevel(uint8 NewLevel)
 	Init();
 }
 
-// Called when the game starts
 void UUnitStatsBase::BeginPlay()
 {
 	Super::BeginPlay();
@@ -33,19 +27,10 @@ void UUnitStatsBase::BeginPlay()
 	OwnerState = &(Cast<AUnitBase>(GetOwner())->GetStateRef());
 }
 
-// Called every frame
-void UUnitStatsBase::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
-
 void UUnitStatsBase::AddStamina(float value, float time, bool skill, int desiredState)
 {
 	if (time > 0.f)
 	{
-		// Delay
 		AddStaminaValue = value;
 		AddStaminaSkill = skill;
 
@@ -59,8 +44,6 @@ void UUnitStatsBase::AddStamina(float value, float time, bool skill, int desired
 		// Restore
 		GetWorld()->GetTimerManager().SetTimer(RestoreStaminaTimer, this, &UUnitStatsBase::RestoreStamina, RestoreStaminaDelay());
 	}
-
-	// ...
 }
 
 void UUnitStatsBase::AddStaminaDeffered()

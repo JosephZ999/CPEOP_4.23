@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Objects/Dynamic/DmgTextBase.h"
+#include "DmgTextBase.h"
 
 // Sets default values
 ADmgTextBase::ADmgTextBase(const FObjectInitializer& ObjectInitializer)

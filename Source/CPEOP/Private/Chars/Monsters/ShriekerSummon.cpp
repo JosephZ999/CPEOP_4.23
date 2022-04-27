@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ShriekerSummon.h"
-#include "Chars/AI/ShriekerSummonAI.h"
+#include "ShriekerSummonAI.h"
 
 AShriekerSummon::AShriekerSummon()
 {

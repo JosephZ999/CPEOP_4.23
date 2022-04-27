@@ -1,8 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Chars/Components/HeroStats.h"
-#include "Sys/MyPlayerController.h"
-#include "Sys/Interfaces/PlayerHUD.h"
+#include "HeroStats.h"
+#include "MyPlayerController.h"
 
 #include "TimerManager.h"
 #include "Engine/World.h"
@@ -30,12 +29,6 @@
 #define HP_RESTORE		0.25f // Percent
 #define MP_RESTORE		0.25f // Percent
 
-void UHeroStats::BeginPlay()
-{
-	Super::BeginPlay();
-	OwnerPawn = Cast<APawn>(GetOwner());
-}
-
 float UHeroStats::GetHealth() const
 {
 	return Health;
@@ -54,38 +47,6 @@ float UHeroStats::GetDamage() const
 float UHeroStats::GetCritRate() const
 {
 	return CritRate;
-}
-
-void UHeroStats::NotEnoughPower_Implementation()
-{
-	if (OwnerPawn && OwnerPawn->GetController())
-	{
-		IPlayerHUD::Execute_NotEnoughPower(OwnerPawn->GetController());
-	}
-}
-
-void UHeroStats::NotEnoughStamina_Implementation()
-{
-	if (OwnerPawn && OwnerPawn->GetController())
-	{
-		IPlayerHUD::Execute_NotEnoughStamina(OwnerPawn->GetController());
-	}
-}
-
-void UHeroStats::SkillActivated_Implementation()
-{
-	if (OwnerPawn && OwnerPawn->GetController())
-	{
-		IPlayerHUD::Execute_SkillActivated(OwnerPawn->GetController());
-	}
-}
-
-void UHeroStats::SkillDeactivated_Implementation()
-{
-	if (OwnerPawn && OwnerPawn->GetController())
-	{
-		IPlayerHUD::Execute_SkillDeactivated(OwnerPawn->GetController());
-	}
 }
 
 void UHeroStats::Init()
@@ -182,7 +143,29 @@ void UHeroStats::AddExp(int32 exp)
 {
 	exp = (float)exp * ExpMultiplier;
 	Exp += exp;
+	Leveling();
 
+	auto OwnerController = GetOwnerController();
+	if (OwnerController)
+	{
+		OwnerController->ExpUpdated(Exp, MaxExp);
+	}
+}
+
+void UHeroStats::SetExp(int32 value)
+{
+	Exp = value;
+	Leveling();
+
+	auto OwnerController = GetOwnerController();
+	if (OwnerController)
+	{
+		OwnerController->ExpUpdated(Exp, MaxExp);
+	}
+}
+
+void UHeroStats::Leveling()
+{
 	if (Exp > MaxExp)
 	{
 		FTimerHandle levelingTimer;
@@ -199,18 +182,6 @@ void UHeroStats::AddExp(int32 exp)
 
 			GetWorld()->GetTimerManager().SetTimer(levelingTimer, this, &UHeroStats::LevelUp, 0.2f);
 		}
-	}
-	if (OwnerPawn && OwnerPawn->GetController())
-	{
-		IPlayerHUD::Execute_UpdateExp(OwnerPawn->GetController(), Exp, MaxExp);
-	}
-}
-
-void UHeroStats::SetExp(int32 value)
-{
-	if (OwnerPawn && OwnerPawn->GetController())
-	{
-		IPlayerHUD::Execute_UpdateExp(OwnerPawn->GetController(), Exp, MaxExp);
 	}
 }
 
@@ -284,56 +255,68 @@ void UHeroStats::RestoreStamina()
 	}
 }
 
-bool UHeroStats::checkStamina(float value, bool skill) const
+bool UHeroStats::CheckPower(float power, float stamina, bool skill) const
 {
-	if (skill)
-	{
-		return (value / SkillReducer) < Stamina;
-	}
-	else
-	{
-		return value <= Stamina;
-	}
-}
+	auto OwnerController = GetOwnerController();
 
-bool UHeroStats::checkPower(float value) const
-{
-	return value <= Power;
+	bool CheckPower = power <= Power;
+	if (! CheckPower && OwnerController)
+	{
+		OwnerController->NotEnoughPower();
+	}
+
+	bool  CheckStamina;
+	float CurrentStamina = skill ? (stamina / SkillReducer) : stamina;
+	CheckStamina		 = CurrentStamina <= Stamina;
+	if (! CheckStamina && OwnerController)
+	{
+		OwnerController->NotEnoughStamina();
+	}
+
+	return CheckPower && CheckStamina;
 }
 
 void UHeroStats::AddHealth(float value)
 {
 	Health = FMath::Clamp(Health + value, 0.f, MaxHealth);
-	if (OwnerPawn && OwnerPawn->GetController())
+
+	auto OwnerController = GetOwnerController();
+	if (OwnerController)
 	{
-		IPlayerHUD::Execute_UpdateHp(OwnerPawn->GetController(), Health, MaxHealth);
+		OwnerController->HpUpdated(Health, MaxHealth);
 	}
 }
 
 void UHeroStats::SetHealth(float value)
 {
 	Health = FMath::Clamp(value, 0.f, MaxHealth);
-	if (OwnerPawn && OwnerPawn->GetController())
+
+	auto OwnerController = GetOwnerController();
+	if (OwnerController)
 	{
-		IPlayerHUD::Execute_UpdateHp(OwnerPawn->GetController(), Health, MaxHealth);
+		OwnerController->HpUpdated(Health, MaxHealth);
 	}
 }
 
 void UHeroStats::AddPower(float value)
 {
 	Power = FMath::Clamp(Power + value, 0.f, MaxPower);
-	if (OwnerPawn && OwnerPawn->GetController())
+
+	auto OwnerController = GetOwnerController();
+	if (OwnerController)
 	{
-		IPlayerHUD::Execute_UpdateMp(OwnerPawn->GetController(), Power, MaxPower);
+		OwnerController->MpUpdated(Power, MaxPower);
 	}
 }
 
 void UHeroStats::SetPower(float value)
 {
 	Power = FMath::Clamp(value, 0.f, MaxPower);
-	if (OwnerPawn && OwnerPawn->GetController())
+
+	auto OwnerController = GetOwnerController();
+	if (OwnerController)
 	{
-		IPlayerHUD::Execute_UpdateMp(OwnerPawn->GetController(), Power, MaxPower);
+		OwnerController->MpUpdated(Power, MaxPower);
 	}
 }
 
@@ -359,4 +342,10 @@ bool UHeroStats::CheckSkill(FName key)
 	{
 		return false;
 	}
+}
+
+AMyPlayerController* UHeroStats::GetOwnerController() const
+{
+	auto OwnerPawn = Cast<APawn>(GetOwner());
+	return OwnerPawn ? OwnerPawn->GetController<AMyPlayerController>() : nullptr;
 }

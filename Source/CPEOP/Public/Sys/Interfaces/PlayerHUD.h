@@ -26,19 +26,19 @@ public:
 	void ShowGameUI(bool Hide);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void UpdateLevel(uint8 Level);
+	void LevelUpdated(uint8 Level);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void UpdateHp(float Hp, float MaxHp);
+	void HpUpdated(float Hp, float MaxHp);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void UpdateMp(float Mp, float MaxMp);
+	void MpUpdated(float Mp, float MaxMp);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void UpdateExp(float Exp, float MaxExp);
+	void ExpUpdated(float Exp, float MaxExp);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void UpdateStamina(float Value);
+	void StaminaUpdated(float Value);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void ShowInputUI(bool Hide);

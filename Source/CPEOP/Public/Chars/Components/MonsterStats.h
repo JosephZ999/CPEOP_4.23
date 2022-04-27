@@ -34,7 +34,5 @@ public:
 
 	virtual float TakeDamage(float damage, float armorPiercing, bool block) override;
 
-	//
-
 	uint8 GetLevel() { return Level; }
 };

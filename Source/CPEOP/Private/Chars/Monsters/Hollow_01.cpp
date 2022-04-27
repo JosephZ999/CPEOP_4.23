@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Hollow_01.h"
+#include "HollowAI_1.h"
 #include "PaperFlipbook.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "PaperFlipbookComponent.h"
-#include "Chars/AI/HollowAI_1.h"
 
 AHollow_01::AHollow_01()
 {

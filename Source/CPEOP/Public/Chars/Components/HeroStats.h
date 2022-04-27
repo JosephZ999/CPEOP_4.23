@@ -3,12 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Chars/Components/UnitStatsBase.h"
+#include "UnitStatsBase.h"
 #include "HeroStats.generated.h"
 
 /**
  *
  */
+
+class AMyPlayerController;
 
 USTRUCT()
 struct FFormStats
@@ -62,6 +64,7 @@ UCLASS()
 class CPEOP_API UHeroStats : public UUnitStatsBase
 {
 	GENERATED_BODY()
+
 public:
 	UPROPERTY(VisibleAnywhere)
 	FName FormName;
@@ -102,12 +105,6 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
 	FSavedStats SavedStats;
 
-	APawn* OwnerPawn;
-
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
 public:
 	virtual void SetLevel(uint8 NewLevel) override;
 
@@ -116,20 +113,6 @@ public:
 	virtual float GetDamage() const override;
 	virtual float GetCritRate() const override;
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void NotEnoughPower();
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void NotEnoughStamina();
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void SkillActivated();
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void SkillDeactivated();
-
-	/** Добавляет форму для персонажа как Банкай
-	 * Вызывается в конструкторе персонажа */
 	void AddForms(FName name, FVector stats);
 
 	UFUNCTION(BlueprintCallable)
@@ -154,19 +137,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	int32 GetLevelScore() const;
-	/*
-		UFUNCTION(BlueprintCallable)
-		void GetAllStats(uint8& Lv, uint8& Str, uint8& Agi, uint8& Spi, float& Dmg, float& Arm, float& Crit)const
-		{
-			Lv	= Level;
-			Str = Strength;
-			Agi = Agility;
-			Spi = Spirit;
-			Dmg = Damage;
-			Arm = Armor;
-			Crit = CritRate;
-		}
-	*/
 
 	UFUNCTION(BlueprintCallable)
 	void GetAllStats(float& Dmg, float& Arm, float& Crit, float& Speed, float& TpCos, float& SkillReduce)
@@ -180,15 +150,13 @@ public:
 	}
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE float getStamina() const { return Stamina; }
+	float getStamina() const { return Stamina; }
 
-	bool checkStamina(float value, bool skill = true) const;
-	bool checkPower(float value) const;
+	bool CheckPower(float power, float stamina = 0.f, bool skill = false) const;
 
-	FORCEINLINE float getWalkSpeed() { return WalkSpeed; }
-	FORCEINLINE float getSprintSpeed() { return SprintSpeed; }
-
-	FORCEINLINE float getTeleportCost() { return TeleportCost; }
+	float getWalkSpeed() { return WalkSpeed; }
+	float getSprintSpeed() { return SprintSpeed; }
+	float getTeleportCost() { return TeleportCost; }
 
 	// Set
 public:
@@ -205,12 +173,15 @@ public:
 	void SetPower(float value);
 	void AddExp(int32 value);
 	void SetExp(int32 value);
+	void Leveling();
 
 	UFUNCTION(BlueprintCallable)
 	void SetSkill(FName skillName, bool value);
 
 	UFUNCTION(BlueprintCallable)
 	bool CheckSkill(FName key);
+
+	AMyPlayerController* GetOwnerController() const;
 
 	virtual float TakeDamage(float damage, float armorPiercing, bool blocked) override;
 

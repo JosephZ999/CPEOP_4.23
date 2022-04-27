@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Chars/Heroes/Ogichi.h"
+#include "Ogichi.h"
+#include "OgichiAI.h"
 #include "TimerManager.h"
 #include "PaperFlipbook.h"
-#include "Chars/AI/OgichiAI.h"
 
 #define OGI_ANIM_LOC   "Texture/Chars/Ogichi/FBook/"
 #define OGI_ANIM_LOC_2 "Texture/Chars/Ogichi_Bankai/Anim/"
@@ -285,6 +285,7 @@ void AOgichi::sh_Attack_2()
 
 	SetBlockingAttack(EBlockType::Forward, getFrameTime(4), BLOCK_DURATION);
 }
+
 void AOgichi::sh_AttackFW()
 {
 	FState nState;
@@ -297,8 +298,14 @@ void AOgichi::sh_AttackFW()
 
 	SetBlockingAttack(EBlockType::Forward, getFrameTime(5), BLOCK_DURATION);
 
-	if (IsSkillActive() && GetHeroStats()->checkStamina(-(GETSUGA_COST)) && GetHeroStats()->checkPower(-(GETSUGA_COST)))
+	if (IsSkillActive())
 	{
+		bool EnoughPower = GetHeroStats()->CheckPower(-(GETSUGA_COST), -(GETSUGA_COST), true);
+		if (! EnoughPower)
+		{
+			return;
+		}
+
 		GET_STATS->AddStamina(GETSUGA_COST, getFrameTime(5), true);
 		SpawnHelperDeferred("sh_GetsugaFWHelper", getFrameTime(5));
 		SkillDisable();
@@ -378,19 +385,22 @@ void AOgichi::sh_SwordThrow()
 //---------------------------------------------// Ogi_Getsuga Tensho
 void AOgichi::sh_Getsuga()
 {
-	if (GetHeroStats()->checkStamina(-(GETSUGA_TENSHOU_COST)) && GetHeroStats()->checkPower(-(GETSUGA_TENSHOU_COST)))
+	bool EnoughPower = GetHeroStats()->CheckPower(-(GETSUGA_TENSHOU_COST), -(GETSUGA_TENSHOU_COST), true);
+	if (! EnoughPower)
 	{
-		FState nState;
-		nState.State	 = EOgichiState::Ogi_Getsuga;
-		nState.Animation = "Getsuga";
-		NewState(nState);
-
-		SpawnHelperDeferred("sh_GetsugaHelper", getFrameTime(4));
-
-		GET_STATS->AddStamina(GETSUGA_TENSHOU_COST, getFrameTime(2), true);
-		SetBlockingAttack(EBlockType::Forward, getFrameTime(4), BLOCK_DURATION);
-		SkillDisable();
+		return;
 	}
+
+	FState nState;
+	nState.State	 = EOgichiState::Ogi_Getsuga;
+	nState.Animation = "Getsuga";
+	NewState(nState);
+
+	SpawnHelperDeferred("sh_GetsugaHelper", getFrameTime(4));
+
+	GET_STATS->AddStamina(GETSUGA_TENSHOU_COST, getFrameTime(2), true);
+	SetBlockingAttack(EBlockType::Forward, getFrameTime(4), BLOCK_DURATION);
+	SkillDisable();
 }
 
 // Ogi_Bankai

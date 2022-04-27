@@ -1,5 +1,6 @@
-#include "Chars/Heroes/Ichigo.h"
-#include "Chars/Components/ShadowComponent.h"
+
+#include "Ichigo.h"
+#include "ShadowComponent.h"
 
 #define DANGER_SCALEX 1.6f
 
@@ -206,18 +207,8 @@ void AIchigo::sh_GetsugaFW()
 
 	if (IsSkillActive())
 	{
-		bool Return{false};
-		if (! GetHeroStats()->checkStamina(-(GETSUGA_COST)))
-		{
-			GET_STATS->NotEnoughStamina();
-			Return = true;
-		}
-		if (! GetHeroStats()->checkPower(-(GETSUGA_COST)))
-		{
-			GET_STATS->NotEnoughPower();
-			Return = true;
-		}
-		if (Return)
+		bool EnoughPower = GetHeroStats()->CheckPower(-(GETSUGA_COST), -(GETSUGA_COST), true);
+		if (! EnoughPower)
 		{
 			return;
 		}
@@ -260,18 +251,8 @@ void AIchigo::sh_GetsugaB()
 
 	if (IsSkillActive())
 	{
-		bool Return{false};
-		if (! GetHeroStats()->checkStamina(-(GETSUGA_COST)))
-		{
-			GET_STATS->NotEnoughStamina();
-			Return = true;
-		}
-		if (! GetHeroStats()->checkPower(-(GETSUGA_COST)))
-		{
-			GET_STATS->NotEnoughPower();
-			Return = true;
-		}
-		if (Return)
+		bool EnoughPower = GetHeroStats()->CheckPower(-(GETSUGA_COST), -(GETSUGA_COST), true);
+		if (! EnoughPower)
 		{
 			return;
 		}
@@ -356,19 +337,8 @@ void AIchigo::sh_SwordThrow()
 
 void AIchigo::sh_GetsugaStart()
 {
-	bool Return{false};
-	if (! GetHeroStats()->checkStamina(-(GETSUGA_TENSHOU_COST)))
-	{
-		GET_STATS->NotEnoughStamina();
-		Return = true;
-	}
-
-	if (! GetHeroStats()->checkPower(-(GETSUGA_TENSHOU_COST)))
-	{
-		GET_STATS->NotEnoughPower();
-		Return = true;
-	}
-	if (Return)
+	bool EnoughPower = GetHeroStats()->CheckPower(-(GETSUGA_TENSHOU_COST), -(GETSUGA_TENSHOU_COST), true);
+	if (! EnoughPower)
 	{
 		return;
 	}
@@ -408,18 +378,8 @@ void AIchigo::sh_RExplosion()
 	if (! GetHeroStats()->CheckSkill("RExplosion"))
 		return;
 
-	bool Return{false};
-	if (! GetHeroStats()->checkStamina(-(EXPLOSION_COST)))
-	{
-		GET_STATS->NotEnoughStamina();
-		Return = true;
-	}
-	if (! GetHeroStats()->checkPower(-(EXPLOSION_COST)))
-	{
-		GET_STATS->NotEnoughPower();
-		Return = true;
-	}
-	if (Return)
+	bool EnoughPower = GetHeroStats()->CheckPower(-(EXPLOSION_COST), -(EXPLOSION_COST), true);
+	if (! EnoughPower)
 	{
 		return;
 	}
@@ -477,7 +437,7 @@ void AIchigo::sh_Bankai()
 
 	GET_STATS->SetExpMultiplier(0.7f);
 	GET_STATS->AddStamina(2.f);
-	if (! GET_STATS->checkPower(-(BANKAI_COST)))
+	if (! GET_STATS->CheckPower(-(BANKAI_COST)))
 	{
 		float hpReducer = (GET_STATS->GetPower() + BANKAI_COST) * 0.5f;
 		GET_STATS->SetHealth(FMath::Max(GET_STATS->GetHealth() + hpReducer, GET_STATS->GetMaxHealth() * 0.1f));

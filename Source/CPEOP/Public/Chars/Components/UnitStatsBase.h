@@ -11,6 +11,9 @@ class CPEOP_API UUnitStatsBase : public UActorComponent
 {
 	GENERATED_BODY()
 
+public:
+	UUnitStatsBase();
+
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	int32 ExpForKill;
@@ -19,40 +22,33 @@ protected:
 	uint8 Level = 0;
 
 public:
-	// Sets default values for this component's properties
-	UUnitStatsBase();
-
-	virtual void Init() {}
-
 	UFUNCTION(BlueprintCallable)
 	virtual void SetLevel(uint8 NewLevel);
 
 	UFUNCTION(BlueprintCallable)
 	virtual float GetHealth() const { return 0.f; };
+
 	UFUNCTION(BlueprintCallable)
 	virtual float GetMaxHealth() const { return 0.f; };
 
 	UFUNCTION(BlueprintCallable)
 	virtual float GetDamage() const { return 0.f; };
+
 	UFUNCTION(BlueprintCallable)
 	virtual float GetCritRate() const { return 0.f; };
-
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
-public:
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	// Calculate and return damage value
-	virtual float TakeDamage(float damage, float armorPiercing, bool blocked) { return 0; }
 
 	UFUNCTION(BlueprintCallable)
 	virtual void AddExp(int32 exp) {}
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	int32 GetExpForKill() { return ExpForKill; }
+
+	virtual void Init() {}
+
+	virtual float TakeDamage(float damage, float armorPiercing, bool blocked) { return 0; }
+
+protected:
+	virtual void BeginPlay() override;
 
 	// Stamina
 public:

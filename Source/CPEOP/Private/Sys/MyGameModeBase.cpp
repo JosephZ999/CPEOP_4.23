@@ -1,15 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Sys/MyGameModeBase.h"
-#include "Sys/Interfaces/AIEvents.h"
-#include "Sys/Interfaces/PlayerHUD.h"
-#include "Sys/MyPlayerController.h"
-#include "sys/MyFunctionLibrary.h"
+#include "MyGameModeBase.h"
+#include "AIEvents.h"
+#include "PlayerHUD.h"
+#include "MyPlayerController.h"
+#include "MyFunctionLibrary.h"
 #include "TimerManager.h"
 #include "Engine/World.h"
 
-#include "Chars/HeroBase.h"
-#include "Chars/MonsterBase.h"
+#include "HeroBase.h"
+#include "MonsterBase.h"
 
 #include "Engine.h"
 
@@ -216,7 +216,7 @@ void AMyGameModeBase::LevelUp_Implementation(AActor* Hero)
 	AHeroBase* HeroRef = Cast<AHeroBase>(Hero);
 	if (HeroRef == _PlayerHero)
 	{
-		IPlayerHUD::Execute_UpdateLevel(_PlayerController, HeroRef->GetHeroStats()->GetLevel());
+		IPlayerHUD::Execute_LevelUpdated(_PlayerController, HeroRef->GetHeroStats()->GetLevel());
 		IPlayerHUD::Execute_ShowWarningNotice(_PlayerController, false);
 	}
 

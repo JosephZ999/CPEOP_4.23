@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Chars/HeroBase.h"
-#include "sys/MyGameInstance.h"
-#include "chars/AI/UnitAIBase.h"
-#include "Sys/Interfaces/PlayerHUD.h"
+#include "HeroBase.h"
+#include "MyGameInstance.h"
+#include "UnitAIBase.h"
+#include "PlayerHUD.h"
 
 // Components
-#include "Chars/Components/ShadowComponent.h"
+#include "ShadowComponent.h"
 #include "PaperFlipbook.h"
 #include "PaperFlipbookComponent.h"
 #include "Camera/CameraComponent.h"
@@ -17,7 +17,7 @@
 
 // Function Library
 #include "Kismet/KismetMathLibrary.h"
-#include "Sys/MyFunctionLibrary.h"
+#include "MyFunctionLibrary.h"
 #include "UObject/ConstructorHelpers.h"
 
 // Camera Settings
@@ -663,9 +663,9 @@ bool AHeroBase::Teleport()
 	if (IsImmortal())
 		return false;
 
-	if (! GetHeroStats()->checkStamina(1.f / GetHeroStats()->getTeleportCost(), false))
+	bool EnoughStamina = GetHeroStats()->CheckPower(0.f, 1.f / GetHeroStats()->getTeleportCost());
+	if (! EnoughStamina)
 	{
-		GET_STATS->NotEnoughStamina();
 		return false;
 	}
 
@@ -706,8 +706,11 @@ void AHeroBase::Teleport(FVector nLocation)
 	if (IsImmortal())
 		return;
 
-	if (! GetHeroStats()->checkStamina(1.f / GetHeroStats()->getTeleportCost(), false))
+	bool EnoughStamina = GetHeroStats()->CheckPower(0.f, 1.f / GetHeroStats()->getTeleportCost());
+	if (! EnoughStamina)
+	{
 		return;
+	}
 
 	if (CheckState(EBaseStates::Fall) || CheckState(EBaseStates::Teleport) || IsDead())
 		return;

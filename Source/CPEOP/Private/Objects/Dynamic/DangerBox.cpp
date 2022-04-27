@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "DangerBox.h"
-#include "Sys/Interfaces/AIEvents.h"
+#include "AIEvents.h"
 #include "Components/BoxComponent.h"
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "TimerManager.h"
 #include "UObject/ConstructorHelpers.h"
-#include "Chars/UnitBase.h"
+#include "UnitBase.h"
 
 #define BOX_SIZE 25.f
 

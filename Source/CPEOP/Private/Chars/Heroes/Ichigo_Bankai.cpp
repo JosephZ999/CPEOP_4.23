@@ -1,5 +1,5 @@
-#include "Chars/Heroes/Ichigo.h"
-#include "Chars/Components/ShadowComponent.h"
+#include "Ichigo.h"
+#include "ShadowComponent.h"
 
 //----------------------------------------------/ Input
 
@@ -185,9 +185,9 @@ void AIchigo::b_Attack_4()
 
 void AIchigo::b_Attack_FW()
 {
-	if (! GET_STATS->checkStamina(2.f / GetHeroStats()->getTeleportCost(), false))
+	bool EnoughPower = GetHeroStats()->CheckPower(0.f, 2.f / GetHeroStats()->getTeleportCost());
+	if (! EnoughPower)
 	{
-		GET_STATS->NotEnoughStamina();
 		return;
 	}
 
@@ -230,9 +230,9 @@ void AIchigo::b_AttackDash(float value)
 
 void AIchigo::b_Attack_FW_Slash()
 {
-	if (! GET_STATS->checkStamina(1.f / GetHeroStats()->getTeleportCost(), false))
+	bool EnoughPower = GetHeroStats()->CheckPower(0.f, 1.f / GetHeroStats()->getTeleportCost());
+	if (! EnoughPower)
 	{
-		GET_STATS->NotEnoughStamina();
 		if (CheckState(EIchigoState::Ichi_Attack_FW_Slash))
 		{
 			b_Attack_FW_End();
@@ -326,18 +326,8 @@ void AIchigo::b_Getsuga()
 	if (! GetHeroStats()->CheckSkill("Getsuga"))
 		return;
 
-	bool Return{false};
-	if (! GetHeroStats()->checkStamina(-(GETSUGA_COST)))
-	{
-		GET_STATS->NotEnoughStamina();
-		Return = true;
-	}
-	if (! GetHeroStats()->checkPower(-(GETSUGA_COST)))
-	{
-		GET_STATS->NotEnoughPower();
-		Return = true;
-	}
-	if (Return)
+	bool EnoughPower = GetHeroStats()->CheckPower(-(GETSUGA_COST), -(GETSUGA_COST), true);
+	if (! EnoughPower)
 	{
 		return;
 	}
@@ -385,18 +375,8 @@ void AIchigo::b_RExplosion()
 	if (! GetHeroStats()->CheckSkill("RExplosion"))
 		return;
 
-	bool Return{false};
-	if (! GetHeroStats()->checkStamina(-(EXPLOSION_COST)))
-	{
-		GET_STATS->NotEnoughStamina();
-		Return = true;
-	}
-	if (! GetHeroStats()->checkPower(-(EXPLOSION_COST)))
-	{
-		GET_STATS->NotEnoughPower();
-		Return = true;
-	}
-	if (Return)
+	bool EnoughPower = GetHeroStats()->CheckPower(-(EXPLOSION_COST), -(EXPLOSION_COST), true);
+	if (! EnoughPower)
 	{
 		return;
 	}

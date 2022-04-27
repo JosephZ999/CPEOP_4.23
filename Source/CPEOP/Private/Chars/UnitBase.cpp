@@ -1,16 +1,16 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Chars/UnitBase.h"
+#include "UnitBase.h"
 
-#include "Objects/Dynamic/Helper.h"
-#include "Objects/Dynamic/HitSparkBase.h"
-#include "Objects/Dynamic/DangerBox.h"
-#include "Chars/Components/UnitStatsBase.h"
-#include "Chars/Components/ShadowComponent.h"
-#include "Sys/MyFunctionLibrary.h"
+#include "Helper.h"
+#include "HitSparkBase.h"
+#include "DangerBox.h"
+#include "UnitStatsBase.h"
+#include "ShadowComponent.h"
+#include "MyFunctionLibrary.h"
 #include "sys/Interfaces/GameIns.h"
 
-#include "chars/AI/UnitAIBase.h"
+#include "UnitAIBase.h"
 #include "PaperFlipbookComponent.h"
 #include "PaperFlipbook.h"
 #include "Components/CapsuleComponent.h"
@@ -122,7 +122,7 @@ void AUnitBase::OnDangerDetected_Implementation(FDangerArg& DangerInfo)
 // Functions
 void AUnitBase::FindHelper(FString objectPath, TSubclassOf<class AHelper>& Class)
 {
-	// Äîáàâëÿþ â êîíåö classPath - .'íàçâàíèå êëàññà'
+	// Ð”Ð¾Ð±Ð°Ð²Ð»ÑÑŽ Ð² ÐºÐ¾Ð½ÐµÑ† classPath - .'Ð½Ð°Ð·Ð²Ð°Ð½Ð¸Ðµ ÐºÐ»Ð°ÑÑÐ°'
 	if (objectPath.IsEmpty())
 		return;
 
@@ -729,7 +729,7 @@ void AUnitBase::EndStateDeferred(float time)
 }
 void AUnitBase::EndState()
 {
-	// Íà âñÿêèé ñëó÷àè
+	// ÐÐ° Ð²ÑÑÐºÐ¸Ð¹ ÑÐ»ÑƒÑ‡Ð°Ð¸
 	PAUSE_TIMER(EndStateTimer);
 	PAUSE_TIMER(ImpulseTimer);
 	GetSprite()->SetLooping(true);
