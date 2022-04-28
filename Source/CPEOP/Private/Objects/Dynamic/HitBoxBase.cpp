@@ -5,7 +5,6 @@
 #include "TimerManager.h"
 #include "Kismet/GameplayStatics.h"
 
-// Sets default values
 AHitBoxBase::AHitBoxBase()
 {
 	Type = EHelperType::HitBox;
@@ -31,7 +30,6 @@ AHitBoxBase::AHitBoxBase()
 	AttackDelay = 0.05f;
 }
 
-// Called when the game starts or when spawned
 void AHitBoxBase::BeginPlay()
 {
 	Super::BeginPlay();
@@ -49,7 +47,6 @@ void AHitBoxBase::BeginPlay()
 	OnActorBeginOverlap.AddDynamic(this, &AHitBoxBase::OnBeginOverlap);
 }
 
-// Init // Init // Init // Init // Init // Init // Init // Init //
 void AHitBoxBase::Init(AUnitBase* ownerChar, float damage, float crit)
 {
 	OwnerCharacter	 = ownerChar;

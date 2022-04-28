@@ -39,11 +39,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Helper Options")
 	EImpulseType ImpulseType;
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-	// Options //
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "Helper Options")
 	bool LoopAnim;
@@ -82,4 +77,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void setSparkRotation(float rotation) { Options.sparkRotation = rotation; }
+
+protected:
+	virtual void BeginPlay() override;
 };

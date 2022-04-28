@@ -33,18 +33,4 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, Category = "GameIns Events")
 	void OnHeroLevelUp(AActor* TargetActor);
-
-	//------------------------------------------// Getters
-
-	UFUNCTION(BlueprintNativeEvent, Category = "GameIns Events")
-	class UPaperFlipbook* GetSparkAnimation(uint8 index);
-
-	UFUNCTION(BlueprintNativeEvent, Category = "GameIns Events")
-	class TSubclassOf<class AHelper> GetDamageTextClass();
-
-	UFUNCTION(BlueprintNativeEvent, Category = "GameIns Events")
-	bool CanCreateDamageText(bool Crited);
-
-	UFUNCTION(BlueprintNativeEvent, Category = "GameIns Events")
-	TSubclassOf<class ADangerBox> GetDangerBoxClass();
 };

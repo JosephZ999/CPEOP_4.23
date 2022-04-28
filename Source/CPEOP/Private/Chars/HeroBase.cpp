@@ -155,14 +155,14 @@ void AHeroBase::EndState()
 // Movement // Sprint // Dash //
 void AHeroBase::Sprint(FVector fwVector)
 {
-	GetCharacterMovement()->MaxWalkSpeed = GetHeroStats()->getSprintSpeed();
+	GetCharacterMovement()->MaxWalkSpeed = GetHeroStats()->GetSprintSpeed();
 	SET_TIMER(SprintPowReducingTimer, this, &AHeroBase::SprintPowReducing, cTime(0.05f), true);
 	Sprinting = true;
 }
 
 void AHeroBase::StopSprinting()
 {
-	GetCharacterMovement()->MaxWalkSpeed = GetHeroStats()->getWalkSpeed();
+	GetCharacterMovement()->MaxWalkSpeed = GetHeroStats()->GetWalkSpeed();
 	PAUSE_TIMER(SprintPowReducingTimer);
 	Sprinting = false;
 }
@@ -570,7 +570,7 @@ void AHeroBase::PowChargeLoop()
 	{
 		SET_TIMER(PowChargeLoopTimer, this, &AHeroBase::PowChargeLoop, cTime(0.05f));
 		// Add Power
-		GET_STATS->AddStamina(0.02f + GetHeroStats()->getStamina() / 100.f);
+		GET_STATS->AddStamina(0.02f + GetHeroStats()->GetStamina() / 100.f);
 	}
 }
 
@@ -663,7 +663,7 @@ bool AHeroBase::Teleport()
 	if (IsImmortal())
 		return false;
 
-	bool EnoughStamina = GetHeroStats()->CheckPower(0.f, 1.f / GetHeroStats()->getTeleportCost());
+	bool EnoughStamina = GetHeroStats()->CheckPower(0.f, 1.f / GetHeroStats()->GetTeleportCost());
 	if (! EnoughStamina)
 	{
 		return false;
@@ -706,7 +706,7 @@ void AHeroBase::Teleport(FVector nLocation)
 	if (IsImmortal())
 		return;
 
-	bool EnoughStamina = GetHeroStats()->CheckPower(0.f, 1.f / GetHeroStats()->getTeleportCost());
+	bool EnoughStamina = GetHeroStats()->CheckPower(0.f, 1.f / GetHeroStats()->GetTeleportCost());
 	if (! EnoughStamina)
 	{
 		return;
@@ -761,7 +761,7 @@ void AHeroBase::TeleportTick(float delta)
 
 			// Minus stamina
 			float dist		   = FVector::Dist(tp_initialLocation, GetActorLocation());
-			float minusStamina = FMath::Min(1.2f, dist / 100.f) / GetHeroStats()->getTeleportCost();
+			float minusStamina = FMath::Min(1.2f, dist / 100.f) / GetHeroStats()->GetTeleportCost();
 			GET_STATS->AddStamina(-(minusStamina));
 			getShadow()->ShowShadow();
 		}
@@ -772,7 +772,7 @@ void AHeroBase::TeleportTick(float delta)
 void AHeroBase::ChangeForm(FName formName)
 {
 	GetHeroStats()->SetForm(formName);
-	GetCharacterMovement()->MaxWalkSpeed = GetHeroStats()->getWalkSpeed();
+	GetCharacterMovement()->MaxWalkSpeed = GetHeroStats()->GetWalkSpeed();
 }
 void AHeroBase::InitForm(FName formName, FVector stats)
 {

@@ -185,7 +185,7 @@ void AIchigo::b_Attack_4()
 
 void AIchigo::b_Attack_FW()
 {
-	bool EnoughPower = GetHeroStats()->CheckPower(0.f, 2.f / GetHeroStats()->getTeleportCost());
+	bool EnoughPower = GetHeroStats()->CheckPower(0.f, 2.f / GetHeroStats()->GetTeleportCost());
 	if (! EnoughPower)
 	{
 		return;
@@ -200,7 +200,7 @@ void AIchigo::b_Attack_FW()
 	SpawnHelperDeferred("Teleport", getFrameTime(4), GetActorRotation());
 	SetCameraViewA(GetCameraLocation(), getFrameTime(12));
 
-	GET_STATS->AddStamina(-2.f / GetHeroStats()->getTeleportCost(), getFrameTime(4), false, EIchigoState::Ichi_Attack_FW);
+	GET_STATS->AddStamina(-2.f / GetHeroStats()->GetTeleportCost(), getFrameTime(4), false, EIchigoState::Ichi_Attack_FW);
 
 	SetBlockingAttack(EBlockType::Forward, getFrameTime(4), BLOCK_DURATION);
 	DangerN(getFrameTime(5), EDangerType::MeleeAttack);
@@ -230,7 +230,7 @@ void AIchigo::b_AttackDash(float value)
 
 void AIchigo::b_Attack_FW_Slash()
 {
-	bool EnoughPower = GetHeroStats()->CheckPower(0.f, 1.f / GetHeroStats()->getTeleportCost());
+	bool EnoughPower = GetHeroStats()->CheckPower(0.f, 1.f / GetHeroStats()->GetTeleportCost());
 	if (! EnoughPower)
 	{
 		if (CheckState(EIchigoState::Ichi_Attack_FW_Slash))
@@ -254,7 +254,7 @@ void AIchigo::b_Attack_FW_Slash()
 	nState.State	 = EIchigoState::Ichi_Attack_FW_Slash;
 	NewState(nState);
 
-	GET_STATS->AddStamina(-1.f / GetHeroStats()->getTeleportCost());
+	GET_STATS->AddStamina(-1.f / GetHeroStats()->GetTeleportCost());
 	SetCameraViewA(GetCameraViewPosition(), 0.2f);
 	getShadow()->HideShadow();
 

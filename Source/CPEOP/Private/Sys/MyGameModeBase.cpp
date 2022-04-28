@@ -10,8 +10,9 @@
 
 #include "HeroBase.h"
 #include "MonsterBase.h"
-
-#include "Engine.h"
+#include "DmgTextBase.h"
+#include "DangerBox.h"
+#include "PaperFlipbook.h"
 
 #define PLAYER_INDEX 0
 
@@ -35,10 +36,7 @@ AHeroBase* AMyGameModeBase::SpawnAHero(TSubclassOf<AHeroBase> HeroClass, FSpawnP
 			GetWorld()->SpawnActor<AActor>(_MonsterSpawnEffect, Params.Transform);
 		}
 
-		if (Possess)
-		{
-			PossessToHero(Hero);
-		}
+		if (Possess) { PossessToHero(Hero); }
 		return Hero;
 	}
 	return nullptr;
@@ -46,10 +44,7 @@ AHeroBase* AMyGameModeBase::SpawnAHero(TSubclassOf<AHeroBase> HeroClass, FSpawnP
 
 bool AMyGameModeBase::PossessToHero(AHeroBase* Hero)
 {
-	if (! IsValid(Hero))
-	{
-		return false;
-	}
+	if (! IsValid(Hero)) { return false; }
 
 	UWorld* World = Hero->GetWorld();
 	uint32	Index = 0;
@@ -61,16 +56,10 @@ bool AMyGameModeBase::PossessToHero(AHeroBase* Hero)
 			IAIEvents::Execute_SetAIEnabled(Hero, false);
 			nController->Possess(Hero);
 
-			if (IsValid(_PlayerHero))
-			{
-				IAIEvents::Execute_SetAIEnabled(_PlayerHero, true);
-			}
+			if (IsValid(_PlayerHero)) { IAIEvents::Execute_SetAIEnabled(_PlayerHero, true); }
 			_PlayerHero = Hero;
 
-			if (! _PlayerController)
-			{
-				_PlayerController = Cast<AMyPlayerController>(nController);
-			}
+			if (! _PlayerController) { _PlayerController = Cast<AMyPlayerController>(nController); }
 			return true;
 		}
 		Index++;
@@ -103,21 +92,13 @@ AMonsterBase* AMyGameModeBase::SpawnAMonster(TSubclassOf<AMonsterBase> MonsterCl
 
 int32 AMyGameModeBase::SpawnAWave(TArray<FWaveMonster> Monsters, int32 MaxInLevel, bool Shuffle)
 {
-	GEngine->AddOnScreenDebugMessage(0, 10.f, //
-		FColor::Yellow,						  //
-		FString(" Spawn Wave"),				  //
-		true, FVector2D(2.f, 2.f));
-
 	_CurrentWave.Empty();
 	_MaxMonstersInLevel = MaxInLevel;
 	_MonsterIndex		= 0;
 
 	for (const FWaveMonster& Element : Monsters)
 	{
-		if (! Element.MonsterClass)
-		{
-			continue;
-		}
+		if (! Element.MonsterClass) { continue; }
 
 		for (int32 i = Element.Number; i > 0; i--)
 		{
@@ -151,8 +132,7 @@ void AMyGameModeBase::SpawnNextDeferred(float Delay)
 
 void AMyGameModeBase::SpawnNext()
 {
-	if (_CurrentWave.Num() == 0)
-		return;
+	if (_CurrentWave.Num() == 0) return;
 
 	if (_MonsterIndex < _CurrentWave.Num() && _MonstersInLevel < _MaxMonstersInLevel)
 	{
@@ -170,10 +150,7 @@ void AMyGameModeBase::SpawnNext()
 
 		AMonsterBase* Monster = SpawnAMonster(MonsterInfo.MonsterClass, nParams);
 
-		if (Monster)
-		{
-			++_MonsterIndex;
-		}
+		if (Monster) { ++_MonsterIndex; }
 	}
 }
 
@@ -181,10 +158,7 @@ void AMyGameModeBase::SpawnPickUp(TSubclassOf<APickUpBase> Class, AHeroBase* Own
 {
 	while (Params.Amount > 0)
 	{
-		if (FMath::RandRange(0.f, 100.f) > Params.Chance)
-		{
-			return;
-		}
+		if (FMath::RandRange(0.f, 100.f) > Params.Chance) { return; }
 
 		FTransform	 nT(FRotator::ZeroRotator, Params.Location, FVector::OneVector);
 		APickUpBase* nObject = GetWorld()->SpawnActorDeferred<APickUpBase>(Class, nT);
@@ -225,10 +199,7 @@ void AMyGameModeBase::LevelUp_Implementation(AActor* Hero)
 
 void AMyGameModeBase::Kill_Implementation(AUnitBase* Killer, AUnitBase* Killed)
 {
-	if (Killer == _PlayerHero)
-	{
-		AddKill();
-	}
+	if (Killer == _PlayerHero) { AddKill(); }
 
 	if (! IUnitInterface::Execute_IsItHero(Killed))
 	{
@@ -237,23 +208,11 @@ void AMyGameModeBase::Kill_Implementation(AUnitBase* Killer, AUnitBase* Killed)
 
 		if (_MonstersInLevel == 0)
 		{
-			GEngine->AddOnScreenDebugMessage(0, 10.f, //
-				FColor::White,						  //
-				FString("Monsters = 0"),			  //
-				true, FVector2D(2.f, 2.f));
 
 			if (_MonsterIndex >= _CurrentWave.Num() - 1)
 			{
-				GEngine->AddOnScreenDebugMessage(0, 10.f, //
-					FColor::White,						  //
-					FString("NextWave"),				  //
-					true, FVector2D(2.f, 2.f));
-
 				++_WavesPassed;
-				if (_PlayerController)
-				{
-					IPlayerHUD::Execute_ShowWaveScore(_PlayerController, _WavesPassed, _PlayerKills);
-				}
+				if (_PlayerController) { IPlayerHUD::Execute_ShowWaveScore(_PlayerController, _WavesPassed, _PlayerKills); }
 				OnWavePassed.Broadcast();
 			}
 		}

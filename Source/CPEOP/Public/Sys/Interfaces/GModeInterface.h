@@ -4,18 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "BCoreTypes.h"
 #include "GModeInterface.generated.h"
 
 class AUnitBase;
-
-UENUM(BlueprintType)
-enum class EGameResultType : uint8
-{
-	Win,
-	Greate,
-	Perfect,
-	Lose,
-};
 
 USTRUCT(BlueprintType)
 struct FGameResults

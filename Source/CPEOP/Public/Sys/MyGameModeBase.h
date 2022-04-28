@@ -3,55 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Sys/Interfaces/GModeInterface.h"
-#include "Objects/Dynamic/PickUpBase.h"
+#include "GModeInterface.h"
+#include "PickUpBase.h"
+#include "BCoreTypes.h"
 #include "GameFramework/GameModeBase.h"
 #include "MyGameModeBase.generated.h"
-
-class AUnitBase;
-class AHeroBase;
-class AMonsterBase;
-class AMyPlayerController;
-class APickUpBase;
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStartBattle);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFinishBattle, EGameResultType, Results);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUnitDead, AUnitBase*, Unit);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHeroLevelUp, AHeroBase*, Hero);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWavePassed);
-
-USTRUCT(BlueprintType)
-struct FSpawnParams
-{
-	GENERATED_BODY()
-
-	UPROPERTY(BlueprintReadWrite)
-	FTransform Transform;
-
-	UPROPERTY(BlueprintReadWrite)
-	uint8 Team;
-
-	UPROPERTY(BlueprintReadWrite)
-	uint8 Level = 1;
-};
-
-USTRUCT(BlueprintType)
-struct FWaveMonster
-{
-	GENERATED_BODY()
-
-	UPROPERTY(BlueprintReadWrite)
-	TSubclassOf<AMonsterBase> MonsterClass;
-
-	UPROPERTY(BlueprintReadWrite)
-	int32 Number;
-
-	UPROPERTY(BlueprintReadWrite)
-	uint8 Level;
-
-	UPROPERTY(BlueprintReadWrite)
-	uint8 LevelAdd;
-};
 
 /**
  *
@@ -60,6 +16,10 @@ UCLASS()
 class CPEOP_API AMyGameModeBase : public AGameModeBase, public IGModeInterface
 {
 	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditDefaultsOnly)
+	FBGameData GameData;
 
 private:
 	UPROPERTY()
@@ -109,19 +69,19 @@ public:
 
 	// Delegates
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "My Delegates")
-	FOnStartBattle OnStartBattle;
+	FOnStartBattleSignature OnStartBattle;
 
 	UPROPERTY(BlueprintAssignable, Category = "My Delegates")
-	FOnFinishBattle OnFinishBattle;
+	FOnFinishBattleSignature OnFinishBattle;
 
 	UPROPERTY(BlueprintAssignable, Category = "My Delegates")
-	FOnUnitDead OnUnitDead;
+	FOnUnitDeadSignature OnUnitDead;
 
 	UPROPERTY(BlueprintAssignable, Category = "My Delegates")
-	FOnHeroLevelUp OnHeroLevelUp;
+	FOnHeroLevelUpSignature OnHeroLevelUp;
 
 	UPROPERTY(BlueprintAssignable, Category = "My Delegates")
-	FOnWavePassed OnWavePassed;
+	FOnWavePassedSignature OnWavePassed;
 
 public:
 	//------------------------------------------// Functional

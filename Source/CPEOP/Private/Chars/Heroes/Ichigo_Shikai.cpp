@@ -324,7 +324,7 @@ void AIchigo::sh_SwordThrow()
 	Combo(getFrameTime(16));
 
 	// Stamina
-	GET_STATS->AddStamina(-1.f / GetHeroStats()->getTeleportCost(), getFrameTime(5), false, EIchigoState::Ichi_SwordThrow);
+	GET_STATS->AddStamina(-1.f / GetHeroStats()->GetTeleportCost(), getFrameTime(5), false, EIchigoState::Ichi_SwordThrow);
 
 	AddImpulse(MoveVector * 300, getFrameTime(2));
 	SpawnHelperDeferred("sh_SwordThrow", getFrameTime(5));

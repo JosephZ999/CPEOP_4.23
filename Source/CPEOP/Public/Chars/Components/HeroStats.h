@@ -70,40 +70,40 @@ public:
 	FName FormName;
 
 private:
-	// Base Stats
-	uint8 Strength;
-	uint8 Agility;
-	uint8 Spirit;
-	int32 MaxExp{0};
-	int32 Exp{0};
-
-	// Strength
-	float MaxHealth;
-	float Health;
-	float Damage;
-	float Armor;
-
-	// Agility
-	float AttackSpeed;
-	float WalkSpeed;
-	float SprintSpeed;
-	float CritRate;
-	float TeleportCost;
-
-	// Intelligence
-	float MaxPower;		// Макс. духовная энергия
-	float Power;		// Запас духовной энергии
-	float Stamina;		// Активная энергия
-	float SkillReducer; // Уменьшает затраты навыков
-	float StaminaRestoreSpeed;
-
-	float ExpMultiplier{1.f};
-
 	UPROPERTY(EditDefaultsOnly, Meta = (AllowPrivateAccess = "true"))
 	TMap<FName, FFormStats> HeroForms;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Meta = (AllowPrivateAccess = "true"))
 	FSavedStats SavedStats;
+
+	// Base Stats
+	uint8 Strength;	 //
+	uint8 Agility;	 //
+	uint8 Spirit;	 //
+	int32 MaxExp{0}; //
+	int32 Exp{0};	 //
+
+	// Strength
+	float MaxHealth; //
+	float Health;	 //
+	float Damage;	 //
+	float Armor;	 //
+
+	// Agility
+	float AttackSpeed;	//
+	float WalkSpeed;	//
+	float SprintSpeed;	//
+	float CritRate;		//
+	float TeleportCost; //
+
+	// Intelligence
+	float MaxPower;			   // Макс. духовная энергия
+	float Power;			   // Запас духовной энергии
+	float Stamina;			   // Активная энергия
+	float SkillReducer;		   // Уменьшает затраты навыков
+	float StaminaRestoreSpeed; //
+
+	float ExpMultiplier{1.f};
 
 public:
 	virtual void SetLevel(uint8 NewLevel) override;
@@ -118,6 +118,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetForm(FName name);
 
+	UFUNCTION(BlueprintCallable)
 	void SetExpMultiplier(float value) { ExpMultiplier = value; }
 
 	UFUNCTION(BlueprintCallable)
@@ -150,13 +151,13 @@ public:
 	}
 
 	UFUNCTION(BlueprintCallable)
-	float getStamina() const { return Stamina; }
+	float GetStamina() const { return Stamina; }
 
 	bool CheckPower(float power, float stamina = 0.f, bool skill = false) const;
 
-	float getWalkSpeed() { return WalkSpeed; }
-	float getSprintSpeed() { return SprintSpeed; }
-	float getTeleportCost() { return TeleportCost; }
+	float GetWalkSpeed() { return WalkSpeed; }
+	float GetSprintSpeed() { return SprintSpeed; }
+	float GetTeleportCost() { return TeleportCost; }
 
 	// Set
 public:
