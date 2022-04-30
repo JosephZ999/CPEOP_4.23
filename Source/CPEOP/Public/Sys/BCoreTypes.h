@@ -2,16 +2,15 @@
 
 #include "BCoreTypes.generated.h"
 
-// Game Mode Types
-
 class AUnitBase;
 class AHeroBase;
 class AMonsterBase;
-class AMyPlayerController;
-class APickUpBase;
 class ADmgTextBase;
 class ADangerBox;
 class UPaperFlipbook;
+class APickUpBase;
+
+// Game Mode Types
 
 UENUM(BlueprintType)
 enum class EGameResultType : uint8
@@ -20,6 +19,26 @@ enum class EGameResultType : uint8
 	Greate,
 	Perfect,
 	Lose,
+};
+
+USTRUCT(BlueprintType)
+struct FGameResults
+{
+	GENERATED_BODY()
+
+	FGameResults() {}
+
+	UPROPERTY(BlueprintReadWrite)
+	FText Title;
+
+	UPROPERTY(BlueprintReadWrite)
+	EGameResultType Result{EGameResultType::Win};
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 Time{0};
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 Kills{0};
 };
 
 UENUM(BlueprintType)
@@ -95,6 +114,27 @@ struct FWaveMonster
 
 	UPROPERTY(BlueprintReadWrite)
 	uint8 LevelAdd;
+};
+
+USTRUCT(BlueprintType)
+struct FPickUpParams
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	TSubclassOf<APickUpBase> Class;
+
+	UPROPERTY(BlueprintReadWrite)
+	FVector Location;
+
+	UPROPERTY(BlueprintReadWrite)
+	uint8 Level;
+
+	UPROPERTY(BlueprintReadWrite, Meta = (ClampMin = 1, ClampMax = 10))
+	uint8 Amount;
+
+	UPROPERTY(BlueprintReadWrite)
+	float Chance;
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStartBattleSignature);

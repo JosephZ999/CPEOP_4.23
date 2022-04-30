@@ -8,6 +8,11 @@ void AMyPlayerController::ShowGameUI_Implementation(bool Hide)
 	IPlayerHUD::Execute_ShowGameUI(MyHUD, Hide);
 }
 
+void AMyPlayerController::ShowPauseUI_Implementation(bool Hide)
+{
+	IPlayerHUD::Execute_ShowPauseUI(MyHUD, Hide);
+}
+
 void AMyPlayerController::LevelUpdated_Implementation(uint8 Level)
 {
 	IPlayerHUD::Execute_LevelUpdated(MyHUD, Level);

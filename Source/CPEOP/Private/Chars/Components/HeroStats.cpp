@@ -2,11 +2,10 @@
 
 #include "HeroStats.h"
 #include "MyPlayerController.h"
+#include "MyGameModeBase.h"
 
 #include "TimerManager.h"
 #include "Engine/World.h"
-
-#include "Sys/Interfaces/GameIns.h"
 
 // Consts per stat
 #define HEALTH			1.f
@@ -121,8 +120,7 @@ void UHeroStats::SetLevel(uint8 NewLevel)
 // Transformation //=============================------------------------------
 void UHeroStats::AddForms(FName name, FVector stats)
 {
-	if (FormName == "None")
-		FormName = name;
+	if (FormName == "None") FormName = name;
 
 	HeroForms.Add(name, FFormStats(stats.X, stats.Y, stats.Z));
 	HeroForms.begin();
@@ -146,10 +144,7 @@ void UHeroStats::AddExp(int32 exp)
 	Leveling();
 
 	auto OwnerController = GetOwnerController();
-	if (OwnerController)
-	{
-		OwnerController->ExpUpdated(Exp, MaxExp);
-	}
+	if (OwnerController) { OwnerController->ExpUpdated(Exp, MaxExp); }
 }
 
 void UHeroStats::SetExp(int32 value)
@@ -158,10 +153,7 @@ void UHeroStats::SetExp(int32 value)
 	Leveling();
 
 	auto OwnerController = GetOwnerController();
-	if (OwnerController)
-	{
-		OwnerController->ExpUpdated(Exp, MaxExp);
-	}
+	if (OwnerController) { OwnerController->ExpUpdated(Exp, MaxExp); }
 }
 
 void UHeroStats::Leveling()
@@ -187,9 +179,13 @@ void UHeroStats::Leveling()
 
 void UHeroStats::LevelUp()
 {
+	if (! GetWorld() || ! GetOwner()) return;
+
 	AddHealth(GetMaxHealth() * HP_RESTORE);
 	AddPower(GetMaxPower() * MP_RESTORE);
-	IGameIns::Execute_OnHeroLevelUp(GetWorld()->GetGameInstance(), GetOwner());
+
+	auto GMode = GetWorld()->GetAuthGameMode<AMyGameModeBase>();
+	if (GMode) { GMode->LevelUp(GetOwner()); }
 }
 
 bool UHeroStats::AddStats(FVector stats, bool force)
@@ -227,11 +223,9 @@ void UHeroStats::AddStamina(float value, float time, bool skill, int desiredStat
 {
 	Super::AddStamina(value, time, skill, desiredState);
 
-	if (time > 0.f)
-		return;
+	if (time > 0.f) return;
 
-	if (desiredState >= 0 && AddStaminaCanceled())
-		return;
+	if (desiredState >= 0 && AddStaminaCanceled()) return;
 
 	if (skill)
 	{
@@ -249,10 +243,7 @@ void UHeroStats::RestoreStamina()
 {
 	Super::RestoreStamina();
 
-	if (RestoreStaminaCondition())
-	{
-		Stamina = FMath::Min(Stamina + StaminaRestoreSpeed, 1.f);
-	}
+	if (RestoreStaminaCondition()) { Stamina = FMath::Min(Stamina + StaminaRestoreSpeed, 1.f); }
 }
 
 bool UHeroStats::CheckPower(float power, float stamina, bool skill) const
@@ -260,18 +251,12 @@ bool UHeroStats::CheckPower(float power, float stamina, bool skill) const
 	auto OwnerController = GetOwnerController();
 
 	bool CheckPower = power <= Power;
-	if (! CheckPower && OwnerController)
-	{
-		OwnerController->NotEnoughPower();
-	}
+	if (! CheckPower && OwnerController) { OwnerController->NotEnoughPower(); }
 
 	bool  CheckStamina;
 	float CurrentStamina = skill ? (stamina / SkillReducer) : stamina;
 	CheckStamina		 = CurrentStamina <= Stamina;
-	if (! CheckStamina && OwnerController)
-	{
-		OwnerController->NotEnoughStamina();
-	}
+	if (! CheckStamina && OwnerController) { OwnerController->NotEnoughStamina(); }
 
 	return CheckPower && CheckStamina;
 }
@@ -281,10 +266,7 @@ void UHeroStats::AddHealth(float value)
 	Health = FMath::Clamp(Health + value, 0.f, MaxHealth);
 
 	auto OwnerController = GetOwnerController();
-	if (OwnerController)
-	{
-		OwnerController->HpUpdated(Health, MaxHealth);
-	}
+	if (OwnerController) { OwnerController->HpUpdated(Health, MaxHealth); }
 }
 
 void UHeroStats::SetHealth(float value)
@@ -292,10 +274,7 @@ void UHeroStats::SetHealth(float value)
 	Health = FMath::Clamp(value, 0.f, MaxHealth);
 
 	auto OwnerController = GetOwnerController();
-	if (OwnerController)
-	{
-		OwnerController->HpUpdated(Health, MaxHealth);
-	}
+	if (OwnerController) { OwnerController->HpUpdated(Health, MaxHealth); }
 }
 
 void UHeroStats::AddPower(float value)
@@ -303,10 +282,7 @@ void UHeroStats::AddPower(float value)
 	Power = FMath::Clamp(Power + value, 0.f, MaxPower);
 
 	auto OwnerController = GetOwnerController();
-	if (OwnerController)
-	{
-		OwnerController->MpUpdated(Power, MaxPower);
-	}
+	if (OwnerController) { OwnerController->MpUpdated(Power, MaxPower); }
 }
 
 void UHeroStats::SetPower(float value)
@@ -314,18 +290,12 @@ void UHeroStats::SetPower(float value)
 	Power = FMath::Clamp(value, 0.f, MaxPower);
 
 	auto OwnerController = GetOwnerController();
-	if (OwnerController)
-	{
-		OwnerController->MpUpdated(Power, MaxPower);
-	}
+	if (OwnerController) { OwnerController->MpUpdated(Power, MaxPower); }
 }
 
 void UHeroStats::SetSkill(FName skillName, bool value)
 {
-	if (SavedStats.Skills.Contains(skillName))
-	{
-		SavedStats.Skills[skillName] = value;
-	}
+	if (SavedStats.Skills.Contains(skillName)) { SavedStats.Skills[skillName] = value; }
 	else
 	{
 		SavedStats.Skills.Add(skillName, value);
@@ -334,10 +304,7 @@ void UHeroStats::SetSkill(FName skillName, bool value)
 
 bool UHeroStats::CheckSkill(FName key)
 {
-	if (SavedStats.Skills.Contains(key))
-	{
-		return SavedStats.Skills[key];
-	}
+	if (SavedStats.Skills.Contains(key)) { return SavedStats.Skills[key]; }
 	else
 	{
 		return false;

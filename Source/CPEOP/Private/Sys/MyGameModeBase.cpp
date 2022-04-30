@@ -154,14 +154,14 @@ void AMyGameModeBase::SpawnNext()
 	}
 }
 
-void AMyGameModeBase::SpawnPickUp(TSubclassOf<APickUpBase> Class, AHeroBase* OwnerHero, FPickUpParams Params)
+void AMyGameModeBase::SpawnPickUp(AHeroBase* OwnerHero, FPickUpParams Params)
 {
 	while (Params.Amount > 0)
 	{
 		if (FMath::RandRange(0.f, 100.f) > Params.Chance) { return; }
 
 		FTransform	 nT(FRotator::ZeroRotator, Params.Location, FVector::OneVector);
-		APickUpBase* nObject = GetWorld()->SpawnActorDeferred<APickUpBase>(Class, nT);
+		APickUpBase* nObject = GetWorld()->SpawnActorDeferred<APickUpBase>(Params.Class, nT);
 		if (nObject)
 		{
 			nObject->Init(Params.Level, OwnerHero);
@@ -185,6 +185,17 @@ void AMyGameModeBase::FinishGame_Implementation(const FText& Title, EGameResultT
 }
 
 //----------------------------------------------// Game Mode Interface
+void AMyGameModeBase::SetGamePaused_Implementation()
+{
+	if (! _PlayerController) return;
+
+	if (_PlayerController->SetPause(! _GamePaused))
+	{
+		_GamePaused = ! _GamePaused;
+		IPlayerHUD::Execute_ShowPauseUI(_PlayerController, _GamePaused);
+	}
+}
+
 void AMyGameModeBase::LevelUp_Implementation(AActor* Hero)
 {
 	AHeroBase* HeroRef = Cast<AHeroBase>(Hero);

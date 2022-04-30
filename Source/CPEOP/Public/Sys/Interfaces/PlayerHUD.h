@@ -26,6 +26,9 @@ public:
 	void ShowGameUI(bool Hide);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void ShowPauseUI(bool Hide);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void LevelUpdated(uint8 Level);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)

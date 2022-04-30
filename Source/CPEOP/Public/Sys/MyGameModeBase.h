@@ -9,6 +9,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "MyGameModeBase.generated.h"
 
+class AMyPlayerController;
+
 /**
  *
  */
@@ -21,9 +23,27 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	FBGameData GameData;
 
+public:
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "My Delegates")
+	FOnStartBattleSignature OnStartBattle;
+
+	UPROPERTY(BlueprintAssignable, Category = "My Delegates")
+	FOnFinishBattleSignature OnFinishBattle;
+
+	UPROPERTY(BlueprintAssignable, Category = "My Delegates")
+	FOnUnitDeadSignature OnUnitDead;
+
+	UPROPERTY(BlueprintAssignable, Category = "My Delegates")
+	FOnHeroLevelUpSignature OnHeroLevelUp;
+
+	UPROPERTY(BlueprintAssignable, Category = "My Delegates")
+	FOnWavePassedSignature OnWavePassed;
+
 private:
 	UPROPERTY()
-	AHeroBase*			 _PlayerHero;
+	AHeroBase* _PlayerHero;
+
+	UPROPERTY()
 	AMyPlayerController* _PlayerController;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -48,40 +68,7 @@ private:
 	int32				 _MaxMonstersInLevel;
 	int32				 _MonsterIndex;
 
-public:
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE AMyPlayerController* GetController() const { return _PlayerController; }
-
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE AHeroBase* GetPlayerHero() const { return _PlayerHero; }
-
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE int32 GetGameTime() const { return _GameTime; }
-
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE int32 GetPlayerKills() const { return _PlayerKills; }
-
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE int32 GetWavesNum() const { return _WavesPassed; }
-
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE int32 GetMonstersNum() const { return _MonstersInLevel; }
-
-	// Delegates
-	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "My Delegates")
-	FOnStartBattleSignature OnStartBattle;
-
-	UPROPERTY(BlueprintAssignable, Category = "My Delegates")
-	FOnFinishBattleSignature OnFinishBattle;
-
-	UPROPERTY(BlueprintAssignable, Category = "My Delegates")
-	FOnUnitDeadSignature OnUnitDead;
-
-	UPROPERTY(BlueprintAssignable, Category = "My Delegates")
-	FOnHeroLevelUpSignature OnHeroLevelUp;
-
-	UPROPERTY(BlueprintAssignable, Category = "My Delegates")
-	FOnWavePassedSignature OnWavePassed;
+	bool _GamePaused = false;
 
 public:
 	//------------------------------------------// Functional
@@ -100,7 +87,7 @@ public:
 	void  SpawnNext();
 
 	UFUNCTION(BlueprintCallable)
-	void SpawnPickUp(TSubclassOf<APickUpBase> Class, AHeroBase* OwnerHero, FPickUpParams Params);
+	void SpawnPickUp(AHeroBase* OwnerHero, FPickUpParams Params);
 
 	// Events
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
@@ -109,7 +96,29 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void FinishGame(const FText& Title, EGameResultType GameResult);
 
+	// Getters
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE AMyPlayerController* GetController() const { return _PlayerController; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE AHeroBase* GetPlayerHero() const { return _PlayerHero; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE int32 GetGameTime() const { return _GameTime; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE int32 GetPlayerKills() const { return _PlayerKills; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE int32 GetWavesNum() const { return _WavesPassed; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE int32 GetMonstersNum() const { return _MonstersInLevel; }
+
 	//------------------------------------------// Game Mode Interface
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GM Interface")
+	void SetGamePaused();
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GM Interface")
 	void LevelUp(AActor* Hero);
 

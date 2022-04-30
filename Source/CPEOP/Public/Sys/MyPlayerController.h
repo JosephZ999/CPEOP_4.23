@@ -22,6 +22,9 @@ public:
 	void ShowGameUI(bool Hide);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void ShowPauseUI(bool Hide);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void LevelUpdated(uint8 Level);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
@@ -58,4 +61,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void NotEnoughStamina();
+
+	// Widgets
+	void SetPauseWidget(bool Hide = false);
 };

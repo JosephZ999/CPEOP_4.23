@@ -7,28 +7,6 @@
 #include "BCoreTypes.h"
 #include "GModeInterface.generated.h"
 
-class AUnitBase;
-
-USTRUCT(BlueprintType)
-struct FGameResults
-{
-	GENERATED_BODY()
-
-	FGameResults() {}
-
-	UPROPERTY(BlueprintReadWrite)
-	FText Title;
-
-	UPROPERTY(BlueprintReadWrite)
-	EGameResultType Result{EGameResultType::Win};
-
-	UPROPERTY(BlueprintReadWrite)
-	int32 Time{0};
-
-	UPROPERTY(BlueprintReadWrite)
-	int32 Kills{0};
-};
-
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UGModeInterface : public UInterface
@@ -45,9 +23,11 @@ class CPEOP_API IGModeInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	// Stats
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GM Interface")
-	FGameResults GetGameResults();
+	void SetGamePaused();
+
+	// Stats
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GM Interface") FGameResults GetGameResults();
 
 	// Events
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "GM Interface")

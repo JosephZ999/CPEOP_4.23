@@ -6,24 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "PickUpBase.generated.h"
 
-USTRUCT(BlueprintType)
-struct FPickUpParams
-{
-	GENERATED_BODY()
-
-	UPROPERTY(BlueprintReadWrite)
-	FVector Location;
-
-	UPROPERTY(BlueprintReadWrite)
-	uint8 Level;
-
-	UPROPERTY(BlueprintReadWrite, Meta = (ClampMin = 1, ClampMax = 10))
-	uint8 Amount;
-
-	UPROPERTY(BlueprintReadWrite)
-	float Chance;
-};
-
 UCLASS(Blueprintable, Abstract)
 class CPEOP_API APickUpBase : public AActor
 {

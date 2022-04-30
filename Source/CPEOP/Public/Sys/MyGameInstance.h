@@ -3,17 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Sys/Interfaces/GameIns.h"
 #include "Engine/GameInstance.h"
-#include "Objects/Dynamic/DmgTextBase.h"
-
 #include "MyGameInstance.generated.h"
 
 /**
  *
  */
 UCLASS()
-class CPEOP_API UMyGameInstance : public UGameInstance, public IGameIns
+class CPEOP_API UMyGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 };
