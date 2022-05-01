@@ -85,7 +85,7 @@ void AUnitBase::CreateADangerBox(EDangerPriority Priority, FDangerOptions& Optio
 	auto GMode = GetWorld()->GetAuthGameMode<AMyGameModeBase>();
 	if (! GMode) return;
 
-	auto nClass	   = GMode->GameData.DangerBoxClass;
+	auto nClass	   = GMode->_GameData.DangerBoxClass;
 	auto nLocation = FVector(Options.Location);
 	auto nT		   = FTransform(GetActorRotation(), nLocation, Options.Scale);
 	auto box	   = GetWorld()->SpawnActorDeferred<ADangerBox>(nClass, nT);
@@ -384,8 +384,8 @@ void AUnitBase::CreateSpark(uint8 index, FVector2D scale, float rotation)
 	auto GMode = GetWorld()->GetAuthGameMode<AMyGameModeBase>();
 	if (! GMode) return;
 
-	if (! GMode->GameData.SparkAnims.IsValidIndex(index)) return;
-	auto nSparkAnim = GMode->GameData.SparkAnims[index];
+	if (! GMode->_GameData.SparkAnims.IsValidIndex(index)) return;
+	auto nSparkAnim = GMode->_GameData.SparkAnims[index];
 
 	// Spawn Location
 	FVector nLocation = GetActorLocation();
@@ -420,9 +420,9 @@ void AUnitBase::CreateDamageText(float damage, bool moveRight, bool crit)
 
 	if (FMath::IsNearlyEqual(damage, 0.f)) { crit = false; }
 
-	if (! GMode->GameData.CanCreateDamageText(crit)) return;
+	if (! GMode->_GameSettings.CanCreateDamageText(crit)) return;
 
-	auto nClass = GMode->GameData.DamageTextClass;
+	auto nClass = GMode->_GameData.DamageTextClass;
 
 	// Location
 	FTransform nTransform{FRotator::ZeroRotator, GetActorLocation(), FVector::OneVector};

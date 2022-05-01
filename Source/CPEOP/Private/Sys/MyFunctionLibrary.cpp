@@ -2,10 +2,14 @@
 
 #include "MyFunctionLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
-// #include "Engine/EngineTypes.h"
+#include "BSaveGame.h"
 
-#define CHANNEL_WALL ECC_GameTraceChannel3
+#define CHANNEL_WALL  ECC_GameTraceChannel3
+
+// Save Game Slots
+#define SETTINGS_SLOT "Settings"
 
 int UMyFunctionLibrary::RotationDivide(FVector2D pointA, FVector2D pointB)
 {
@@ -26,10 +30,7 @@ int UMyFunctionLibrary::RotationDivide2(FVector2D pointA, FVector2D pointB, uint
 		float remainder;
 		int	  outValue = UKismetMathLibrary::FMod(Rotation, angle, remainder);
 
-		if (outValue == 0)
-		{
-			outValue = divisionNum;
-		}
+		if (outValue == 0) { outValue = divisionNum; }
 		angle *= (float)outValue;
 		return outValue;
 	}
@@ -82,8 +83,7 @@ FString UMyFunctionLibrary::FindObjectName(FString objectPath)
 
 FVector UMyFunctionLibrary::FindRandomLocation(AActor* ActorInCenter, float DistMin, float DistMax)
 {
-	if (! ActorInCenter)
-		return FVector::ZeroVector;
+	if (! ActorInCenter) return FVector::ZeroVector;
 
 	UWorld*		  nWorld	 = ActorInCenter->GetWorld();
 	const FVector TraceStart = ActorInCenter->GetActorLocation();
@@ -97,4 +97,63 @@ FVector UMyFunctionLibrary::FindRandomLocation(AActor* ActorInCenter, float Dist
 		return Hit.ImpactPoint;
 	}
 	return TraceEnd;
+}
+
+// Save Load Game
+
+FGameSettings UMyFunctionLibrary::LoadGameSettings()
+{
+	if (UGameplayStatics::DoesSaveGameExist(SETTINGS_SLOT, 0))
+	{
+		auto SaveGameObject = Cast<UBSaveGame>(UGameplayStatics::LoadGameFromSlot(SETTINGS_SLOT, 0));
+		return SaveGameObject ? SaveGameObject->_GameSettings : FGameSettings();
+	}
+	else
+	{
+		auto SaveGameObject = Cast<UBSaveGame>(UGameplayStatics::CreateSaveGameObject(UBSaveGame::StaticClass()));
+		UGameplayStatics::SaveGameToSlot(SaveGameObject, SETTINGS_SLOT, 0);
+		return SaveGameObject->_GameSettings;
+	}
+}
+
+bool UMyFunctionLibrary::SaveGameSettings(FGameSettings Settings)
+{
+	if (UGameplayStatics::DoesSaveGameExist(SETTINGS_SLOT, 0))
+	{
+		auto SaveGameObject			  = Cast<UBSaveGame>(UGameplayStatics::LoadGameFromSlot(SETTINGS_SLOT, 0));
+		SaveGameObject->_GameSettings = Settings;
+		return UGameplayStatics::SaveGameToSlot(SaveGameObject, SETTINGS_SLOT, 0);
+	}
+	else
+	{
+		auto SaveGameObject			  = Cast<UBSaveGame>(UGameplayStatics::CreateSaveGameObject(UBSaveGame::StaticClass()));
+		SaveGameObject->_GameSettings = Settings;
+		return UGameplayStatics::SaveGameToSlot(SaveGameObject, SETTINGS_SLOT, 0);
+	}
+}
+
+void UMyFunctionLibrary::SaveGameOption(EGameSettingsKeys Key, FGameOptionValue Value)
+{
+	auto nGameSettings = LoadGameSettings();
+	switch (Key)
+	{
+	case EGameSettingsKeys::CrossDevisions: nGameSettings.CrossDevider = Value.ValueType2; break;
+	case EGameSettingsKeys::DamageTextRate: nGameSettings.DamageTextRate = Value.ValueType2; break;
+	case EGameSettingsKeys::ShowCritText: nGameSettings.bAlwaysShowCritText = Value.ValueType2; break;
+	}
+	SaveGameSettings(nGameSettings);
+}
+
+FGameOptionValue UMyFunctionLibrary::GetGameOptionValue(EGameSettingsKeys Key)
+{
+	auto nGameSettings = LoadGameSettings();
+
+	switch (Key)
+	{
+	case EGameSettingsKeys::CrossDevisions: return FGameOptionValue(nGameSettings.CrossDevider);
+	case EGameSettingsKeys::DamageTextRate: return FGameOptionValue(nGameSettings.DamageTextRate);
+	case EGameSettingsKeys::ShowCritText: return FGameOptionValue(nGameSettings.bAlwaysShowCritText);
+	}
+
+	return FGameOptionValue();
 }

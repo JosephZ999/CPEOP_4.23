@@ -36,7 +36,8 @@ public class CPEOP : ModuleRules
             "CPEOP/public/Objects/Static",
 
             "CPEOP/public/Sys",
-            "CPEOP/public/Sys/Interfaces"
+            "CPEOP/public/Sys/Interfaces",
+            "CPEOP/public/Sys/SaveGame"
         });
 
         // Uncomment if you are using Slate UI

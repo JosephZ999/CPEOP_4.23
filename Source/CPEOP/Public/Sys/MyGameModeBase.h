@@ -20,10 +20,6 @@ class CPEOP_API AMyGameModeBase : public AGameModeBase, public IGModeInterface
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly)
-	FBGameData GameData;
-
-public:
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "My Delegates")
 	FOnStartBattleSignature OnStartBattle;
 
@@ -38,6 +34,13 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "My Delegates")
 	FOnWavePassedSignature OnWavePassed;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FBGameData _GameData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGameSettings _GameSettings;
 
 private:
 	UPROPERTY()
@@ -71,6 +74,8 @@ private:
 	bool _GamePaused = false;
 
 public:
+	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
+
 	//------------------------------------------// Functional
 	UFUNCTION(BlueprintCallable)
 	AHeroBase* SpawnAHero(TSubclassOf<AHeroBase> HeroClass, FSpawnParams Params, bool Possess = false, bool Effect = false);

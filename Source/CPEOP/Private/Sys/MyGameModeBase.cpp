@@ -16,6 +16,13 @@
 
 #define PLAYER_INDEX 0
 
+void AMyGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
+{
+	Super::InitGame(MapName, Options, ErrorMessage);
+
+	_GameSettings = UMyFunctionLibrary::LoadGameSettings();
+}
+
 //----------------------------------------------// Functional
 AHeroBase* AMyGameModeBase::SpawnAHero(TSubclassOf<AHeroBase> HeroClass, FSpawnParams Params, bool Possess, bool Effect)
 {
