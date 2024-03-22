@@ -20,6 +20,8 @@
 // Settings
 #define HIT_TIME 0.2f
 
+DEFINE_LOG_CATEGORY_STATIC(LogUnitBase, All, All);
+
 AUnitBase::AUnitBase()
 {
 	GetCapsuleComponent()->InitCapsuleSize(12.0f, 28.0f);
@@ -113,7 +115,7 @@ void AUnitBase::OnDangerDetected_Implementation(FDangerArg& DangerInfo)
 		IAIEvents::Execute_OnDangerDetected(GetController(), DangerInfo);
 	}
 
-	// UE_LOG(LogTemp, Warning, TEXT("UnitBase OnDangerDetected Arg: Pos X - %f, Pos Y - %f"), Arg1.Position.X, Arg1.Position.Y);
+	// UE_LOG(LogUnitBase, Warning, TEXT("UnitBase OnDangerDetected Arg: Pos X - %f, Pos Y - %f"), Arg1.Position.X, Arg1.Position.Y);
 }
 
 // Functions
@@ -132,7 +134,7 @@ void AUnitBase::FindHelper(FString objectPath, TSubclassOf<class AHelper>& Class
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Can't find the class, path: %s "), *objectPath);
+	UE_LOG(LogUnitBase, Warning, TEXT("Can't find the class, path: %s "), *objectPath);
 }
 
 UPaperFlipbook* AUnitBase::FindAnim(FString objectPath)
@@ -143,7 +145,7 @@ UPaperFlipbook* AUnitBase::FindAnim(FString objectPath)
 	ConstructorHelpers::FObjectFinder<UPaperFlipbook> nObject((TEXT("%s"), *finalPath));
 	if (nObject.Succeeded()) { return nObject.Object; }
 
-	UE_LOG(LogTemp, Warning, TEXT("Cannot find the object, path: %s "), *objectPath);
+	UE_LOG(LogUnitBase, Warning, TEXT("Cannot find the object, path: %s "), *objectPath);
 	return nullptr;
 }
 
@@ -436,7 +438,7 @@ void AUnitBase::CreateDamageText(float damage, bool moveRight, bool crit)
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Creating damage text failed"));
+		UE_LOG(LogUnitBase, Warning, TEXT("Creating damage text failed"));
 	}
 }
 
@@ -724,7 +726,7 @@ void AUnitBase::InitAnim(FName name, FString flipbookPath)
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Animation data not selected"));
+		UE_LOG(LogUnitBase, Warning, TEXT("Animation data not selected"));
 	}
 }
 
